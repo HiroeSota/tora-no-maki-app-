@@ -5,48 +5,45 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>虎の巻 クイズアプリ</title>
   <style>
-    /* ── リセット ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── ベース：集中力が上がる深夜コーディング風ダークテーマ ── */
     body {
       min-height: 100vh;
       display: flex;
-      align-items: center;
+      align-items: flex-start;
       justify-content: center;
+      padding: 40px 16px;
       background: #0d1117;
       font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
       color: #e6edf3;
     }
 
-    /* ── 背景のグラデーション装飾 ── */
     body::before {
       content: '';
       position: fixed;
       inset: 0;
       background:
-        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(0, 255, 180, 0.07) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 35% at 80% 80%, rgba(88, 166, 255, 0.08) 0%, transparent 60%);
+        radial-gradient(ellipse 60% 40% at 20% 20%, rgba(0,255,180,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 35% at 80% 80%, rgba(88,166,255,0.08) 0%, transparent 60%);
       pointer-events: none;
     }
 
-    /* ── カード ── */
     .quiz-card {
       position: relative;
-      width: min(680px, 92vw);
+      width: min(720px, 100%);
       background: #161b22;
       border: 1px solid #30363d;
       border-radius: 16px;
-      padding: 40px 44px;
-      box-shadow: 0 8px 40px rgba(0, 0, 0, 0.6);
+      padding: 36px 44px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
     }
 
-    /* ── ヘッダー ── */
+    /* ── Header ── */
     .quiz-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .quiz-title {
@@ -62,12 +59,10 @@
       flex-direction: column;
       align-items: flex-end;
       gap: 6px;
+      visibility: hidden;
     }
 
-    .progress-label {
-      font-size: 0.75rem;
-      color: #8b949e;
-    }
+    .progress-label { font-size: 0.75rem; color: #8b949e; }
 
     .progress-bar-bg {
       width: 120px;
@@ -85,50 +80,154 @@
       width: 0%;
     }
 
-    /* ── カテゴリバッジ ── */
+    /* ── Start Screen ── */
+    .start-lead {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .start-sub {
+      font-size: 0.85rem;
+      color: #8b949e;
+      margin-bottom: 28px;
+    }
+
+    .start-sub code {
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 0.8rem;
+      color: #00ffb4;
+      font-family: 'Consolas', 'Monaco', monospace;
+    }
+
+    .filter-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8b949e;
+      margin-bottom: 12px;
+    }
+
+    .filter-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 32px;
+    }
+
+    .filter-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: 12px 20px;
+      min-width: 100px;
+      background: #21262d;
+      border: 2px solid #30363d;
+      border-radius: 12px;
+      color: #8b949e;
+      font-size: 0.9rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, background 0.15s, color 0.15s;
+    }
+
+    .filter-btn .f-count { font-size: 0.72rem; font-weight: 400; opacity: 0.7; }
+    .filter-btn:hover { border-color: #58a6ff; color: #e6edf3; }
+    .filter-btn.active { color: #0d1117; }
+
+    .filter-btn[data-cat="all"].active        { background: linear-gradient(135deg,#00ffb4,#58a6ff); border-color: transparent; }
+    .filter-btn[data-cat="コマンド"].active   { background: #e3b341; border-color: #e3b341; }
+    .filter-btn[data-cat="Git"].active        { background: #bc8cff; border-color: #bc8cff; }
+    .filter-btn[data-cat="言語の違い"].active { background: #58a6ff; border-color: #58a6ff; }
+    .filter-btn[data-cat="Web基礎"].active    { background: #3fb950; border-color: #3fb950; }
+    .filter-btn[data-cat="npm"].active        { background: #f85149; border-color: #f85149; }
+
+    .start-btn {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #00ffb4 0%, #58a6ff 100%);
+      border: none;
+      border-radius: 12px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #0d1117;
+      cursor: pointer;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+    }
+
+    .start-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── Category Badge ── */
     .category-badge {
       display: inline-block;
       font-size: 0.7rem;
       font-weight: 600;
       letter-spacing: 0.08em;
-      text-transform: uppercase;
       padding: 3px 10px;
       border-radius: 99px;
-      margin-bottom: 14px;
-      background: rgba(88, 166, 255, 0.15);
-      border: 1px solid rgba(88, 166, 255, 0.35);
+      margin-bottom: 12px;
+      background: rgba(88,166,255,0.15);
+      border: 1px solid rgba(88,166,255,0.35);
       color: #58a6ff;
+      transition: background 0.2s, color 0.2s, border-color 0.2s;
     }
 
-    /* ── 問題文 ── */
-    .question-number {
-      font-size: 0.75rem;
-      color: #8b949e;
-      margin-bottom: 8px;
-    }
+    .category-badge[data-cat="コマンド"]   { background: rgba(227,179,65,0.15);  border-color: rgba(227,179,65,0.35);  color: #e3b341; }
+    .category-badge[data-cat="Git"]        { background: rgba(188,140,255,0.15); border-color: rgba(188,140,255,0.35); color: #bc8cff; }
+    .category-badge[data-cat="言語の違い"] { background: rgba(88,166,255,0.15);  border-color: rgba(88,166,255,0.35);  color: #58a6ff; }
+    .category-badge[data-cat="Web基礎"]   { background: rgba(63,185,80,0.15);   border-color: rgba(63,185,80,0.35);   color: #3fb950; }
+    .category-badge[data-cat="npm"]        { background: rgba(248,81,73,0.15);   border-color: rgba(248,81,73,0.35);   color: #f85149; }
+
+    /* ── Question ── */
+    .question-number { font-size: 0.75rem; color: #8b949e; margin-bottom: 8px; }
 
     .question-text {
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 600;
-      line-height: 1.6;
+      line-height: 1.7;
       color: #e6edf3;
-      margin-bottom: 32px;
-      min-height: 4rem;
+      margin-bottom: 28px;
+      min-height: 3.5rem;
     }
 
-    /* ── 選択肢 ── */
-    .choices {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+    .question-text code {
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 4px;
+      padding: 1px 6px;
+      font-size: 1rem;
+      font-family: 'Consolas', 'Monaco', monospace;
+      color: #e6edf3;
     }
+
+    /* ── Tooltip Terms ── */
+    .term {
+      border-bottom: 1px dashed #58a6ff;
+      color: #58a6ff;
+      cursor: help;
+    }
+
+    code.term {
+      color: #00ffb4;
+      border-bottom: 1px dashed #00ffb4;
+    }
+
+    /* ── Choices ── */
+    .choices { display: flex; flex-direction: column; gap: 10px; }
 
     .choice-btn {
       display: flex;
       align-items: center;
       gap: 14px;
       width: 100%;
-      padding: 14px 18px;
+      padding: 13px 18px;
       background: #21262d;
       border: 1px solid #30363d;
       border-radius: 10px;
@@ -162,71 +261,35 @@
       transition: background 0.15s, color 0.15s;
     }
 
-    /* 正解 */
-    .choice-btn.correct {
-      border-color: #00ffb4;
-      background: rgba(0, 255, 180, 0.1);
-      color: #00ffb4;
-    }
-    .choice-btn.correct .choice-label {
-      background: #00ffb4;
-      color: #0d1117;
-    }
-
-    /* 不正解 */
-    .choice-btn.wrong {
-      border-color: #f85149;
-      background: rgba(248, 81, 73, 0.1);
-      color: #f85149;
-    }
-    .choice-btn.wrong .choice-label {
-      background: #f85149;
-      color: #fff;
-    }
-
+    .choice-btn.correct { border-color: #00ffb4; background: rgba(0,255,180,0.1); color: #00ffb4; }
+    .choice-btn.correct .choice-label { background: #00ffb4; color: #0d1117; }
+    .choice-btn.wrong   { border-color: #f85149; background: rgba(248,81,73,0.1); color: #f85149; }
+    .choice-btn.wrong   .choice-label { background: #f85149; color: #fff; }
     .choice-btn:disabled { cursor: not-allowed; }
 
-    /* ── フィードバックバナー ── */
+    /* ── Feedback ── */
     .feedback {
-      margin-top: 24px;
+      margin-top: 20px;
       padding: 14px 18px;
       border-radius: 10px;
       font-size: 1rem;
       font-weight: 600;
       display: none;
-      align-items: center;
+      align-items: flex-start;
       gap: 10px;
     }
 
     .feedback.show { display: flex; }
+    .feedback.correct-fb { background: rgba(0,255,180,0.12); border: 1px solid rgba(0,255,180,0.4); color: #00ffb4; }
+    .feedback.wrong-fb   { background: rgba(248,81,73,0.12);  border: 1px solid rgba(248,81,73,0.4);  color: #f85149; }
+    .feedback .fb-icon   { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
+    .feedback .fb-text   { flex: 1; }
+    .feedback .fb-hint   { font-size: 0.82rem; font-weight: 400; color: #8b949e; margin-top: 4px; }
 
-    .feedback.correct-fb {
-      background: rgba(0, 255, 180, 0.12);
-      border: 1px solid rgba(0, 255, 180, 0.4);
-      color: #00ffb4;
-    }
-
-    .feedback.wrong-fb {
-      background: rgba(248, 81, 73, 0.12);
-      border: 1px solid rgba(248, 81, 73, 0.4);
-      color: #f85149;
-    }
-
-    .feedback .fb-icon { font-size: 1.3rem; }
-
-    .feedback .fb-text { flex: 1; }
-
-    .feedback .fb-hint {
-      font-size: 0.82rem;
-      font-weight: 400;
-      color: #8b949e;
-      margin-top: 4px;
-    }
-
-    /* ── 次へボタン ── */
+    /* ── Next Button ── */
     .next-btn {
       display: none;
-      margin-top: 20px;
+      margin-top: 16px;
       width: 100%;
       padding: 14px;
       background: linear-gradient(135deg, #00ffb4 0%, #58a6ff 100%);
@@ -241,18 +304,12 @@
     }
 
     .next-btn:hover { opacity: 0.9; transform: translateY(-1px); }
-    .next-btn:active { transform: translateY(0); }
-    .next-btn.show { display: block; }
+    .next-btn.show  { display: block; }
 
-    /* ── 結果画面 ── */
-    .result-screen {
-      text-align: center;
-      display: none;
-    }
-
+    /* ── Result ── */
+    .result-screen { display: none; text-align: center; }
     .result-screen.show { display: block; }
-
-    .result-emoji { font-size: 4rem; margin-bottom: 16px; }
+    .result-emoji  { font-size: 4rem; margin-bottom: 16px; }
 
     .result-title {
       font-size: 1.8rem;
@@ -264,50 +321,62 @@
       background-clip: text;
     }
 
-    .result-score {
-      font-size: 1.1rem;
-      color: #8b949e;
-      margin-bottom: 32px;
-    }
+    .result-score { font-size: 1.1rem; color: #8b949e; margin-bottom: 32px; }
+    .result-score strong { font-size: 2rem; color: #e6edf3; -webkit-text-fill-color: #e6edf3; }
 
-    .result-score strong {
-      font-size: 2rem;
-      color: #e6edf3;
-      -webkit-text-fill-color: #e6edf3;
-    }
+    .result-buttons { display: flex; gap: 12px; justify-content: center; }
 
-    .restart-btn {
-      padding: 14px 40px;
-      background: linear-gradient(135deg, #00ffb4 0%, #58a6ff 100%);
+    .restart-btn, .change-cat-btn {
+      padding: 14px 28px;
       border: none;
       border-radius: 10px;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      color: #0d1117;
       cursor: pointer;
       transition: opacity 0.15s, transform 0.1s;
     }
 
-    .restart-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .restart-btn    { background: linear-gradient(135deg,#00ffb4,#58a6ff); color: #0d1117; }
+    .change-cat-btn { background: #21262d; border: 1px solid #30363d; color: #c9d1d9; }
+    .restart-btn:hover, .change-cat-btn:hover { opacity: 0.9; transform: translateY(-1px); }
 
-    /* ── メインクイズ本体 ── */
-    .quiz-body { }
+    /* ── Tooltip Bubble ── */
+    .tooltip-bubble {
+      position: fixed;
+      z-index: 9999;
+      max-width: 260px;
+      padding: 10px 14px;
+      background: #1c2128;
+      border: 1px solid #58a6ff;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      line-height: 1.5;
+      color: #c9d1d9;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.12s;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
 
-    /* ── レスポンシブ ── */
-    @media (max-width: 480px) {
-      .quiz-card { padding: 28px 20px; }
+    .tooltip-bubble.visible { opacity: 1; }
+
+    @media (max-width: 520px) {
+      .quiz-card { padding: 24px 18px; }
       .question-text { font-size: 1.1rem; }
+      .filter-btn { min-width: 80px; padding: 10px 14px; }
+      .result-buttons { flex-direction: column; }
     }
   </style>
 </head>
 <body>
 
+  <div class="tooltip-bubble" id="tooltipBubble"></div>
+
   <div class="quiz-card">
 
-    <!-- ヘッダー -->
     <div class="quiz-header">
       <span class="quiz-title">🐯 虎の巻 Quiz</span>
-      <div class="progress-wrap">
+      <div class="progress-wrap" id="progressWrap">
         <span class="progress-label" id="progressLabel">1 / 10</span>
         <div class="progress-bar-bg">
           <div class="progress-bar" id="progressBar"></div>
@@ -315,17 +384,21 @@
       </div>
     </div>
 
-    <!-- クイズ本体 -->
-    <div class="quiz-body" id="quizBody">
-      <div class="category-badge" id="categoryBadge">コマンド</div>
-      <div class="question-number" id="questionNumber">Q1</div>
-      <div class="question-text" id="questionText">問題がここに入ります</div>
+    <!-- Start Screen -->
+    <div id="startScreen">
+      <div class="start-lead">カテゴリを選んでスタート！</div>
+      <div class="start-sub">問題中の用語に <code>マウスを乗せる</code> と意味が表示されます 💡</div>
+      <div class="filter-label">カテゴリを選択</div>
+      <div class="filter-grid" id="filterGrid"></div>
+      <button class="start-btn" onclick="startQuiz()">スタートする →</button>
+    </div>
 
-      <div class="choices" id="choicesContainer">
-        <!-- JS で動的生成 -->
-      </div>
-
-      <!-- フィードバック -->
+    <!-- Quiz Body -->
+    <div id="quizBody" style="display:none">
+      <div class="category-badge" id="categoryBadge"></div>
+      <div class="question-number" id="questionNumber"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choicesContainer"></div>
       <div class="feedback" id="feedback">
         <span class="fb-icon" id="fbIcon"></span>
         <div class="fb-text">
@@ -333,249 +406,464 @@
           <div class="fb-hint" id="fbHint"></div>
         </div>
       </div>
-
-      <!-- 次へ -->
-      <button class="next-btn" id="nextBtn" onclick="nextQuestion()">次の問題へ →</button>
+      <button class="next-btn" id="nextBtn" onclick="nextQuestion()"></button>
     </div>
 
-    <!-- 結果画面 -->
+    <!-- Result Screen -->
     <div class="result-screen" id="resultScreen">
       <div class="result-emoji" id="resultEmoji"></div>
       <div class="result-title" id="resultTitle"></div>
       <div class="result-score" id="resultScore"></div>
-      <button class="restart-btn" onclick="startQuiz()">もう一度チャレンジ 🔄</button>
+      <div class="result-buttons">
+        <button class="change-cat-btn" onclick="showScreen('start')">カテゴリ変更</button>
+        <button class="restart-btn"    onclick="startQuiz()">もう一度 🔄</button>
+      </div>
     </div>
 
   </div>
 
   <script>
-    // ── 問題データ ─────────────────────────────────────────────
+    // ── Glossary ──────────────────────────────────────────────────
+    const GLOSSARY = {
+      'cd':               'Change Directory。ターミナルで作業ディレクトリを移動するコマンド。',
+      'mkdir':            'make directory。新しいディレクトリを作成するコマンド。',
+      'pwd':              'print working directory。現在のディレクトリのフルパスを表示するコマンド。',
+      'ls':               'list。カレントディレクトリのファイル・フォルダ一覧を表示するコマンド。',
+      'rm':               'remove。ファイルやディレクトリを削除するコマンド。元に戻せないので注意！',
+      'touch':            '空のファイルを新規作成するコマンド。既存ファイルのタイムスタンプ更新にも使う。',
+      'cat':              'concatenate。ファイルの内容をターミナルに表示するコマンド。',
+      'cp':               'copy。ファイルをコピーするコマンド。',
+      'mv':               'move。ファイルを移動またはリネームするコマンド。',
+      'git':              '分散型バージョン管理システム。ファイルの変更履歴を管理・記録するツール。',
+      'git init':         'カレントディレクトリを Git リポジトリとして初期化するコマンド。',
+      'git add':          '変更ファイルをステージングエリアに追加するコマンド。',
+      'git commit':       'ステージングした変更をリポジトリに記録するコマンド。',
+      'git push':         'ローカルのコミットをリモートリポジトリに送信するコマンド。',
+      'git pull':         'リモートリポジトリの変更をローカルに取得・統合するコマンド。',
+      'git status':       '作業ツリーの変更状態を確認するコマンド。',
+      'git log':          'コミット履歴の一覧を表示するコマンド。',
+      'git clone':        'リモートリポジトリをローカルにコピーするコマンド。',
+      'リポジトリ':       'ファイルや変更履歴を保存・管理する場所。ローカルとリモートの2種類がある。',
+      'ステージングエリア': 'コミット前に変更を一時的に登録しておく準備ゾーン（舞台袖のイメージ）。',
+      'ブランチ':         '開発の作業ラインを分岐させる機能。本流（main）を壊さず並行作業できる。',
+      'npm':              'Node Package Manager。Node.js のパッケージ（ライブラリ）を管理するツール。',
+      'Node.js':          'JavaScript をブラウザ外（サーバーサイドなど）で実行できる環境。',
+      'JavaScript':       'ブラウザで動作するプログラミング言語。Node.js でサーバーサイドにも使える。',
+      'Java':             'Sun Microsystems（現Oracle）が開発した汎用プログラミング言語。',
+      'HTML':             'HyperText Markup Language。Webページの構造（骨格）を作るマークアップ言語。',
+      'CSS':              'Cascading Style Sheets。Webページの見た目・レイアウトを装飾するスタイルシート言語。',
+      'HTTP':             'HyperText Transfer Protocol。ブラウザとサーバー間の通信規格。',
+      'HTTPS':            'HTTP に SSL/TLS 暗号化を追加した安全な通信規格。ブラウザに🔒マークがつく。',
+      'package.json':     'プロジェクトの情報・依存パッケージ・スクリプトなどを記述する設定ファイル。',
+      'node_modules':     'npm install で取得したパッケージが格納されるフォルダ。通常 .gitignore に追加する。',
+      'フロントエンド':   'ユーザーが目にする・操作するブラウザ側の領域。HTML/CSS/JS が担う。',
+      'バックエンド':     'ユーザーからは見えないサーバー側の処理。データ管理・API 提供などを担う。',
+    };
+
+    // ── Questions ─────────────────────────────────────────────────
     const ALL_QUESTIONS = [
+      // コマンド
       {
         category: 'コマンド',
         text: '`cd` コマンドの正式名称・意味として正しいものはどれ？',
-        choices: [
-          'Copy Directory（ディレクトリをコピーする）',
-          'Change Directory（ディレクトリを移動する）',
-          'Create Directory（ディレクトリを作成する）',
-          'Current Directory（現在のディレクトリを表示する）',
-        ],
+        choices: ['Copy Directory（ディレクトリをコピーする）','Change Directory（ディレクトリを移動する）','Create Directory（ディレクトリを作成する）','Current Directory（現在地を表示する）'],
         answer: 1,
-        hint: 'cd .. で一つ上の階層に戻れるのも "移動" の操作です。',
+        hint: '`cd ..` で一つ上の階層へ、`cd ~/Desktop` でデスクトップへ移動できます。',
       },
       {
         category: 'コマンド',
         text: '新しいディレクトリを作成するコマンドはどれ？',
-        choices: ['touch', 'ls', 'mkdir', 'rm'],
+        choices: ['`touch`','`ls`','`mkdir`','`rm`'],
         answer: 2,
-        hint: 'make directory の略です。',
+        hint: 'make directory の略。`mkdir myApp` のように使います。',
       },
       {
         category: 'コマンド',
         text: 'ターミナルで現在いるディレクトリのパスを確認するコマンドは？',
-        choices: ['ls', 'pwd', 'cat', 'echo'],
+        choices: ['`ls`','`pwd`','`cat`','`echo`'],
         answer: 1,
-        hint: 'print working directory の略です。',
+        hint: 'print working directory の略。`/Users/名前/...` のように表示されます。',
       },
       {
-        category: 'Git',
-        text: '変更ファイルをステージングエリアに追加する Git コマンドは？',
-        choices: ['git commit', 'git push', 'git add', 'git status'],
+        category: 'コマンド',
+        text: 'カレントディレクトリのファイル・フォルダ一覧を表示するコマンドは？',
+        choices: ['`pwd`','`mv`','`ls`','`touch`'],
         answer: 2,
-        hint: 'コミット前に「舞台に上げる」イメージです。',
+        hint: '`ls -la` とすると隠しファイルや詳細情報も表示されます。',
       },
       {
-        category: 'Git',
-        text: 'ステージングした変更を記録（保存）する Git コマンドは？',
-        choices: ['git add', 'git save', 'git commit', 'git push'],
-        answer: 2,
-        hint: '-m "メッセージ" でコミットメッセージを付けます。',
+        category: 'コマンド',
+        text: '空のファイルを新しく作成するコマンドはどれ？',
+        choices: ['`mkdir`','`touch`','`cat`','`cp`'],
+        answer: 1,
+        hint: '`touch index.html` で空の HTML ファイルが作成されます。',
       },
       {
-        category: 'Git',
-        text: 'ローカルのコミットをリモートリポジトリに送信するコマンドは？',
-        choices: ['git pull', 'git fetch', 'git merge', 'git push'],
+        category: 'コマンド',
+        text: 'ファイルを移動またはリネーム（名前変更）するコマンドはどれ？',
+        choices: ['`cp`','`ls`','`rm`','`mv`'],
         answer: 3,
-        hint: '「押し出す」イメージ。GitHub に反映されます。',
+        hint: 'move の略。`mv old.txt new.txt` でリネーム、`mv file.txt ./dir/` で移動できます。',
+      },
+      {
+        category: 'コマンド',
+        text: 'ファイルを削除するコマンドはどれ？（元に戻せないので注意！）',
+        choices: ['`del`','`rm`','`mv`','`cut`'],
+        answer: 1,
+        hint: 'remove の略。`rm -r フォルダ名` でフォルダごと削除できますが、慎重に！',
+      },
+      // Git
+      {
+        category: 'Git',
+        text: '変更ファイルを[[ステージングエリア]]に追加する Git コマンドは？',
+        choices: ['`git commit`','`git push`','`git add`','`git status`'],
+        answer: 2,
+        hint: '`git add .` で全変更ファイルをまとめてステージングできます。',
       },
       {
         category: 'Git',
-        text: 'リモートリポジトリの変更を取得して、ローカルに統合するコマンドは？',
-        choices: ['git push', 'git clone', 'git pull', 'git init'],
+        text: 'ステージングした変更を[[リポジトリ]]に記録（保存）する Git コマンドは？',
+        choices: ['`git add`','`git save`','`git commit`','`git push`'],
         answer: 2,
-        hint: 'fetch + merge を一度に行います。',
+        hint: '`git commit -m "コメント"` でコミットメッセージを付けて記録します。',
+      },
+      {
+        category: 'Git',
+        text: 'ローカルのコミットをリモート[[リポジトリ]]に送信するコマンドは？',
+        choices: ['`git pull`','`git fetch`','`git merge`','`git push`'],
+        answer: 3,
+        hint: '「押し出す」イメージ。`git push origin main` で main ブランチに送信します。',
+      },
+      {
+        category: 'Git',
+        text: 'リモート[[リポジトリ]]の変更をローカルに取得・統合するコマンドは？',
+        choices: ['`git push`','`git clone`','`git pull`','`git init`'],
+        answer: 2,
+        hint: 'fetch（取得）＋ merge（統合）を一度に行います。チーム開発で頻繁に使います。',
+      },
+      {
+        category: 'Git',
+        text: 'カレントディレクトリを新しい Git [[リポジトリ]]として初期化するコマンドは？',
+        choices: ['`git start`','`git new`','`git create`','`git init`'],
+        answer: 3,
+        hint: 'プロジェクト開始時に一度だけ実行します。`.git` フォルダが作成されます。',
+      },
+      {
+        category: 'Git',
+        text: '作業ツリーの変更状態（変更済み・ステージング済みかどうか）を確認するコマンドは？',
+        choices: ['`git log`','`git status`','`git diff`','`git show`'],
+        answer: 1,
+        hint: 'こまめに `git status` を確認する習慣をつけると、作業の見通しが良くなります。',
+      },
+      {
+        category: 'Git',
+        text: 'コミットの履歴（ログ）を一覧表示するコマンドは？',
+        choices: ['`git history`','`git status`','`git log`','`git show`'],
+        answer: 2,
+        hint: '`git log --oneline` で一行ずつコンパクトに表示できます。',
+      },
+      {
+        category: 'Git',
+        text: 'リモート[[リポジトリ]]をローカルにまるごとコピーするコマンドは？',
+        choices: ['`git pull`','`git init`','`git fetch`','`git clone`'],
+        answer: 3,
+        hint: 'GitHub の URL を指定して `git clone <URL>` と実行します。',
+      },
+      // 言語の違い
+      {
+        category: '言語の違い',
+        text: '[[Java]] と [[JavaScript]] の関係として最も正確な説明はどれ？',
+        choices: ['Java の軽量バージョンが JavaScript である','名前が似ているだけで、別会社が開発した全く異なる言語','JavaScript は Java のブラウザ向け方言である','現在は同じ規格に統一されている'],
+        answer: 1,
+        hint: 'Java は Sun Microsystems、JavaScript は Netscape が開発。当時の Java 人気にあやかった命名です。',
       },
       {
         category: '言語の違い',
-        text: 'Java と JavaScript の関係として最も正確な説明はどれ？',
-        choices: [
-          'Java の軽量バージョンが JavaScript である',
-          '名前が似ているだけで、別の会社が開発した全く異なる言語',
-          'JavaScript は Java のブラウザ向け方言である',
-          '現在は同じ規格に統一されている',
-        ],
+        text: '[[JavaScript]] が主に動作する環境として最も適切なものはどれ？',
+        choices: ['サーバーサイドのみ','ブラウザ（クライアントサイド）、および [[Node.js]] でサーバーサイドも可','モバイルアプリ専用','データベース操作専用'],
         answer: 1,
-        hint: 'Java は Sun Microsystems、JS は Netscape が開発。当時の流行に乗った命名です。',
+        hint: 'Node.js の登場でブラウザ外でも実行できるようになりました。',
       },
       {
         category: '言語の違い',
-        text: 'JavaScript が主に動作する環境として最も適切なものはどれ？',
-        choices: [
-          'サーバーサイドのみ',
-          'ブラウザ（クライアントサイド）、および Node.js 等でサーバーサイドも可',
-          'モバイルアプリ専用',
-          'データベース操作専用',
-        ],
+        text: '[[フロントエンド]] と [[バックエンド]] の説明として正しいものはどれ？',
+        choices: ['フロントエンド＝サーバー処理 ／ バックエンド＝画面表示','フロントエンド＝画面表示・操作 ／ バックエンド＝サーバー処理・データ管理','どちらも同じ意味で使われる','フロントエンド＝データベース ／ バックエンド＝デザイン'],
         answer: 1,
-        hint: 'Node.js の登場でサーバーサイドでも使えるようになりました。',
+        hint: 'ユーザーが「見る・触る」側がフロント、「見えない裏側」がバックエンドです。',
       },
       {
-        category: 'Web 基礎',
-        text: 'HTML・CSS・JavaScript それぞれの役割の組み合わせとして正しいものはどれ？',
-        choices: [
-          'HTML＝デザイン／CSS＝構造／JS＝アニメーション',
-          'HTML＝構造／CSS＝装飾・レイアウト／JS＝動的処理',
-          'HTML＝プログラム／CSS＝データ／JS＝表示',
-          'HTML＝色指定／CSS＝文章／JS＝画像',
-        ],
+        category: '言語の違い',
+        text: '次の中で [[フロントエンド]] の技術に当てはまるものはどれ？',
+        choices: ['Python / Django','Ruby / Ruby on Rails','[[HTML]] / [[CSS]] / [[JavaScript]]','Java / Spring Boot'],
+        answer: 2,
+        hint: '「ブラウザで動く」技術がフロントエンドです。',
+      },
+      {
+        category: '言語の違い',
+        text: 'プログラムを実行前に機械語に変換（コンパイル）が必要な言語の分類は？',
+        choices: ['インタープリタ言語','スクリプト言語','マークアップ言語','コンパイル言語'],
+        answer: 3,
+        hint: 'Java や C++ が代表例。実行前に変換するため速度が速い傾向があります。',
+      },
+      // Web基礎
+      {
+        category: 'Web基礎',
+        text: '[[HTML]]・[[CSS]]・[[JavaScript]] それぞれの役割として正しいものはどれ？',
+        choices: ['HTML＝デザイン ／ CSS＝構造 ／ JS＝アニメーション','HTML＝構造 ／ CSS＝装飾・レイアウト ／ JS＝動的処理','HTML＝プログラム ／ CSS＝データ ／ JS＝表示','HTML＝色指定 ／ CSS＝文章 ／ JS＝画像'],
         answer: 1,
-        hint: '骨格・外見・動き、と覚えると整理しやすいです。',
+        hint: '「骨格・外見・動き」で覚えると整理しやすいです。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[HTTP]] と [[HTTPS]] の違いとして正しいものはどれ？',
+        choices: ['HTTPS の方が古い通信規格である','HTTP は高速、HTTPS は低速なので用途が異なる','HTTPS は HTTP に暗号化（SSL/TLS）を追加した安全な通信規格','2つは全く別のプロトコルで互換性がない'],
+        answer: 2,
+        hint: 'ブラウザの🔒マークが HTTPS の証拠。パスワードや決済には HTTPS が必須です。',
+      },
+      {
+        category: 'Web基礎',
+        text: 'ブラウザの主な役割として正しいものはどれ？',
+        choices: ['サーバーにデータを保存する','[[HTML]]/[[CSS]]/[[JavaScript]] を解釈してWebページを画面に表示する','データベースを管理する','プログラムをコンパイルして配布する'],
+        answer: 1,
+        hint: 'Chrome・Firefox・Safari などがブラウザ。HTML を読んで画面を描画（レンダリング）します。',
+      },
+      {
+        category: 'Web基礎',
+        text: 'クライアントサイドとサーバーサイドの説明として正しいものはどれ？',
+        choices: ['クライアント＝データを保存する側 ／ サーバー＝要求する側','クライアント＝データを要求する側（ブラウザ）／ サーバー＝データを提供する側','どちらも同じ意味','クライアント＝プログラミング言語 ／ サーバー＝データベース'],
+        answer: 1,
+        hint: '「お客さん（client）がお店（server）に注文する」イメージです。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[HTML]] で最大の見出し（タイトル）を表すタグとして正しいものはどれ？',
+        choices: ['`<head>`','`<title>`','`<h1>`','`<p>`'],
+        answer: 2,
+        hint: 'h は heading（見出し）の略。h1 が最大で h6 まであります。`<p>` は段落、`<head>` はメタ情報。',
+      },
+      // npm
+      {
+        category: 'npm',
+        text: '[[npm]] の正式名称として正しいものはどれ？',
+        choices: ['New Package Manager','Node Package Manager','Node Program Module','Network Package Module'],
+        answer: 1,
+        hint: '[[Node.js]] のパッケージ管理ツール。世界最大のソフトウェアレジストリです。',
+      },
+      {
+        category: 'npm',
+        text: '`npm install` を実行すると何が起こる？',
+        choices: ['Node.js 本体をインストールする','[[package.json]] に記載されたパッケージをダウンロード・インストールする','プロジェクトを初期化して [[package.json]] を生成する','インストール済みパッケージの一覧を表示する'],
+        answer: 1,
+        hint: 'ダウンロードされたパッケージは [[node_modules]] フォルダに保存されます。',
+      },
+      {
+        category: 'npm',
+        text: '[[package.json]] の主な役割として正しいものはどれ？',
+        choices: ['HTML テンプレートを定義するファイル','プロジェクトの情報・依存パッケージ・スクリプトなどを記述する設定ファイル','CSS の変数をまとめるファイル','Git の設定を記述するファイル'],
+        answer: 1,
+        hint: '`npm init` を実行すると自動生成されます。依存関係の「設計図」です。',
+      },
+      {
+        category: 'npm',
+        text: '[[node_modules]] フォルダについて正しい説明はどれ？',
+        choices: ['Git で必ずコミットしてチームで共有すべきフォルダ','npm でインストールしたパッケージが入るフォルダで、通常は .gitignore に追加する','自分で書いたコードを置くフォルダ','CSS や画像ファイルを置く専用フォルダ'],
+        answer: 1,
+        hint: 'サイズが大きくなるため .gitignore に追加し、Git の管理対象外にするのが慣例です。',
       },
     ];
 
-    // ── 状態 ────────────────────────────────────────────────────
-    let questions = [];
-    let currentIndex = 0;
-    let score = 0;
-    let answered = false;
+    // ── State ─────────────────────────────────────────────────────
+    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all';
 
-    // ── ユーティリティ：配列シャッフル ──────────────────────────
-    function shuffle(arr) {
-      return [...arr].sort(() => Math.random() - 0.5);
+    // ── Utils ─────────────────────────────────────────────────────
+    const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
+
+    function escapeHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    // ── クイズ開始 ───────────────────────────────────────────────
+    function escapeAttr(s) {
+      return s.replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+    }
+
+    // ── Screen ────────────────────────────────────────────────────
+    function showScreen(name) {
+      document.getElementById('startScreen').style.display  = name === 'start'  ? '' : 'none';
+      document.getElementById('quizBody').style.display     = name === 'quiz'   ? '' : 'none';
+      document.getElementById('resultScreen').classList.toggle('show', name === 'result');
+      document.getElementById('progressWrap').style.visibility = name === 'quiz' ? 'visible' : 'hidden';
+    }
+
+    // ── Filter Grid ───────────────────────────────────────────────
+    const CATS = [
+      { key: 'all',      label: 'すべて' },
+      { key: 'コマンド', label: 'コマンド' },
+      { key: 'Git',      label: 'Git' },
+      { key: '言語の違い', label: '言語の違い' },
+      { key: 'Web基礎',  label: 'Web 基礎' },
+      { key: 'npm',      label: 'npm' },
+    ];
+
+    function initFilterGrid() {
+      const grid = document.getElementById('filterGrid');
+      CATS.forEach(({ key, label }) => {
+        const count = key === 'all' ? ALL_QUESTIONS.length : ALL_QUESTIONS.filter(q => q.category === key).length;
+        const btn = document.createElement('button');
+        btn.className = 'filter-btn' + (key === selectedCategory ? ' active' : '');
+        btn.dataset.cat = key;
+        btn.innerHTML = `<span>${label}</span><span class="f-count">${count}問</span>`;
+        btn.onclick = () => {
+          selectedCategory = key;
+          document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+        };
+        grid.appendChild(btn);
+      });
+    }
+
+    // ── Text Rendering (tooltips) ─────────────────────────────────
+    function renderText(raw) {
+      return raw.split(/`([^`]+)`/).map((part, i) => {
+        if (i % 2 === 0) {
+          return escapeHtml(part).replace(/\[\[([^\]]+)\]\]/g, (_, term) => {
+            const def = GLOSSARY[term];
+            return def
+              ? `<span class="term" data-def="${escapeAttr(def)}">${escapeHtml(term)}</span>`
+              : escapeHtml(term);
+          });
+        }
+        const def = GLOSSARY[part];
+        return def
+          ? `<code class="term" data-def="${escapeAttr(def)}">${escapeHtml(part)}</code>`
+          : `<code>${escapeHtml(part)}</code>`;
+      }).join('');
+    }
+
+    // ── Tooltip ───────────────────────────────────────────────────
+    const tipEl = document.getElementById('tooltipBubble');
+    let tipTarget = null;
+
+    document.addEventListener('mouseover', e => {
+      const term = e.target.closest('.term');
+      if (!term) return;
+      tipTarget = term;
+      tipEl.textContent = term.dataset.def || '';
+      tipEl.classList.add('visible');
+    });
+
+    document.addEventListener('mouseout', e => {
+      const term = e.target.closest('.term');
+      if (!term) return;
+      if (!e.relatedTarget || !term.contains(e.relatedTarget)) {
+        tipTarget = null;
+        tipEl.classList.remove('visible');
+      }
+    });
+
+    document.addEventListener('mousemove', e => {
+      if (!tipTarget) return;
+      const tw = tipEl.offsetWidth || 260, th = tipEl.offsetHeight || 60;
+      const x = Math.min(e.clientX + 14, window.innerWidth - tw - 8);
+      const y = e.clientY - th - 10 < 8 ? e.clientY + 22 : e.clientY - th - 10;
+      tipEl.style.left = x + 'px';
+      tipEl.style.top  = y + 'px';
+    });
+
+    // ── Quiz Flow ─────────────────────────────────────────────────
     function startQuiz() {
-      questions = shuffle(ALL_QUESTIONS).slice(0, 10);
+      const pool = selectedCategory === 'all'
+        ? ALL_QUESTIONS
+        : ALL_QUESTIONS.filter(q => q.category === selectedCategory);
+      questions = shuffle(pool).slice(0, Math.min(10, pool.length));
       currentIndex = 0;
       score = 0;
-
-      document.getElementById('quizBody').style.display = '';
-      document.getElementById('resultScreen').classList.remove('show');
-
+      showScreen('quiz');
       renderQuestion();
     }
 
-    // ── 問題描画 ─────────────────────────────────────────────────
     function renderQuestion() {
       answered = false;
       const q = questions[currentIndex];
       const total = questions.length;
 
-      // ヘッダー
       document.getElementById('progressLabel').textContent = `${currentIndex + 1} / ${total}`;
       document.getElementById('progressBar').style.width = `${(currentIndex / total) * 100}%`;
 
-      // 問題文
-      document.getElementById('categoryBadge').textContent = q.category;
-      document.getElementById('questionNumber').textContent = `Q${currentIndex + 1}`;
-      document.getElementById('questionText').textContent = q.text;
+      const badge = document.getElementById('categoryBadge');
+      badge.textContent = q.category;
+      badge.dataset.cat = q.category;
 
-      // 選択肢
+      document.getElementById('questionNumber').textContent = `Q${currentIndex + 1}`;
+      document.getElementById('questionText').innerHTML = renderText(q.text);
+
       const container = document.getElementById('choicesContainer');
       container.innerHTML = '';
-      const labels = ['A', 'B', 'C', 'D'];
-
-      q.choices.forEach((text, i) => {
+      ['A','B','C','D'].forEach((label, i) => {
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
-        btn.innerHTML = `<span class="choice-label">${labels[i]}</span><span>${text}</span>`;
+        btn.innerHTML = `<span class="choice-label">${label}</span><span>${renderText(q.choices[i])}</span>`;
         btn.onclick = () => selectAnswer(i);
         container.appendChild(btn);
       });
 
-      // フィードバック・次へ リセット
-      const fb = document.getElementById('feedback');
-      fb.className = 'feedback';
+      document.getElementById('feedback').className = 'feedback';
       document.getElementById('nextBtn').classList.remove('show');
     }
 
-    // ── 回答選択 ─────────────────────────────────────────────────
-    function selectAnswer(selectedIndex) {
+    function selectAnswer(idx) {
       if (answered) return;
       answered = true;
 
       const q = questions[currentIndex];
-      const buttons = document.querySelectorAll('.choice-btn');
-      const isCorrect = selectedIndex === q.answer;
+      const btns = document.querySelectorAll('.choice-btn');
+      const ok = idx === q.answer;
 
-      // ボタンを無効化
-      buttons.forEach(btn => (btn.disabled = true));
+      btns.forEach(b => (b.disabled = true));
+      btns[idx].classList.add(ok ? 'correct' : 'wrong');
+      if (!ok) btns[q.answer].classList.add('correct');
 
-      // 正解・不正解の色付け
-      buttons[selectedIndex].classList.add(isCorrect ? 'correct' : 'wrong');
-      if (!isCorrect) {
-        buttons[q.answer].classList.add('correct');
-      }
+      if (ok) score++;
 
-      // フィードバック表示
       const fb = document.getElementById('feedback');
-      if (isCorrect) {
-        score++;
-        fb.className = 'feedback correct-fb show';
-        document.getElementById('fbIcon').textContent = '✅';
-        document.getElementById('fbMain').textContent = '正解！すばらしい！';
-        document.getElementById('fbHint').textContent = q.hint;
-      } else {
-        fb.className = 'feedback wrong-fb show';
-        document.getElementById('fbIcon').textContent = '❌';
-        document.getElementById('fbMain').textContent = `不正解… 正解は「${['A','B','C','D'][q.answer]}」でした。`;
-        document.getElementById('fbHint').textContent = q.hint;
-      }
+      fb.className = 'feedback ' + (ok ? 'correct-fb' : 'wrong-fb') + ' show';
+      document.getElementById('fbIcon').textContent = ok ? '✅' : '❌';
+      document.getElementById('fbMain').textContent = ok ? '正解！すばらしい！' : `不正解… 正解は「${'ABCD'[q.answer]}」でした。`;
+      document.getElementById('fbHint').textContent = q.hint;
 
-      // 次へボタン表示
-      const nextBtn = document.getElementById('nextBtn');
-      nextBtn.textContent = currentIndex + 1 < questions.length ? '次の問題へ →' : '結果を見る 🎉';
-      nextBtn.classList.add('show');
+      const nb = document.getElementById('nextBtn');
+      nb.textContent = currentIndex + 1 < questions.length ? '次の問題へ →' : '結果を見る 🎉';
+      nb.classList.add('show');
     }
 
-    // ── 次の問題 ─────────────────────────────────────────────────
     function nextQuestion() {
       currentIndex++;
-      if (currentIndex < questions.length) {
-        renderQuestion();
-      } else {
-        showResult();
-      }
+      currentIndex < questions.length ? renderQuestion() : showResult();
     }
 
-    // ── 結果表示 ─────────────────────────────────────────────────
     function showResult() {
-      document.getElementById('quizBody').style.display = 'none';
       document.getElementById('progressBar').style.width = '100%';
       document.getElementById('progressLabel').textContent = `${questions.length} / ${questions.length}`;
 
-      const total = questions.length;
-      const pct = Math.round((score / total) * 100);
-
-      let emoji, title;
-      if (pct === 100)      { emoji = '🏆'; title = '完璧！全問正解！'; }
-      else if (pct >= 80)   { emoji = '🎉'; title = 'すごい！よく覚えてる！'; }
-      else if (pct >= 60)   { emoji = '👍'; title = 'なかなか良い！あと少し！'; }
-      else if (pct >= 40)   { emoji = '📖'; title = 'もう一度復習しよう！'; }
-      else                   { emoji = '💪'; title = '虎の巻を読み直そう！'; }
+      const pct = Math.round((score / questions.length) * 100);
+      const [[emoji, title]] = [
+        pct === 100 ? ['🏆','完璧！全問正解！'] :
+        pct >= 80   ? ['🎉','すごい！よく覚えてる！'] :
+        pct >= 60   ? ['👍','なかなか良い！あと少し！'] :
+        pct >= 40   ? ['📖','もう一度復習しよう！'] :
+                      ['💪','虎の巻を読み直そう！']
+      ];
 
       document.getElementById('resultEmoji').textContent = emoji;
       document.getElementById('resultTitle').textContent = title;
       document.getElementById('resultScore').innerHTML =
-        `正解数：<strong>${score} / ${total}</strong>（正解率 ${pct}%）`;
+        `正解数：<strong>${score} / ${questions.length}</strong>（正解率 ${pct}%）`;
 
-      document.getElementById('resultScreen').classList.add('show');
+      showScreen('result');
     }
 
-    // ── 起動 ────────────────────────────────────────────────────
-    startQuiz();
+    // ── Init ──────────────────────────────────────────────────────
+    initFilterGrid();
+    showScreen('start');
   </script>
-
 </body>
 </html>
