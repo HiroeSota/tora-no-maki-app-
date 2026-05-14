@@ -28,8 +28,61 @@
       font-size: 2rem;
       color: #fff;
       text-shadow: 0 2px 12px rgba(0,0,0,0.25);
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       letter-spacing: 0.04em;
+    }
+
+    /* ── Start screen ── */
+    #startScreen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .tagline {
+      color: rgba(255,255,255,0.85);
+      font-size: 0.92rem;
+      margin-bottom: 40px;
+      text-align: center;
+      line-height: 1.7;
+    }
+
+    .mode-cards {
+      display: flex;
+      gap: 20px;
+    }
+
+    .mode-card {
+      background: rgba(255,255,255,0.16);
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(255,255,255,0.28);
+      border-radius: 22px;
+      padding: 32px 36px;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+      min-width: 140px;
+      transition: background 0.2s, transform 0.18s, border-color 0.2s;
+    }
+
+    .mode-card:hover {
+      background: rgba(255,255,255,0.26);
+      border-color: rgba(255,255,255,0.6);
+      transform: translateY(-5px);
+    }
+
+    .mode-card:active { transform: translateY(-2px); }
+
+    .mode-icon { font-size: 3.2rem; margin-bottom: 14px; }
+    .mode-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
+    .mode-desc { font-size: 0.8rem; opacity: 0.75; }
+
+    /* ── Game screen ── */
+    #gameScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
     }
 
     .how-to {
@@ -177,24 +230,24 @@
       animation: slideFromTop 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    /* ── Cells (3D sphere look) ── */
+    /* ── Cells ── */
     .cell {
       width: var(--cell);
       height: var(--cell);
       border-radius: 50%;
       background: radial-gradient(circle at 38% 30%, #1a6fd4, #0d47a1 55%, #082d6e);
-      box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(255,255,255,0.06);
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
       flex-shrink: 0;
     }
 
     .cell.p1 {
       background: radial-gradient(circle at 38% 30%, #ff8a80, #f44336 55%, #b71c1c);
-      box-shadow: 0 6px 20px rgba(244,67,54,0.65), inset 0 -3px 7px rgba(0,0,0,0.3), inset 0 3px 6px rgba(255,255,255,0.25);
+      box-shadow: none;
     }
 
     .cell.p2 {
       background: radial-gradient(circle at 38% 30%, #fff9c4, #ffeb3b 50%, #f57f17);
-      box-shadow: 0 6px 20px rgba(255,235,59,0.65), inset 0 -3px 7px rgba(0,0,0,0.2), inset 0 3px 6px rgba(255,255,255,0.4);
+      box-shadow: none;
     }
 
     .cell.win { animation: winPulse 0.55s ease-in-out infinite alternate; }
@@ -222,7 +275,6 @@
     }
 
     .action-btn:hover { background: rgba(255,255,255,0.32); transform: translateY(-2px); }
-    .action-btn.active { background: rgba(255,255,255,0.38); border-color: #fff; }
 
     /* ── Win banner ── */
     .backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
@@ -254,8 +306,10 @@
     .win-title  { font-size: 1.9rem; font-weight: 700; color: #333; margin-bottom: 6px; }
     .win-sub    { font-size: 1rem; color: #888; margin-bottom: 28px; }
 
+    .win-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
     .play-again-btn {
-      padding: 14px 36px;
+      padding: 14px 28px;
       background: linear-gradient(135deg, #667eea, #764ba2);
       border: none;
       border-radius: 50px;
@@ -269,13 +323,31 @@
 
     .play-again-btn:hover { opacity: 0.88; transform: translateY(-2px); }
 
+    .back-btn {
+      padding: 14px 28px;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 50px;
+      color: #555;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+    }
+
+    .back-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
+
     @media (max-width: 500px) {
       :root { --cell: 56px; --gap: 8px; --step: 64px; }
       h1 { font-size: 1.5rem; }
+      .mode-cards { gap: 14px; }
+      .mode-card { padding: 24px 22px; min-width: 120px; }
+      .mode-icon { font-size: 2.4rem; }
       .push-btn { height: 36px; font-size: 1.2rem; }
       .board-wrap { padding: 10px; gap: 6px; }
       .timer-wrap { width: 260px; }
-      .win-banner { padding: 32px 28px; width: 90vw; }
+      .win-banner { padding: 32px 24px; width: 90vw; }
       .win-title { font-size: 1.4rem; }
     }
   </style>
@@ -289,45 +361,72 @@
     <div class="win-emoji" id="winEmoji">🎉</div>
     <div class="win-title" id="winTitle"></div>
     <div class="win-sub"   id="winSub"></div>
-    <button class="play-again-btn" onclick="newRound()">もう一度遊ぶ 🔄</button>
-  </div>
-
-  <h1>⬇️ プッシュ四目並べ</h1>
-
-  <div class="how-to">
-    ↓ を押して列にコマを挿入 → 一番下のコマが押し出される！<br>
-    縦・横・斜めに4つ並べたら勝ち 🏆　制限時間：30秒
-  </div>
-
-  <div class="score-wrap">
-    <div class="score-card p1-card">
-      <div class="s-name">🔴 プレイヤー 1</div>
-      <div class="s-num" id="score1">0</div>
-    </div>
-    <div class="score-card p2-card">
-      <div class="s-name" id="p2Label">🟡 プレイヤー 2</div>
-      <div class="s-num" id="score2">0</div>
+    <div class="win-buttons">
+      <button class="play-again-btn" onclick="newRound()">もう一度 🔄</button>
+      <button class="back-btn" onclick="goToStart()">← モード選択</button>
     </div>
   </div>
 
-  <div class="turn-display">
-    <div class="turn-piece" id="turnPiece"></div>
-    <span id="turnText"></span>
+  <!-- ── Start screen ── -->
+  <div id="startScreen">
+    <h1>⬇️ プッシュ四目並べ</h1>
+    <p class="tagline">
+      列の上から駒を押し込んで4つ並べろ！<br>
+      制限時間 30秒・押し出しあり
+    </p>
+    <div class="mode-cards">
+      <button class="mode-card" onclick="startGame(false)">
+        <div class="mode-icon">👥</div>
+        <div class="mode-name">2人対戦</div>
+        <div class="mode-desc">友達と対決</div>
+      </button>
+      <button class="mode-card" onclick="startGame(true)">
+        <div class="mode-icon">🤖</div>
+        <div class="mode-name">CPU対戦</div>
+        <div class="mode-desc">AIに挑戦</div>
+      </button>
+    </div>
   </div>
 
-  <div class="timer-wrap">
-    <div class="timer-bar" id="timerBar"></div>
-    <span class="timer-text" id="timerText">30</span>
-  </div>
+  <!-- ── Game screen ── -->
+  <div id="gameScreen">
+    <h1>⬇️ プッシュ四目並べ</h1>
 
-  <div class="board-wrap">
-    <div class="push-row" id="pushRow"></div>
-    <div class="board"    id="board"></div>
-  </div>
+    <div class="how-to">
+      ↓ を押して列にコマを挿入 → 一番下のコマが押し出される！<br>
+      縦・横・斜めに4つ並べたら勝ち 🏆
+    </div>
 
-  <div class="btn-row">
-    <button class="action-btn" onclick="newRound()">🔄 リセット</button>
-    <button class="action-btn" id="cpuBtn" onclick="toggleCPU()">🤖 CPU対戦</button>
+    <div class="score-wrap">
+      <div class="score-card p1-card">
+        <div class="s-name">🔴 プレイヤー 1</div>
+        <div class="s-num" id="score1">0</div>
+      </div>
+      <div class="score-card p2-card">
+        <div class="s-name" id="p2Label">🟡 プレイヤー 2</div>
+        <div class="s-num" id="score2">0</div>
+      </div>
+    </div>
+
+    <div class="turn-display">
+      <div class="turn-piece" id="turnPiece"></div>
+      <span id="turnText"></span>
+    </div>
+
+    <div class="timer-wrap">
+      <div class="timer-bar" id="timerBar"></div>
+      <span class="timer-text" id="timerText">30</span>
+    </div>
+
+    <div class="board-wrap">
+      <div class="push-row" id="pushRow"></div>
+      <div class="board"    id="board"></div>
+    </div>
+
+    <div class="btn-row">
+      <button class="action-btn" onclick="newRound()">🔄 リセット</button>
+      <button class="action-btn" onclick="goToStart()">← モード選択</button>
+    </div>
   </div>
 
   <script>
@@ -350,7 +449,30 @@
       else if (board[r][c] === P2) el.classList.add('p2');
     }
 
-    // ── Build DOM (once) ──────────────────────────────────────────
+    // ── Screen transitions ────────────────────────────────────────
+    function startGame(isCPU) {
+      cpuMode = isCPU;
+      scores[P1] = 0;
+      scores[P2] = 0;
+      document.getElementById('score1').textContent = '0';
+      document.getElementById('score2').textContent = '0';
+      document.getElementById('p2Label').textContent = cpuMode ? '🤖 CPU' : '🟡 プレイヤー 2';
+      document.getElementById('startScreen').style.display = 'none';
+      document.getElementById('gameScreen').style.display  = 'flex';
+      buildDOM();
+      newRound();
+    }
+
+    function goToStart() {
+      stopTimer();
+      stopConfetti();
+      document.getElementById('winBanner').classList.remove('show');
+      document.getElementById('backdrop').classList.remove('show');
+      document.getElementById('gameScreen').style.display  = 'none';
+      document.getElementById('startScreen').style.display = 'flex';
+    }
+
+    // ── Build DOM (once per game) ─────────────────────────────────
     function buildDOM() {
       const pushRow = document.getElementById('pushRow');
       const boardEl = document.getElementById('board');
@@ -479,15 +601,12 @@
     }
 
     function cpuPickCol() {
-      // 1. Win if possible
       for (let c = 0; c < COLS; c++) {
         if (checkWinOnBoard(simulatePush(board, c, P2))) return c;
       }
-      // 2. Block opponent's win
       for (let c = 0; c < COLS; c++) {
         if (checkWinOnBoard(simulatePush(board, c, P1))) return c;
       }
-      // 3. Random
       return Math.floor(Math.random() * COLS);
     }
 
@@ -552,16 +671,6 @@
       updateTurn();
       lockButtons(false);
       startTimer();
-    }
-
-    // ── CPU toggle ────────────────────────────────────────────────
-    function toggleCPU() {
-      cpuMode = !cpuMode;
-      const btn = document.getElementById('cpuBtn');
-      btn.classList.toggle('active', cpuMode);
-      btn.textContent = cpuMode ? '🤖 CPU対戦 ON' : '🤖 CPU対戦';
-      document.getElementById('p2Label').textContent = cpuMode ? '🤖 CPU' : '🟡 プレイヤー 2';
-      newRound();
     }
 
     // ── UI helpers ────────────────────────────────────────────────
@@ -631,11 +740,6 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles = [];
     }
-
-    // ── Start ─────────────────────────────────────────────────────
-    cpuMode = false;
-    buildDOM();
-    newRound();
   </script>
 </body>
 </html>
