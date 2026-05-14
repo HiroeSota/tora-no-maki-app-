@@ -277,92 +277,105 @@
 
   <script>
     const ROWS = 6, COLS = 7, EMPTY = 0, P1 = 1, P2 = 2;
-    const COLOR  = { [P1]: '#f44336', [P2]: '#ffeb3b' };
-    const NAME   = { [P1]: 'プレイヤー 1', [P2]: 'プレイヤー 2' };
-    const EMOJI  = { [P1]: '🔴', [P2]: '🟡' };
+    const COLOR = { [P1]: '#f44336', [P2]: '#ffeb3b' };
+    const NAME  = { [P1]: 'プレイヤー 1', [P2]: 'プレイヤー 2' };
+    const EMOJI = { [P1]: '🔴', [P2]: '🟡' };
 
-    let board, current, over, hovCol;
+    let board, current, over;
     const scores = { [P1]: 0, [P2]: 0 };
 
-    // ── Init ──────────────────────────────────────────────────────
-    function newRound() {
-      board   = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
-      current = P1;
-      over    = false;
-      hovCol  = -1;
-      document.getElementById('winBanner').classList.remove('show');
-      document.getElementById('backdrop').classList.remove('show');
-      stopConfetti();
-      renderBoard();
-      updateTurn();
+    // ── Cell helpers ──────────────────────────────────────────────
+    function cell(r, c) {
+      return document.getElementById(`c${r}-${c}`);
     }
 
-    // ── Render ────────────────────────────────────────────────────
-    function renderBoard() {
+    function setCellState(r, c, state) {
+      const el = cell(r, c);
+      el.className = 'cell';
+      if (state === P1)        el.classList.add('p1');
+      else if (state === P2)   el.classList.add('p2');
+    }
+
+    // ── Build board DOM once ──────────────────────────────────────
+    function buildBoardDOM() {
       const el = document.getElementById('board');
       el.innerHTML = '';
-
       for (let c = 0; c < COLS; c++) {
-        const colEl = document.createElement('div');
-        colEl.className = 'col-btn' + (board[0][c] !== EMPTY ? ' disabled' : '');
-
-        colEl.addEventListener('mouseenter', () => { if (!over) { hovCol = c; renderBoard(); } });
-        colEl.addEventListener('mouseleave', () => { if (!over) { hovCol = -1; renderBoard(); } });
-        colEl.addEventListener('click',      () => drop(c));
-
-        // Find preview row for hover
-        let prevRow = -1;
-        if (!over && hovCol === c && board[0][c] === EMPTY) {
-          for (let r = ROWS - 1; r >= 0; r--) {
-            if (board[r][c] === EMPTY) { prevRow = r; break; }
-          }
-        }
-
+        const col = document.createElement('div');
+        col.className = 'col-btn';
+        col.id = `col${c}`;
+        col.addEventListener('mouseenter', () => showPreview(c));
+        col.addEventListener('mouseleave', () => hidePreview(c));
+        col.addEventListener('click', () => drop(c));
         for (let r = 0; r < ROWS; r++) {
-          const cell = document.createElement('div');
-          cell.className = 'cell';
-          if      (board[r][c] === P1) cell.classList.add('p1');
-          else if (board[r][c] === P2) cell.classList.add('p2');
-          else if (r === prevRow)      cell.classList.add(current === P1 ? 'preview-p1' : 'preview-p2');
-
-          colEl.appendChild(cell);
+          const div = document.createElement('div');
+          div.className = 'cell';
+          div.id = `c${r}-${c}`;
+          col.appendChild(div);
         }
-        el.appendChild(colEl);
+        el.appendChild(col);
       }
+    }
+
+    // ── Preview on hover ──────────────────────────────────────────
+    let previewCol = -1, previewRow = -1;
+
+    function showPreview(c) {
+      if (over || board[0][c] !== EMPTY) return;
+      hidePreview(previewCol);
+      for (let r = ROWS - 1; r >= 0; r--) {
+        if (board[r][c] === EMPTY) {
+          previewCol = c; previewRow = r;
+          cell(r, c).classList.add(current === P1 ? 'preview-p1' : 'preview-p2');
+          break;
+        }
+      }
+    }
+
+    function hidePreview(c) {
+      if (previewRow >= 0 && previewCol >= 0) {
+        const el = cell(previewRow, previewCol);
+        el.classList.remove('preview-p1', 'preview-p2');
+      }
+      previewCol = -1; previewRow = -1;
     }
 
     // ── Drop ──────────────────────────────────────────────────────
-    function drop(col) {
+    function drop(c) {
       if (over) return;
-
       let row = -1;
       for (let r = ROWS - 1; r >= 0; r--) {
-        if (board[r][col] === EMPTY) { row = r; break; }
+        if (board[r][c] === EMPTY) { row = r; break; }
       }
       if (row === -1) return;
 
-      board[row][col] = current;
-      hovCol = -1;
-      renderBoard();
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          const colEls = document.getElementById('board').children;
-          if (colEls[col]) colEls[col].children[row].classList.add('dropping');
-        });
-      });
+      hidePreview(c);
+      board[row][c] = current;
 
-      const win = checkWin(row, col);
+      // Apply color, force reflow, then add drop animation
+      const el = cell(row, c);
+      el.classList.add(current === P1 ? 'p1' : 'p2');
+      void el.offsetWidth;
+      el.classList.add('dropping');
+      el.addEventListener('animationend', () => el.classList.remove('dropping'), { once: true });
+
+      // Disable column if full
+      if (board[0][c] !== EMPTY) {
+        document.getElementById(`col${c}`).classList.add('disabled');
+      }
+
+      const win = checkWin(row, c);
       if (win) {
         over = true;
         scores[current]++;
         document.getElementById(`score${current}`).textContent = scores[current];
-        setTimeout(() => { highlightWin(win); showWinBanner(current); }, 320);
+        setTimeout(() => { highlightWin(win); showWinBanner(current); }, 350);
         return;
       }
 
-      if (board[0].every((v, c) => board[0][c] !== EMPTY)) {
+      if (board[0].every((_, i) => board[0][i] !== EMPTY)) {
         over = true;
-        setTimeout(showDrawBanner, 320);
+        setTimeout(showDrawBanner, 350);
         return;
       }
 
@@ -375,11 +388,10 @@
       const p = board[row][col];
       for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
         const cells = [[row, col]];
-        for (const sign of [-1, 1]) {
-          let r = row + dr * sign, c = col + dc * sign;
+        for (const s of [-1, 1]) {
+          let r = row + dr*s, c = col + dc*s;
           while (r >= 0 && r < ROWS && c >= 0 && c < COLS && board[r][c] === p) {
-            cells.push([r, c]);
-            r += dr * sign; c += dc * sign;
+            cells.push([r, c]); r += dr*s; c += dc*s;
           }
         }
         if (cells.length >= 4) return cells;
@@ -388,8 +400,24 @@
     }
 
     function highlightWin(cells) {
-      const colEls = document.getElementById('board').children;
-      cells.forEach(([r, c]) => colEls[c].children[r].classList.add('win'));
+      cells.forEach(([r, c]) => cell(r, c).classList.add('win'));
+    }
+
+    // ── New round ─────────────────────────────────────────────────
+    function newRound() {
+      board   = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
+      current = P1;
+      over    = false;
+      previewCol = previewRow = -1;
+      document.getElementById('winBanner').classList.remove('show');
+      document.getElementById('backdrop').classList.remove('show');
+      stopConfetti();
+      // Reset all cells and columns
+      for (let r = 0; r < ROWS; r++)
+        for (let c = 0; c < COLS; c++) setCellState(r, c, EMPTY);
+      for (let c = 0; c < COLS; c++)
+        document.getElementById(`col${c}`).classList.remove('disabled');
+      updateTurn();
     }
 
     // ── Banners ───────────────────────────────────────────────────
@@ -413,7 +441,7 @@
     // ── Turn indicator ────────────────────────────────────────────
     function updateTurn() {
       document.getElementById('turnPiece').style.background = COLOR[current];
-      document.getElementById('turnText').textContent       = `${NAME[current]} のターン`;
+      document.getElementById('turnText').textContent = `${NAME[current]} のターン`;
     }
 
     // ── Confetti ──────────────────────────────────────────────────
@@ -444,14 +472,12 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
         ctx.save();
-        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+        ctx.translate(p.x + p.w/2, p.y + p.h/2);
         ctx.rotate(p.rot * Math.PI / 180);
         ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
         ctx.restore();
-        p.y   += p.vy;
-        p.x   += p.vx;
-        p.rot += p.rotSpeed;
+        p.y += p.vy; p.x += p.vx; p.rot += p.rotSpeed;
       });
       particles = particles.filter(p => p.y < canvas.height);
       if (particles.length > 0) rafId = requestAnimationFrame(animConfetti);
@@ -464,6 +490,7 @@
     }
 
     // ── Start ─────────────────────────────────────────────────────
+    buildBoardDOM();
     newRound();
   </script>
 </body>
