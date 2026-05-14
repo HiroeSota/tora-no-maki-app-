@@ -346,7 +346,7 @@
     .tooltip-bubble {
       position: fixed;
       z-index: 9999;
-      max-width: 260px;
+      max-width: min(260px, calc(100vw - 24px));
       padding: 10px 14px;
       background: #1c2128;
       border: 1px solid #58a6ff;
@@ -473,7 +473,7 @@
     <!-- Start Screen -->
     <div id="startScreen">
       <div class="start-lead">カテゴリを選んでスタート！</div>
-      <div class="start-sub">問題中の用語に <code>マウスを乗せる</code> と意味が表示されます 💡</div>
+      <div class="start-sub">問題中の用語を <code>タップ / ホバー</code> すると意味が表示されます 💡</div>
       <div class="filter-label">カテゴリを選択</div>
       <div class="filter-grid" id="filterGrid"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
@@ -970,8 +970,24 @@
     // ── Tooltip ───────────────────────────────────────────────────
     const tipEl = document.getElementById('tooltipBubble');
     let tipTarget = null;
+    let pinnedTip = null;
 
+    function showTip(term, x, y) {
+      tipEl.textContent = term.dataset.def || '';
+      tipEl.style.left = x + 'px';
+      tipEl.style.top  = y + 'px';
+      tipEl.classList.add('visible');
+    }
+
+    function hideTip() {
+      tipTarget = null;
+      pinnedTip = null;
+      tipEl.classList.remove('visible');
+    }
+
+    // Desktop: hover
     document.addEventListener('mouseover', e => {
+      if (pinnedTip) return;
       const term = e.target.closest('.term');
       if (!term) return;
       tipTarget = term;
@@ -980,6 +996,7 @@
     });
 
     document.addEventListener('mouseout', e => {
+      if (pinnedTip) return;
       const term = e.target.closest('.term');
       if (!term) return;
       if (!e.relatedTarget || !term.contains(e.relatedTarget)) {
@@ -989,12 +1006,30 @@
     });
 
     document.addEventListener('mousemove', e => {
-      if (!tipTarget) return;
+      if (!tipTarget || pinnedTip) return;
       const tw = tipEl.offsetWidth || 260, th = tipEl.offsetHeight || 60;
       const x = Math.min(e.clientX + 14, window.innerWidth - tw - 8);
       const y = e.clientY - th - 10 < 8 ? e.clientY + 22 : e.clientY - th - 10;
       tipEl.style.left = x + 'px';
       tipEl.style.top  = y + 'px';
+    });
+
+    // Mobile: tap to show / tap again or tap outside to hide
+    document.addEventListener('click', e => {
+      const term = e.target.closest('.term');
+      if (term) {
+        e.stopPropagation();
+        if (pinnedTip === term) { hideTip(); return; }
+        pinnedTip = term;
+        tipTarget = null;
+        const rect = term.getBoundingClientRect();
+        const tw = tipEl.offsetWidth || 260, th = tipEl.offsetHeight || 60;
+        const x = Math.min(Math.max(rect.left, 8), window.innerWidth - tw - 8);
+        const y = rect.top - th - 10 < 8 ? rect.bottom + 8 : rect.top - th - 10;
+        showTip(term, x, y);
+      } else if (pinnedTip) {
+        hideTip();
+      }
     });
 
     // ── Word List ─────────────────────────────────────────────────
