@@ -263,11 +263,55 @@
       transition: background 0.15s, color 0.15s;
     }
 
+    .choice-btn.selected { border-color: #58a6ff; background: rgba(88,166,255,0.12); color: #58a6ff; }
+    .choice-btn.selected .choice-label { background: #58a6ff; color: #0d1117; }
     .choice-btn.correct { border-color: #00ffb4; background: rgba(0,255,180,0.1); color: #00ffb4; }
     .choice-btn.correct .choice-label { background: #00ffb4; color: #0d1117; }
     .choice-btn.wrong   { border-color: #f85149; background: rgba(248,81,73,0.1); color: #f85149; }
     .choice-btn.wrong   .choice-label { background: #f85149; color: #fff; }
     .choice-btn:disabled { cursor: not-allowed; }
+
+    /* ── Confirm Button ── */
+    .confirm-btn {
+      display: none;
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: #58a6ff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0d1117;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+    }
+    .confirm-btn.show { display: block; }
+    .confirm-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+
+    /* ── Quiz Top Row (back btn + badge) ── */
+    .quiz-top-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .back-btn {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #8b949e;
+      background: transparent;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      padding: 5px 12px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: color 0.15s, border-color 0.15s;
+    }
+    .back-btn:hover { color: #e6edf3; border-color: #8b949e; }
 
     /* ── Feedback ── */
     .feedback {
@@ -483,10 +527,14 @@
 
     <!-- Quiz Body -->
     <div id="quizBody" style="display:none">
-      <div class="category-badge" id="categoryBadge"></div>
+      <div class="quiz-top-row">
+        <button class="back-btn" onclick="backToTop()">← トップへ</button>
+        <div class="category-badge" id="categoryBadge"></div>
+      </div>
       <div class="question-number" id="questionNumber"></div>
       <div class="question-text" id="questionText"></div>
       <div class="choices" id="choicesContainer"></div>
+      <button class="confirm-btn" id="confirmBtn" onclick="confirmAnswer()">この答えで確定する →</button>
       <div class="feedback" id="feedback">
         <span class="fb-icon" id="fbIcon"></span>
         <div class="fb-text">
@@ -900,7 +948,7 @@
     ];
 
     // ── State ─────────────────────────────────────────────────────
-    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false;
+    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1;
 
     // ── Utils ─────────────────────────────────────────────────────
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -1067,6 +1115,28 @@
       renderQuestion();
     }
 
+    // ── Choice Selection & Confirmation ───────────────────────────
+    function selectChoice(idx) {
+      if (answered) return;
+      selectedIdx = idx;
+      document.querySelectorAll('.choice-btn').forEach((btn, i) => {
+        btn.classList.toggle('selected', i === idx);
+      });
+      document.getElementById('confirmBtn').classList.add('show');
+    }
+
+    function confirmAnswer() {
+      if (selectedIdx < 0 || answered) return;
+      document.querySelectorAll('.choice-btn').forEach(b => b.classList.remove('selected'));
+      document.getElementById('confirmBtn').classList.remove('show');
+      selectAnswer(selectedIdx);
+    }
+
+    function backToTop() {
+      retriedCurrent = false;
+      showScreen('start');
+    }
+
     // ── Quiz Flow ─────────────────────────────────────────────────
     function startQuiz() {
       const pool = selectedCategory === 'all'
@@ -1101,11 +1171,13 @@
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
         btn.innerHTML = `<span class="choice-label">${label}</span><span>${renderText(q.choices[i])}</span>`;
-        btn.onclick = () => selectAnswer(i);
+        btn.onclick = () => selectChoice(i);
         container.appendChild(btn);
       });
 
+      selectedIdx = -1;
       document.getElementById('feedback').className = 'feedback';
+      document.getElementById('confirmBtn').classList.remove('show');
       document.getElementById('nextBtn').classList.remove('show');
       document.getElementById('retryBtn').classList.remove('show');
     }
