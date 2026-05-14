@@ -558,6 +558,10 @@
       'ITP':              'Intelligent Tracking Prevention。SafariのプライバシーProtection機能。サードパーティCookieやリダイレクト後のセッションを制限し、Google認証フローに影響することがある。',
       'OAuth':            'Open Authorization。パスワードを共有せず第三者サービスへ認証を委任する仕組み。Google認証などで使われる。',
       'セキュリティルール': 'Firestoreでデータへのアクセス権限を定義する設定。デフォルトは全拒否で、`allow create: if request.auth != null;` のように明示的に許可する必要がある。',
+      'GitHub Pages':     'GitHubが提供する静的サイトホスティングサービス。リポジトリのHTMLファイルをそのままWebサイトとして無料公開できる。',
+      '静的サイト':        '表示する内容がHTMLなどのファイルに最初から書いてあるWebサイト。サーバー処理やデータベースが不要。',
+      '動的サイト':        'ユーザーの操作やデータに応じてサーバーが内容を生成するWebサイト。データベースとサーバー処理が必要。',
+      'git remote':       'ローカルリポジトリと接続するリモートリポジトリの設定。`git remote add origin <URL>` でGitHubと紐付ける。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -669,6 +673,27 @@
         answer: 3,
         hint: 'GitHub の URL を指定して `git clone <URL>` と実行します。',
       },
+      {
+        category: 'Git',
+        text: '`git remote add origin <URL>` コマンドの役割として正しいものはどれ？',
+        choices: ['リモート[[リポジトリ]]からファイルをダウンロードする','ローカル[[リポジトリ]]と [[GitHub]] の[[リポジトリ]]を紐付ける','ファイルの変更をコミットする','リモート[[リポジトリ]]を削除する'],
+        answer: 1,
+        hint: '`origin` はリモートリポジトリの「あだ名」。この設定をしないと `git push` の送り先がわかりません。',
+      },
+      {
+        category: 'Git',
+        text: '`git push -u origin main` の `-u` フラグの意味として正しいものはどれ？',
+        choices: ['強制的に上書きして push する','upstream（追跡先）を設定し、次回から `git push` だけで済むようにする','ユーザー認証を求める','アンドゥ（取り消し）する'],
+        answer: 1,
+        hint: '`-u` は `--set-upstream` の略。一度設定すれば次回から `git push` だけで OK になります。',
+      },
+      {
+        category: 'Git',
+        text: '[[GitHub]] の Public リポジトリについて正しい説明はどれ？',
+        choices: ['パスワードを知っている人だけ見られる','コードは誰でも閲覧可能だが、URL を知らなければ実質アクセスされにくい','チームメンバーだけがアクセスできる','有料プランでないと設定できない'],
+        answer: 1,
+        hint: 'Public でも URL を共有しない限り検索で引っかかる可能性はほぼゼロ。「鍵のない倉庫だが場所を誰も知らない」イメージ。',
+      },
       // 言語の違い
       {
         category: '言語の違い',
@@ -740,6 +765,27 @@
         choices: ['`<head>`','`<title>`','`<h1>`','`<p>`'],
         answer: 2,
         hint: 'h は heading（見出し）の略。h1 が最大で h6 まであります。`<p>` は段落、`<head>` はメタ情報。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[GitHub Pages]] の説明として正しいものはどれ？',
+        choices: ['GitHub が提供する有料のサーバーホスティングサービス','[[GitHub]] リポジトリの [[HTML]] ファイルをそのまま Webサイトとして無料公開できるサービス','データベースを提供するクラウドサービス','Git のコマンドを視覚的に操作できるツール'],
+        answer: 1,
+        hint: '[[静的サイト]]（HTML/CSS/JS のみ）なら無料で公開できます。認証やデータベースが不要なアプリに最適です。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[静的サイト]] と [[動的サイト]] の違いとして正しいものはどれ？',
+        choices: ['静的サイト＝アニメーションあり ／ 動的サイト＝アニメーションなし','静的サイト＝HTML をそのまま配信 ／ 動的サイト＝サーバーがデータに応じて内容を生成','静的サイト＝スマホ対応 ／ 動的サイト＝PC 専用','静的サイト＝無料 ／ 動的サイト＝有料'],
+        answer: 1,
+        hint: '虎の巻クイズは[[静的サイト]]（問題がコードに書いてある）。ikuzi-log は[[動的サイト]]（Firestore にデータを保存・取得）。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[静的サイト]] に[[データベース]]が不要な理由として正しいものはどれ？',
+        choices: ['静的サイトはデータを表示できないから','表示する内容が HTML などのファイルに最初から全部書いてあるから','静的サイトは [[JavaScript]] が使えないから','[[データベース]]は有料だから'],
+        answer: 1,
+        hint: '虎の巻の問題はすべて index.html の中に書いてあります。ユーザーが入力・保存するデータがないので倉庫（[[データベース]]）は不要です。',
       },
       // npm
       {
@@ -846,9 +892,9 @@
     // ── Word List Groups ──────────────────────────────────────────
     const WORD_LIST_GROUPS = [
       { cat: 'コマンド', color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
-      { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ'] },
+      { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド'] },
-      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS'] },
+      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール'] },
     ];
