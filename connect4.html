@@ -298,7 +298,7 @@
     }
 
     // ── Render ────────────────────────────────────────────────────
-    function renderBoard(dropRow, dropCol) {
+    function renderBoard() {
       const el = document.getElementById('board');
       el.innerHTML = '';
 
@@ -325,7 +325,6 @@
           else if (board[r][c] === P2) cell.classList.add('p2');
           else if (r === prevRow)      cell.classList.add(current === P1 ? 'preview-p1' : 'preview-p2');
 
-          if (r === dropRow && c === dropCol) cell.classList.add('dropping');
           colEl.appendChild(cell);
         }
         el.appendChild(colEl);
@@ -344,7 +343,11 @@
 
       board[row][col] = current;
       hovCol = -1;
-      renderBoard(row, col);
+      renderBoard();
+      requestAnimationFrame(() => {
+        const colEls = document.getElementById('board').children;
+        if (colEls[col]) colEls[col].children[row].classList.add('dropping');
+      });
 
       const win = checkWin(row, col);
       if (win) {
