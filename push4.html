@@ -370,6 +370,39 @@
 
     .back-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
 
+    /* ── Eject fall animation ── */
+    @keyframes ejectFall {
+      0%   { transform: translateY(0) scale(1);   opacity: 1; }
+      100% { transform: translateY(72px) scale(0.4); opacity: 0; }
+    }
+
+    .eject-ghost {
+      position: fixed;
+      pointer-events: none;
+      z-index: 50;
+      border-radius: 50%;
+      animation: ejectFall 0.38s ease-in forwards;
+    }
+
+    /* ── Mute button ── */
+    .mute-btn {
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.4);
+      border-radius: 50px;
+      color: #fff;
+      font-size: 1rem;
+      width: 44px; height: 44px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      flex-shrink: 0;
+    }
+
+    .mute-btn:hover { background: rgba(255,255,255,0.32); }
+
     @media (max-width: 500px) {
       h1 { font-size: 1.5rem; }
       .mode-cards { gap: 14px; }
@@ -514,6 +547,7 @@
     <div class="btn-row">
       <button class="action-btn" onclick="newRound()">🔄 リセット</button>
       <button class="action-btn" onclick="goToStart()">← モード選択</button>
+      <button class="mute-btn" id="muteBtn" onclick="toggleMute()" title="消音">🔊</button>
     </div>
   </div>
 
@@ -680,6 +714,12 @@
       animating = true;
       stopTimer();
       lockButtons(true);
+
+      // Animate ejected piece before board update
+      const ejected = board[ROWS - 1][col];
+      if (ejected) animateEject(col, ejected);
+
+      playPush();
 
       for (let r = ROWS - 1; r > 0; r--) board[r][col] = board[r - 1][col];
       board[0][col] = current;
@@ -874,6 +914,7 @@
       document.getElementById('winBanner').classList.add('show');
       document.getElementById('backdrop').classList.add('show');
       launchConfetti(COLOR[p]);
+      playWin();
     }
 
     // ── Confetti ──────────────────────────────────────────────────
@@ -916,6 +957,68 @@
       if (rafId) cancelAnimationFrame(rafId);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles = [];
+    }
+
+    // ── Sound (Web Audio API) ─────────────────────────────────────
+    let audioCtx = null, muted = false;
+
+    function getAudio() {
+      if (!audioCtx) audioCtx = new AudioContext();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      return audioCtx;
+    }
+
+    function playPush() {
+      if (muted) return;
+      const ac = getAudio();
+      const osc  = ac.createOscillator();
+      const gain = ac.createGain();
+      osc.connect(gain);
+      gain.connect(ac.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(280, ac.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(90, ac.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.18, ac.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.14);
+      osc.start(ac.currentTime);
+      osc.stop(ac.currentTime + 0.14);
+    }
+
+    function playWin() {
+      if (muted) return;
+      const ac = getAudio();
+      [[523, 0], [659, 0.1], [784, 0.2], [1047, 0.32], [1319, 0.44]].forEach(([freq, t]) => {
+        const osc  = ac.createOscillator();
+        const gain = ac.createGain();
+        osc.connect(gain);
+        gain.connect(ac.destination);
+        osc.type = 'triangle';
+        osc.frequency.value = freq;
+        const st = ac.currentTime + t;
+        gain.gain.setValueAtTime(0.22, st);
+        gain.gain.exponentialRampToValueAtTime(0.001, st + 0.28);
+        osc.start(st);
+        osc.stop(st + 0.28);
+      });
+    }
+
+    function toggleMute() {
+      muted = !muted;
+      document.getElementById('muteBtn').textContent = muted ? '🔇' : '🔊';
+    }
+
+    // ── Eject animation ───────────────────────────────────────────
+    function animateEject(col, player) {
+      const el   = cellEl(ROWS - 1, col);
+      const rect = el.getBoundingClientRect();
+      const ghost = document.createElement('div');
+      ghost.className = `eject-ghost ${player === P1 ? 'p1' : 'p2'}`;
+      ghost.style.left   = `${rect.left}px`;
+      ghost.style.top    = `${rect.top}px`;
+      ghost.style.width  = `${rect.width}px`;
+      ghost.style.height = `${rect.height}px`;
+      document.body.appendChild(ghost);
+      ghost.addEventListener('animationend', () => ghost.remove(), { once: true });
     }
 
     // ── Start ─────────────────────────────────────────────────────
