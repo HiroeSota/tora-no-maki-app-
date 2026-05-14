@@ -800,7 +800,15 @@
 
     function autoRandomPush() {
       if (animating) { setTimeout(autoRandomPush, 100); return; }
+      showTimeoutToast();
       push(Math.floor(Math.random() * COLS));
+    }
+
+    function showTimeoutToast() {
+      const toast = document.getElementById('firstToast');
+      toast.textContent = '⏰ 時間切れ！ランダムにプッシュ！';
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2000);
     }
 
     function showCPUThinking() {
