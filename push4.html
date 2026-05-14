@@ -32,25 +32,23 @@
       letter-spacing: 0.04em;
     }
 
-    /* ── Start screen ── */
-    #startScreen {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
     .tagline {
       color: rgba(255,255,255,0.85);
       font-size: 0.92rem;
-      margin-bottom: 40px;
+      margin-bottom: 36px;
       text-align: center;
       line-height: 1.7;
     }
 
-    .mode-cards {
-      display: flex;
-      gap: 20px;
+    /* ── Screens ── */
+    #startScreen, #difficultyScreen, #gameScreen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
     }
+
+    /* ── Mode cards ── */
+    .mode-cards { display: flex; gap: 20px; }
 
     .mode-card {
       background: rgba(255,255,255,0.16);
@@ -73,18 +71,66 @@
     }
 
     .mode-card:active { transform: translateY(-2px); }
-
     .mode-icon { font-size: 3.2rem; margin-bottom: 14px; }
     .mode-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
     .mode-desc { font-size: 0.8rem; opacity: 0.75; }
 
-    /* ── Game screen ── */
-    #gameScreen {
-      display: none;
-      flex-direction: column;
-      align-items: center;
+    /* ── Difficulty cards ── */
+    .diff-cards {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 360px;
     }
 
+    .diff-card {
+      background: rgba(255,255,255,0.16);
+      backdrop-filter: blur(12px);
+      border: 2px solid rgba(255,255,255,0.28);
+      border-radius: 18px;
+      padding: 20px 14px;
+      color: #fff;
+      cursor: pointer;
+      font-family: inherit;
+      text-align: center;
+      transition: background 0.2s, transform 0.18s, border-color 0.2s;
+    }
+
+    .diff-card:hover {
+      background: rgba(255,255,255,0.26);
+      border-color: rgba(255,255,255,0.6);
+      transform: translateY(-4px);
+    }
+
+    .diff-card:active { transform: translateY(-1px); }
+
+    .diff-card.diff-max {
+      border-color: rgba(255,100,100,0.6);
+      background: rgba(180,0,50,0.22);
+    }
+
+    .diff-card.diff-max:hover { background: rgba(180,0,50,0.36); }
+
+    .diff-icon { font-size: 2rem; margin-bottom: 8px; }
+    .diff-name { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .diff-desc { font-size: 0.72rem; opacity: 0.75; }
+
+    .back-link {
+      margin-top: 22px;
+      color: rgba(255,255,255,0.75);
+      font-size: 0.88rem;
+      cursor: pointer;
+      text-decoration: underline;
+      background: none;
+      border: none;
+      font-family: inherit;
+      transition: color 0.15s;
+    }
+
+    .back-link:hover { color: #fff; }
+
+    /* ── Game UI ── */
     .how-to {
       background: rgba(255,255,255,0.18);
       backdrop-filter: blur(10px);
@@ -97,7 +143,6 @@
       line-height: 1.6;
     }
 
-    /* ── Score ── */
     .score-wrap { display: flex; gap: 16px; margin-bottom: 16px; }
 
     .score-card {
@@ -115,7 +160,6 @@
     .p1-card .s-num { color: #ff8a80; }
     .p2-card .s-num { color: #fff59d; }
 
-    /* ── Turn ── */
     .turn-display {
       display: flex;
       align-items: center;
@@ -141,7 +185,7 @@
       transition: background 0.3s;
     }
 
-    /* ── Timer bar ── */
+    /* ── Timer ── */
     .timer-wrap {
       width: 310px;
       height: 26px;
@@ -174,7 +218,7 @@
       white-space: nowrap;
     }
 
-    /* ── Board wrap ── */
+    /* ── Board ── */
     .board-wrap {
       background: #1565c0;
       border-radius: 18px;
@@ -185,7 +229,6 @@
       gap: 8px;
     }
 
-    /* ── Push buttons ── */
     .push-row { display: flex; gap: var(--gap); }
 
     .push-btn {
@@ -210,16 +253,9 @@
     .push-btn:active:not(:disabled) { transform: scale(0.92); }
     .push-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-    /* ── Board ── */
     .board { display: flex; gap: var(--gap); }
-
     .col-wrap { overflow: hidden; border-radius: 6px; }
-
-    .col-inner {
-      display: flex;
-      flex-direction: column;
-      gap: var(--gap);
-    }
+    .col-inner { display: flex; flex-direction: column; gap: var(--gap); }
 
     @keyframes slideFromTop {
       from { transform: translateY(calc(-1 * var(--step))); }
@@ -257,8 +293,14 @@
       to   { transform: scale(1.14); filter: brightness(1.35); }
     }
 
-    /* ── Action buttons ── */
-    .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
+    /* ── Buttons ── */
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
 
     .action-btn {
       padding: 11px 24px;
@@ -286,7 +328,7 @@
       top: 50%; left: 50%;
       background: #fff;
       border-radius: 24px;
-      padding: 44px 60px;
+      padding: 44px 56px;
       text-align: center;
       box-shadow: 0 24px 80px rgba(0,0,0,0.4);
       z-index: 100;
@@ -303,18 +345,17 @@
     }
 
     .win-emoji  { font-size: 4rem; margin-bottom: 12px; }
-    .win-title  { font-size: 1.9rem; font-weight: 700; color: #333; margin-bottom: 6px; }
-    .win-sub    { font-size: 1rem; color: #888; margin-bottom: 28px; }
-
+    .win-title  { font-size: 1.8rem; font-weight: 700; color: #333; margin-bottom: 6px; }
+    .win-sub    { font-size: 1rem; color: #888; margin-bottom: 24px; }
     .win-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 
     .play-again-btn {
-      padding: 14px 28px;
+      padding: 13px 24px;
       background: linear-gradient(135deg, #667eea, #764ba2);
       border: none;
       border-radius: 50px;
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
@@ -324,12 +365,12 @@
     .play-again-btn:hover { opacity: 0.88; transform: translateY(-2px); }
 
     .back-btn {
-      padding: 14px 28px;
+      padding: 13px 24px;
       background: #f0f0f0;
       border: none;
       border-radius: 50px;
       color: #555;
-      font-size: 1rem;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
@@ -344,6 +385,7 @@
       .mode-cards { gap: 14px; }
       .mode-card { padding: 24px 22px; min-width: 120px; }
       .mode-icon { font-size: 2.4rem; }
+      .diff-cards { max-width: 300px; gap: 10px; }
       .push-btn { height: 36px; font-size: 1.2rem; }
       .board-wrap { padding: 10px; gap: 6px; }
       .timer-wrap { width: 260px; }
@@ -355,7 +397,6 @@
 <body>
 
   <canvas id="confettiCanvas" style="position:fixed;top:0;left:0;pointer-events:none;z-index:200;"></canvas>
-
   <div class="backdrop" id="backdrop"></div>
   <div class="win-banner" id="winBanner">
     <div class="win-emoji" id="winEmoji">🎉</div>
@@ -367,20 +408,20 @@
     </div>
   </div>
 
-  <!-- ── Start screen ── -->
+  <!-- ① Start screen -->
   <div id="startScreen">
     <h1>⬇️ プッシュ四目並べ</h1>
     <p class="tagline">
       列の上から駒を押し込んで4つ並べろ！<br>
-      制限時間 30秒・押し出しあり
+      制限時間 20秒・押し出しあり
     </p>
     <div class="mode-cards">
-      <button class="mode-card" onclick="startGame(false)">
+      <button class="mode-card" onclick="startGame('2p')">
         <div class="mode-icon">👥</div>
         <div class="mode-name">2人対戦</div>
         <div class="mode-desc">友達と対決</div>
       </button>
-      <button class="mode-card" onclick="startGame(true)">
+      <button class="mode-card" onclick="showDifficulty()">
         <div class="mode-icon">🤖</div>
         <div class="mode-name">CPU対戦</div>
         <div class="mode-desc">AIに挑戦</div>
@@ -388,10 +429,38 @@
     </div>
   </div>
 
-  <!-- ── Game screen ── -->
+  <!-- ② Difficulty screen -->
+  <div id="difficultyScreen">
+    <h1>⬇️ プッシュ四目並べ</h1>
+    <p class="tagline">CPU の強さを選んでください</p>
+    <div class="diff-cards">
+      <button class="diff-card" onclick="startGame('easy')">
+        <div class="diff-icon">😊</div>
+        <div class="diff-name">かんたん</div>
+        <div class="diff-desc">ランダムに動く</div>
+      </button>
+      <button class="diff-card" onclick="startGame('normal')">
+        <div class="diff-icon">🙂</div>
+        <div class="diff-name">ふつう</div>
+        <div class="diff-desc">勝てる手を優先</div>
+      </button>
+      <button class="diff-card" onclick="startGame('hard')">
+        <div class="diff-icon">😤</div>
+        <div class="diff-name">むずかしい</div>
+        <div class="diff-desc">5手先まで読む</div>
+      </button>
+      <button class="diff-card diff-max" onclick="startGame('max')">
+        <div class="diff-icon">💀</div>
+        <div class="diff-name">最強</div>
+        <div class="diff-desc">8手先・完全読み</div>
+      </button>
+    </div>
+    <button class="back-link" onclick="goToStart()">← モード選択に戻る</button>
+  </div>
+
+  <!-- ③ Game screen -->
   <div id="gameScreen">
     <h1>⬇️ プッシュ四目並べ</h1>
-
     <div class="how-to">
       ↓ を押して列にコマを挿入 → 一番下のコマが押し出される！<br>
       縦・横・斜めに4つ並べたら勝ち 🏆
@@ -415,7 +484,7 @@
 
     <div class="timer-wrap">
       <div class="timer-bar" id="timerBar"></div>
-      <span class="timer-text" id="timerText">30</span>
+      <span class="timer-text" id="timerText">20</span>
     </div>
 
     <div class="board-wrap">
@@ -431,48 +500,75 @@
 
   <script>
     const ROWS = 4, COLS = 4, EMPTY = 0, P1 = 1, P2 = 2;
-    const TURN_TIME = 30;
+    const TURN_TIME = 20;
     const COLOR = { [P1]: '#f44336', [P2]: '#ffeb3b' };
     const NAME  = { [P1]: 'プレイヤー 1', [P2]: 'プレイヤー 2' };
     const EMOJI = { [P1]: '🔴', [P2]: '🟡' };
 
-    let board, current, over, animating, cpuMode;
+    const CPU_LEVELS = {
+      easy:   { label: 'かんたん', emoji: '😊', delay: 400,  depth: 0 },
+      normal: { label: 'ふつう',   emoji: '🙂', delay: 600,  depth: 1 },
+      hard:   { label: 'むずかしい', emoji: '😤', delay: 900,  depth: 5 },
+      max:    { label: '最強',     emoji: '💀', delay: 1400, depth: 8 },
+    };
+
+    // Pre-compute all 4-length winning lines on the board
+    const ALL_LINES = (() => {
+      const lines = [];
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
+            const line = [];
+            for (let i = 0; i < 4; i++) {
+              const nr = r + dr*i, nc = c + dc*i;
+              if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS) break;
+              line.push([nr, nc]);
+            }
+            if (line.length === 4) lines.push(line);
+          }
+        }
+      }
+      return lines;
+    })();
+
+    let board, current, over, animating;
+    let cpuMode = false, cpuLevel = 'normal';
     let timerRAF = null, timerStart = null;
     const scores = { [P1]: 0, [P2]: 0 };
 
-    function cellEl(r, c) { return document.getElementById(`c${r}-${c}`); }
-
-    function renderCell(r, c) {
-      const el = cellEl(r, c);
-      el.className = 'cell';
-      if      (board[r][c] === P1) el.classList.add('p1');
-      else if (board[r][c] === P2) el.classList.add('p2');
+    // ── Screen control ────────────────────────────────────────────
+    function show(id) {
+      ['startScreen','difficultyScreen','gameScreen'].forEach(s =>
+        document.getElementById(s).style.display = s === id ? 'flex' : 'none'
+      );
     }
 
-    // ── Screen transitions ────────────────────────────────────────
-    function startGame(isCPU) {
-      cpuMode = isCPU;
-      scores[P1] = 0;
-      scores[P2] = 0;
+    function goToStart() {
+      stopTimer(); stopConfetti();
+      document.getElementById('winBanner').classList.remove('show');
+      document.getElementById('backdrop').classList.remove('show');
+      show('startScreen');
+    }
+
+    function showDifficulty() { show('difficultyScreen'); }
+
+    function startGame(mode) {
+      cpuMode  = mode !== '2p';
+      cpuLevel = cpuMode ? mode : 'normal';
+      scores[P1] = scores[P2] = 0;
       document.getElementById('score1').textContent = '0';
       document.getElementById('score2').textContent = '0';
-      document.getElementById('p2Label').textContent = cpuMode ? '🤖 CPU' : '🟡 プレイヤー 2';
-      document.getElementById('startScreen').style.display = 'none';
-      document.getElementById('gameScreen').style.display  = 'flex';
+
+      const cfg = CPU_LEVELS[cpuLevel];
+      document.getElementById('p2Label').textContent =
+        cpuMode ? `🤖 CPU (${cfg.label})` : '🟡 プレイヤー 2';
+
+      show('gameScreen');
       buildDOM();
       newRound();
     }
 
-    function goToStart() {
-      stopTimer();
-      stopConfetti();
-      document.getElementById('winBanner').classList.remove('show');
-      document.getElementById('backdrop').classList.remove('show');
-      document.getElementById('gameScreen').style.display  = 'none';
-      document.getElementById('startScreen').style.display = 'flex';
-    }
-
-    // ── Build DOM (once per game) ─────────────────────────────────
+    // ── Build board DOM (once per game) ──────────────────────────
     function buildDOM() {
       const pushRow = document.getElementById('pushRow');
       const boardEl = document.getElementById('board');
@@ -503,6 +599,16 @@
       }
     }
 
+    // ── Cell helpers ──────────────────────────────────────────────
+    function cellEl(r, c) { return document.getElementById(`c${r}-${c}`); }
+
+    function renderCell(r, c) {
+      const el = cellEl(r, c);
+      el.className = 'cell';
+      if      (board[r][c] === P1) el.classList.add('p1');
+      else if (board[r][c] === P2) el.classList.add('p2');
+    }
+
     // ── Push logic ────────────────────────────────────────────────
     function push(col) {
       if (over || animating) return;
@@ -512,7 +618,6 @@
 
       for (let r = ROWS - 1; r > 0; r--) board[r][col] = board[r - 1][col];
       board[0][col] = current;
-
       for (let r = 0; r < ROWS; r++) renderCell(r, col);
 
       const colEl = document.getElementById(`col${col}`);
@@ -537,7 +642,7 @@
 
         if (cpuMode && current === P2) {
           showCPUThinking();
-          setTimeout(doCPUMove, 700);
+          setTimeout(doCPUMove, CPU_LEVELS[cpuLevel].delay);
         } else {
           startTimer();
         }
@@ -553,20 +658,21 @@
 
     function stopTimer() {
       if (timerRAF) cancelAnimationFrame(timerRAF);
-      timerRAF = null;
-      timerStart = null;
+      timerRAF = null; timerStart = null;
     }
 
     function tickTimer() {
-      const elapsed   = (Date.now() - timerStart) / 1000;
-      const remaining = Math.max(0, TURN_TIME - elapsed);
-      updateTimerBar(remaining);
+      const remaining = Math.max(0, TURN_TIME - (Date.now() - timerStart) / 1000);
+      const pct = (remaining / TURN_TIME) * 100;
+      const bar = document.getElementById('timerBar');
+      const txt = document.getElementById('timerText');
+      bar.style.width = `${pct}%`;
+      txt.textContent = Math.ceil(remaining);
+      bar.className = 'timer-bar';
+      if (remaining <= 5)       bar.classList.add('danger');
+      else if (remaining <= 8)  bar.classList.add('warning');
 
-      if (remaining <= 0) {
-        stopTimer();
-        autoRandomPush();
-        return;
-      }
+      if (remaining <= 0) { stopTimer(); autoRandomPush(); return; }
       timerRAF = requestAnimationFrame(tickTimer);
     }
 
@@ -575,23 +681,13 @@
       push(Math.floor(Math.random() * COLS));
     }
 
-    function updateTimerBar(remaining) {
-      const pct = (remaining / TURN_TIME) * 100;
-      const bar = document.getElementById('timerBar');
-      const txt = document.getElementById('timerText');
-      bar.style.width = `${pct}%`;
-      txt.textContent = Math.ceil(remaining);
-      bar.className = 'timer-bar';
-      if (remaining <= 5)       bar.classList.add('danger');
-      else if (remaining <= 10) bar.classList.add('warning');
-    }
-
     function showCPUThinking() {
+      const cfg = CPU_LEVELS[cpuLevel];
       const bar = document.getElementById('timerBar');
       const txt = document.getElementById('timerText');
       bar.className = 'timer-bar cpu';
       bar.style.width = '100%';
-      txt.textContent = 'CPU が考え中…';
+      txt.textContent = `${cfg.emoji} CPU が考え中…`;
     }
 
     // ── CPU logic ─────────────────────────────────────────────────
@@ -601,13 +697,59 @@
     }
 
     function cpuPickCol() {
-      for (let c = 0; c < COLS; c++) {
-        if (checkWinOnBoard(simulatePush(board, c, P2))) return c;
+      const depth = CPU_LEVELS[cpuLevel].depth;
+
+      if (depth === 0) return Math.floor(Math.random() * COLS);
+
+      if (depth === 1) {
+        const cols = shuffled();
+        for (const c of cols) if (checkWinOnBoard(simulatePush(board, c, P2), P2)) return c;
+        for (const c of cols) if (checkWinOnBoard(simulatePush(board, c, P1), P1)) return c;
+        return cols[0];
       }
-      for (let c = 0; c < COLS; c++) {
-        if (checkWinOnBoard(simulatePush(board, c, P1))) return c;
+
+      // Minimax
+      let bestScore = -Infinity, bestCol = 0;
+      for (const c of shuffled()) {
+        const score = minimax(simulatePush(board, c, P2), depth - 1, -Infinity, Infinity, false);
+        if (score > bestScore) { bestScore = score; bestCol = c; }
       }
-      return Math.floor(Math.random() * COLS);
+      return bestCol;
+    }
+
+    function minimax(b, depth, alpha, beta, isMax) {
+      if (checkWinOnBoard(b, P2)) return 10000 + depth;
+      if (checkWinOnBoard(b, P1)) return -10000 - depth;
+      if (depth === 0) return evalBoard(b);
+
+      const player = isMax ? P2 : P1;
+      let best = isMax ? -Infinity : Infinity;
+
+      for (const c of shuffled()) {
+        const score = minimax(simulatePush(b, c, player), depth - 1, alpha, beta, !isMax);
+        if (isMax) { best = Math.max(best, score); alpha = Math.max(alpha, best); }
+        else        { best = Math.min(best, score); beta  = Math.min(beta,  best); }
+        if (beta <= alpha) break;
+      }
+      return best;
+    }
+
+    function evalBoard(b) {
+      let score = 0;
+      for (const line of ALL_LINES) {
+        let p1 = 0, p2 = 0;
+        for (const [r, c] of line) {
+          if (b[r][c] === P1) p1++;
+          else if (b[r][c] === P2) p2++;
+        }
+        if (p1 === 0 && p2 > 0) score += p2 === 3 ? 500 : p2 === 2 ? 20 : 1;
+        if (p2 === 0 && p1 > 0) score -= p1 === 3 ? 500 : p1 === 2 ? 20 : 1;
+      }
+      return score;
+    }
+
+    function shuffled() {
+      return [0,1,2,3].sort(() => Math.random() - 0.5);
     }
 
     function simulatePush(b, col, player) {
@@ -617,41 +759,21 @@
       return copy;
     }
 
-    function checkWinOnBoard(b) {
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const p = b[r][c];
-          if (!p) continue;
-          for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
-            let count = 0;
-            for (let i = 0; i < 4; i++) {
-              const nr = r + dr*i, nc = c + dc*i;
-              if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || b[nr][nc] !== p) break;
-              count++;
-            }
-            if (count === 4) return true;
-          }
+    function checkWinOnBoard(b, player = null) {
+      const targets = player ? [player] : [P1, P2];
+      for (const p of targets) {
+        for (const line of ALL_LINES) {
+          if (line.every(([r, c]) => b[r][c] === p)) return true;
         }
       }
       return false;
     }
 
-    // ── Win check (returns cells) ─────────────────────────────────
+    // ── Win check (returns winning cells) ─────────────────────────
     function checkWin() {
-      for (let r = 0; r < ROWS; r++) {
-        for (let c = 0; c < COLS; c++) {
-          const p = board[r][c];
-          if (!p) continue;
-          for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
-            const cells = [];
-            for (let i = 0; i < 4; i++) {
-              const nr = r + dr*i, nc = c + dc*i;
-              if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || board[nr][nc] !== p) break;
-              cells.push([nr, nc]);
-            }
-            if (cells.length === 4) return cells;
-          }
-        }
+      for (const line of ALL_LINES) {
+        const p = board[line[0][0]][line[0][1]];
+        if (p && line.every(([r, c]) => board[r][c] === p)) return line;
       }
       return null;
     }
@@ -678,7 +800,9 @@
       const cls = current === P1 ? 'p1-style' : 'p2-style';
       document.querySelectorAll('.push-btn').forEach(b => b.className = `push-btn ${cls}`);
       document.getElementById('turnPiece').style.background = COLOR[current];
-      const label = (cpuMode && current === P2) ? 'CPU のターン' : `${NAME[current]} のターン`;
+      const label = cpuMode && current === P2
+        ? `${CPU_LEVELS[cpuLevel].emoji} CPU のターン`
+        : `${NAME[current]} のターン`;
       document.getElementById('turnText').textContent = label;
     }
 
@@ -687,10 +811,12 @@
     }
 
     function showWinBanner(p) {
-      const name = (cpuMode && p === P2) ? 'CPU' : NAME[p];
-      document.getElementById('winEmoji').textContent = EMOJI[p];
-      document.getElementById('winTitle').textContent = `${name} の勝ち！`;
-      document.getElementById('winSub').textContent   = 'おめでとう！🎊';
+      const isCPU = cpuMode && p === P2;
+      document.getElementById('winEmoji').textContent = isCPU ? CPU_LEVELS[cpuLevel].emoji : EMOJI[p];
+      document.getElementById('winTitle').textContent =
+        isCPU ? `CPU (${CPU_LEVELS[cpuLevel].label}) の勝ち！` : `${NAME[p]} の勝ち！`;
+      document.getElementById('winSub').textContent =
+        isCPU ? '手強かった！また挑戦しよう 💪' : 'おめでとう！🎊';
       document.getElementById('winBanner').classList.add('show');
       document.getElementById('backdrop').classList.add('show');
       launchConfetti(COLOR[p]);
@@ -708,13 +834,10 @@
       particles = Array.from({length: 100}, () => ({
         x: Math.random() * canvas.width,
         y: -20 - Math.random() * 100,
-        w: Math.random() * 10 + 5,
-        h: Math.random() * 6 + 3,
+        w: Math.random() * 10 + 5, h: Math.random() * 6 + 3,
         color: palette[Math.floor(Math.random() * palette.length)],
-        vy: Math.random() * 2 + 2,
-        vx: (Math.random() - 0.5) * 2,
-        rot: Math.random() * 360,
-        rotSpeed: (Math.random() - 0.5) * 6,
+        vy: Math.random() * 2 + 2, vx: (Math.random() - 0.5) * 2,
+        rot: Math.random() * 360, rotSpeed: (Math.random() - 0.5) * 6,
       }));
       if (rafId) cancelAnimationFrame(rafId);
       animConfetti();
@@ -740,6 +863,9 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles = [];
     }
+
+    // ── Start ─────────────────────────────────────────────────────
+    show('startScreen');
   </script>
 </body>
 </html>
