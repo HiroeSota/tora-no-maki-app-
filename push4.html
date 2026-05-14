@@ -8,7 +8,7 @@
     :root {
       --cell: 72px;
       --gap:  10px;
-      --step: 82px; /* cell + gap */
+      --step: 82px;
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -71,7 +71,7 @@
       backdrop-filter: blur(10px);
       border-radius: 50px;
       padding: 10px 24px;
-      margin-bottom: 22px;
+      margin-bottom: 10px;
       color: #fff;
       font-size: 1rem;
       font-weight: 700;
@@ -88,7 +88,40 @@
       transition: background 0.3s;
     }
 
-    /* ── Board wrap (contains push buttons + grid) ── */
+    /* ── Timer bar ── */
+    .timer-wrap {
+      width: 310px;
+      height: 26px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 50px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timer-bar {
+      height: 100%;
+      border-radius: 50px;
+      background: linear-gradient(90deg, #43e97b, #38f9d7);
+      width: 100%;
+    }
+
+    .timer-bar.warning { background: linear-gradient(90deg, #f7971e, #ffd200); }
+    .timer-bar.danger  { background: linear-gradient(90deg, #f44336, #ff6b6b); }
+    .timer-bar.cpu     { background: rgba(255,255,255,0.25); }
+
+    .timer-text {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+
+    /* ── Board wrap ── */
     .board-wrap {
       background: #1565c0;
       border-radius: 18px;
@@ -99,11 +132,8 @@
       gap: 8px;
     }
 
-    /* ── Push buttons row ── */
-    .push-row {
-      display: flex;
-      gap: var(--gap);
-    }
+    /* ── Push buttons ── */
+    .push-row { display: flex; gap: var(--gap); }
 
     .push-btn {
       width: var(--cell);
@@ -127,17 +157,10 @@
     .push-btn:active:not(:disabled) { transform: scale(0.92); }
     .push-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-    /* ── Board grid ── */
-    .board {
-      display: flex;
-      gap: var(--gap);
-    }
+    /* ── Board ── */
+    .board { display: flex; gap: var(--gap); }
 
-    /* Column: overflow hidden clips the slide-in animation */
-    .col-wrap {
-      overflow: hidden;
-      border-radius: 6px;
-    }
+    .col-wrap { overflow: hidden; border-radius: 6px; }
 
     .col-inner {
       display: flex;
@@ -154,38 +177,38 @@
       animation: slideFromTop 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
-    /* ── Cells ── */
+    /* ── Cells (3D sphere look) ── */
     .cell {
       width: var(--cell);
       height: var(--cell);
       border-radius: 50%;
-      background: #0d47a1;
-      box-shadow: inset 0 4px 10px rgba(0,0,0,0.45);
+      background: radial-gradient(circle at 38% 30%, #1a6fd4, #0d47a1 55%, #082d6e);
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.5), inset 0 -2px 4px rgba(255,255,255,0.06);
       flex-shrink: 0;
     }
 
     .cell.p1 {
-      background: #f44336;
-      box-shadow: 0 4px 14px rgba(244,67,54,0.6), inset 0 2px 4px rgba(255,255,255,0.25);
+      background: radial-gradient(circle at 38% 30%, #ff8a80, #f44336 55%, #b71c1c);
+      box-shadow: 0 6px 20px rgba(244,67,54,0.65), inset 0 -3px 7px rgba(0,0,0,0.3), inset 0 3px 6px rgba(255,255,255,0.25);
     }
 
     .cell.p2 {
-      background: #ffeb3b;
-      box-shadow: 0 4px 14px rgba(255,235,59,0.6), inset 0 2px 4px rgba(255,255,255,0.35);
+      background: radial-gradient(circle at 38% 30%, #fff9c4, #ffeb3b 50%, #f57f17);
+      box-shadow: 0 6px 20px rgba(255,235,59,0.65), inset 0 -3px 7px rgba(0,0,0,0.2), inset 0 3px 6px rgba(255,255,255,0.4);
     }
 
     .cell.win { animation: winPulse 0.55s ease-in-out infinite alternate; }
 
     @keyframes winPulse {
-      from { transform: scale(1);    box-shadow: 0 4px 14px rgba(255,255,255,0.3); }
-      to   { transform: scale(1.12); box-shadow: 0 0 28px rgba(255,255,255,0.85); }
+      from { transform: scale(1);    filter: brightness(1); }
+      to   { transform: scale(1.14); filter: brightness(1.35); }
     }
 
     /* ── Action buttons ── */
-    .btn-row { display: flex; gap: 12px; margin-top: 20px; }
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; flex-wrap: wrap; justify-content: center; }
 
     .action-btn {
-      padding: 11px 28px;
+      padding: 11px 24px;
       background: rgba(255,255,255,0.2);
       backdrop-filter: blur(10px);
       border: 2px solid rgba(255,255,255,0.4);
@@ -199,6 +222,7 @@
     }
 
     .action-btn:hover { background: rgba(255,255,255,0.32); transform: translateY(-2px); }
+    .action-btn.active { background: rgba(255,255,255,0.38); border-color: #fff; }
 
     /* ── Win banner ── */
     .backdrop { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 99; }
@@ -250,6 +274,7 @@
       h1 { font-size: 1.5rem; }
       .push-btn { height: 36px; font-size: 1.2rem; }
       .board-wrap { padding: 10px; gap: 6px; }
+      .timer-wrap { width: 260px; }
       .win-banner { padding: 32px 28px; width: 90vw; }
       .win-title { font-size: 1.4rem; }
     }
@@ -271,7 +296,7 @@
 
   <div class="how-to">
     ↓ を押して列にコマを挿入 → 一番下のコマが押し出される！<br>
-    縦・横・斜めに4つ並べたら勝ち 🏆
+    縦・横・斜めに4つ並べたら勝ち 🏆　制限時間：30秒
   </div>
 
   <div class="score-wrap">
@@ -280,7 +305,7 @@
       <div class="s-num" id="score1">0</div>
     </div>
     <div class="score-card p2-card">
-      <div class="s-name">🟡 プレイヤー 2</div>
+      <div class="s-name" id="p2Label">🟡 プレイヤー 2</div>
       <div class="s-num" id="score2">0</div>
     </div>
   </div>
@@ -290,6 +315,11 @@
     <span id="turnText"></span>
   </div>
 
+  <div class="timer-wrap">
+    <div class="timer-bar" id="timerBar"></div>
+    <span class="timer-text" id="timerText">30</span>
+  </div>
+
   <div class="board-wrap">
     <div class="push-row" id="pushRow"></div>
     <div class="board"    id="board"></div>
@@ -297,15 +327,18 @@
 
   <div class="btn-row">
     <button class="action-btn" onclick="newRound()">🔄 リセット</button>
+    <button class="action-btn" id="cpuBtn" onclick="toggleCPU()">🤖 CPU対戦</button>
   </div>
 
   <script>
     const ROWS = 4, COLS = 4, EMPTY = 0, P1 = 1, P2 = 2;
+    const TURN_TIME = 30;
     const COLOR = { [P1]: '#f44336', [P2]: '#ffeb3b' };
     const NAME  = { [P1]: 'プレイヤー 1', [P2]: 'プレイヤー 2' };
     const EMOJI = { [P1]: '🔴', [P2]: '🟡' };
 
-    let board, current, over, animating;
+    let board, current, over, animating, cpuMode;
+    let timerRAF = null, timerStart = null;
     const scores = { [P1]: 0, [P2]: 0 };
 
     function cellEl(r, c) { return document.getElementById(`c${r}-${c}`); }
@@ -325,7 +358,6 @@
       boardEl.innerHTML = '';
 
       for (let c = 0; c < COLS; c++) {
-        // Push button
         const btn = document.createElement('button');
         btn.className = 'push-btn';
         btn.id = `pb${c}`;
@@ -333,7 +365,6 @@
         btn.onclick = () => push(c);
         pushRow.appendChild(btn);
 
-        // Column
         const wrap  = document.createElement('div');
         wrap.className = 'col-wrap';
         const inner = document.createElement('div');
@@ -354,16 +385,14 @@
     function push(col) {
       if (over || animating) return;
       animating = true;
+      stopTimer();
       lockButtons(true);
 
-      // New piece enters row 0; bottom row (ROWS-1) is ejected
       for (let r = ROWS - 1; r > 0; r--) board[r][col] = board[r - 1][col];
       board[0][col] = current;
 
-      // Update DOM cells
       for (let r = 0; r < ROWS; r++) renderCell(r, col);
 
-      // Slide-down animation
       const colEl = document.getElementById(`col${col}`);
       colEl.classList.add('anim-down');
       colEl.addEventListener('animationend', () => {
@@ -383,10 +412,112 @@
         current = current === P1 ? P2 : P1;
         updateTurn();
         lockButtons(false);
+
+        if (cpuMode && current === P2) {
+          showCPUThinking();
+          setTimeout(doCPUMove, 700);
+        } else {
+          startTimer();
+        }
       }, { once: true });
     }
 
-    // ── Win check ─────────────────────────────────────────────────
+    // ── Timer ─────────────────────────────────────────────────────
+    function startTimer() {
+      stopTimer();
+      timerStart = Date.now();
+      timerRAF = requestAnimationFrame(tickTimer);
+    }
+
+    function stopTimer() {
+      if (timerRAF) cancelAnimationFrame(timerRAF);
+      timerRAF = null;
+      timerStart = null;
+    }
+
+    function tickTimer() {
+      const elapsed   = (Date.now() - timerStart) / 1000;
+      const remaining = Math.max(0, TURN_TIME - elapsed);
+      updateTimerBar(remaining);
+
+      if (remaining <= 0) {
+        stopTimer();
+        autoRandomPush();
+        return;
+      }
+      timerRAF = requestAnimationFrame(tickTimer);
+    }
+
+    function autoRandomPush() {
+      if (animating) { setTimeout(autoRandomPush, 100); return; }
+      push(Math.floor(Math.random() * COLS));
+    }
+
+    function updateTimerBar(remaining) {
+      const pct = (remaining / TURN_TIME) * 100;
+      const bar = document.getElementById('timerBar');
+      const txt = document.getElementById('timerText');
+      bar.style.width = `${pct}%`;
+      txt.textContent = Math.ceil(remaining);
+      bar.className = 'timer-bar';
+      if (remaining <= 5)       bar.classList.add('danger');
+      else if (remaining <= 10) bar.classList.add('warning');
+    }
+
+    function showCPUThinking() {
+      const bar = document.getElementById('timerBar');
+      const txt = document.getElementById('timerText');
+      bar.className = 'timer-bar cpu';
+      bar.style.width = '100%';
+      txt.textContent = 'CPU が考え中…';
+    }
+
+    // ── CPU logic ─────────────────────────────────────────────────
+    function doCPUMove() {
+      if (over) return;
+      push(cpuPickCol());
+    }
+
+    function cpuPickCol() {
+      // 1. Win if possible
+      for (let c = 0; c < COLS; c++) {
+        if (checkWinOnBoard(simulatePush(board, c, P2))) return c;
+      }
+      // 2. Block opponent's win
+      for (let c = 0; c < COLS; c++) {
+        if (checkWinOnBoard(simulatePush(board, c, P1))) return c;
+      }
+      // 3. Random
+      return Math.floor(Math.random() * COLS);
+    }
+
+    function simulatePush(b, col, player) {
+      const copy = b.map(r => [...r]);
+      for (let r = ROWS - 1; r > 0; r--) copy[r][col] = copy[r - 1][col];
+      copy[0][col] = player;
+      return copy;
+    }
+
+    function checkWinOnBoard(b) {
+      for (let r = 0; r < ROWS; r++) {
+        for (let c = 0; c < COLS; c++) {
+          const p = b[r][c];
+          if (!p) continue;
+          for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
+            let count = 0;
+            for (let i = 0; i < 4; i++) {
+              const nr = r + dr*i, nc = c + dc*i;
+              if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || b[nr][nc] !== p) break;
+              count++;
+            }
+            if (count === 4) return true;
+          }
+        }
+      }
+      return false;
+    }
+
+    // ── Win check (returns cells) ─────────────────────────────────
     function checkWin() {
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
@@ -395,7 +526,7 @@
           for (const [dr, dc] of [[0,1],[1,0],[1,1],[1,-1]]) {
             const cells = [];
             for (let i = 0; i < 4; i++) {
-              const nr = r + dr * i, nc = c + dc * i;
+              const nr = r + dr*i, nc = c + dc*i;
               if (nr < 0 || nr >= ROWS || nc < 0 || nc >= COLS || board[nr][nc] !== p) break;
               cells.push([nr, nc]);
             }
@@ -408,6 +539,7 @@
 
     // ── New round ─────────────────────────────────────────────────
     function newRound() {
+      stopTimer();
       board     = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
       current   = P1;
       over      = false;
@@ -419,6 +551,17 @@
         for (let c = 0; c < COLS; c++) renderCell(r, c);
       updateTurn();
       lockButtons(false);
+      startTimer();
+    }
+
+    // ── CPU toggle ────────────────────────────────────────────────
+    function toggleCPU() {
+      cpuMode = !cpuMode;
+      const btn = document.getElementById('cpuBtn');
+      btn.classList.toggle('active', cpuMode);
+      btn.textContent = cpuMode ? '🤖 CPU対戦 ON' : '🤖 CPU対戦';
+      document.getElementById('p2Label').textContent = cpuMode ? '🤖 CPU' : '🟡 プレイヤー 2';
+      newRound();
     }
 
     // ── UI helpers ────────────────────────────────────────────────
@@ -426,7 +569,8 @@
       const cls = current === P1 ? 'p1-style' : 'p2-style';
       document.querySelectorAll('.push-btn').forEach(b => b.className = `push-btn ${cls}`);
       document.getElementById('turnPiece').style.background = COLOR[current];
-      document.getElementById('turnText').textContent = `${NAME[current]} のターン`;
+      const label = (cpuMode && current === P2) ? 'CPU のターン' : `${NAME[current]} のターン`;
+      document.getElementById('turnText').textContent = label;
     }
 
     function lockButtons(lock) {
@@ -434,8 +578,9 @@
     }
 
     function showWinBanner(p) {
+      const name = (cpuMode && p === P2) ? 'CPU' : NAME[p];
       document.getElementById('winEmoji').textContent = EMOJI[p];
-      document.getElementById('winTitle').textContent = `${NAME[p]} の勝ち！`;
+      document.getElementById('winTitle').textContent = `${name} の勝ち！`;
       document.getElementById('winSub').textContent   = 'おめでとう！🎊';
       document.getElementById('winBanner').classList.add('show');
       document.getElementById('backdrop').classList.add('show');
@@ -488,6 +633,7 @@
     }
 
     // ── Start ─────────────────────────────────────────────────────
+    cpuMode = false;
     buildDOM();
     newRound();
   </script>
