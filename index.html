@@ -147,6 +147,7 @@
     .filter-btn[data-cat="言語の違い"].active { background: #58a6ff; border-color: #58a6ff; }
     .filter-btn[data-cat="Web基礎"].active    { background: #3fb950; border-color: #3fb950; }
     .filter-btn[data-cat="npm"].active        { background: #f85149; border-color: #f85149; }
+    .filter-btn[data-cat="データ管理"].active { background: #00b4d8; border-color: #00b4d8; }
 
     .start-btn {
       width: 100%;
@@ -184,6 +185,7 @@
     .category-badge[data-cat="言語の違い"] { background: rgba(88,166,255,0.15);  border-color: rgba(88,166,255,0.35);  color: #58a6ff; }
     .category-badge[data-cat="Web基礎"]   { background: rgba(63,185,80,0.15);   border-color: rgba(63,185,80,0.35);   color: #3fb950; }
     .category-badge[data-cat="npm"]        { background: rgba(248,81,73,0.15);   border-color: rgba(248,81,73,0.35);   color: #f85149; }
+    .category-badge[data-cat="データ管理"] { background: rgba(0,180,216,0.15);   border-color: rgba(0,180,216,0.35);   color: #00b4d8; }
 
     /* ── Question ── */
     .question-number { font-size: 0.75rem; color: #8b949e; margin-bottom: 8px; }
@@ -289,7 +291,7 @@
     /* ── Next Button ── */
     .next-btn {
       display: none;
-      margin-top: 16px;
+      flex: 1;
       width: 100%;
       padding: 14px;
       background: linear-gradient(135deg, #00ffb4 0%, #58a6ff 100%);
@@ -365,7 +367,91 @@
       .question-text { font-size: 1.1rem; }
       .filter-btn { min-width: 80px; padding: 10px 14px; }
       .result-buttons { flex-direction: column; }
+      .wl-item { grid-template-columns: 1fr; gap: 3px; }
+      .action-row { flex-direction: column; }
     }
+
+    /* ── Word List ── */
+    .word-list-toggle {
+      width: 100%;
+      margin-top: 14px;
+      padding: 12px;
+      background: transparent;
+      border: 1px dashed #30363d;
+      border-radius: 10px;
+      color: #8b949e;
+      font-size: 0.88rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      letter-spacing: 0.03em;
+      text-align: center;
+    }
+    .word-list-toggle:hover { border-color: #58a6ff; color: #58a6ff; }
+
+    .word-list-section {
+      margin-top: 14px;
+      border: 1px solid #21262d;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .wl-cat-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: #1c2128;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-bottom: 1px solid #21262d;
+    }
+
+    .wl-item {
+      display: grid;
+      grid-template-columns: minmax(90px, 150px) 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 9px 16px;
+      border-bottom: 1px solid #21262d;
+      font-size: 0.83rem;
+      line-height: 1.5;
+      transition: background 0.1s;
+    }
+    .wl-item:last-child { border-bottom: none; }
+    .wl-item:hover { background: rgba(255,255,255,0.03); }
+    .wl-term {
+      font-family: 'Consolas','Monaco',monospace;
+      color: #e6edf3;
+      font-weight: 600;
+      font-size: 0.8rem;
+      padding-top: 1px;
+    }
+    .wl-def { color: #8b949e; }
+
+    /* ── Action Row (retry + next) ── */
+    .action-row { display: flex; gap: 10px; margin-top: 16px; }
+
+    .retry-btn {
+      display: none;
+      flex: 1;
+      padding: 14px;
+      background: transparent;
+      border: 1px solid #f85149;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f85149;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+    }
+    .retry-btn:hover { background: rgba(248,81,73,0.1); transform: translateY(-1px); }
+    .retry-btn.show  { display: block; }
   </style>
 </head>
 <body>
@@ -391,6 +477,8 @@
       <div class="filter-label">カテゴリを選択</div>
       <div class="filter-grid" id="filterGrid"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
+      <button class="word-list-toggle" id="wordListToggle" onclick="toggleWordList()">📚 単語リストを確認する ▾</button>
+      <div class="word-list-section" id="wordListSection" style="display:none"></div>
     </div>
 
     <!-- Quiz Body -->
@@ -406,7 +494,10 @@
           <div class="fb-hint" id="fbHint"></div>
         </div>
       </div>
-      <button class="next-btn" id="nextBtn" onclick="nextQuestion()"></button>
+      <div class="action-row">
+        <button class="retry-btn" id="retryBtn" onclick="retryQuestion()">もう一度挑戦 🔄</button>
+        <button class="next-btn" id="nextBtn" onclick="nextQuestion()"></button>
+      </div>
     </div>
 
     <!-- Result Screen -->
@@ -458,6 +549,15 @@
       'node_modules':     'npm install で取得したパッケージが格納されるフォルダ。通常 .gitignore に追加する。',
       'フロントエンド':   'ユーザーが目にする・操作するブラウザ側の領域。HTML/CSS/JS が担う。',
       'バックエンド':     'ユーザーからは見えないサーバー側の処理。データ管理・API 提供などを担う。',
+      'データベース':     'アプリを閉じてもデータが消えない「倉庫」。Firebase Firestoreなど。端末間でのデータ共有に必須。',
+      'GitHub':           'コード（設計図）を管理・共有するWebサービス。ユーザーが入力したデータの保存場所ではない。',
+      'Firebase':         'Googleが提供するBaaS（Backend as a Service）。認証・データベース・ホスティングなど開発に必要な機能をまとめて提供する。',
+      'Firestore':        'Firebaseが提供するNoSQLクラウドデータベース。リアルタイム同期とセキュリティルール設定が特徴。',
+      'localStorage':     'ブラウザに永続データを保存するWeb API。タブを閉じても残るが、同じ端末・ブラウザ内のみ有効。複数端末での共有は不可。',
+      'SessionStorage':   'ブラウザにデータを一時保存するWeb API。タブを閉じると消える。LINEのインアプリブラウザでは制限される。',
+      'ITP':              'Intelligent Tracking Prevention。SafariのプライバシーProtection機能。サードパーティCookieやリダイレクト後のセッションを制限し、Google認証フローに影響することがある。',
+      'OAuth':            'Open Authorization。パスワードを共有せず第三者サービスへ認証を委任する仕組み。Google認証などで使われる。',
+      'セキュリティルール': 'Firestoreでデータへのアクセス権限を定義する設定。デフォルトは全拒否で、`allow create: if request.auth != null;` のように明示的に許可する必要がある。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -670,10 +770,91 @@
         answer: 1,
         hint: 'サイズが大きくなるため .gitignore に追加し、Git の管理対象外にするのが慣例です。',
       },
+      // データ管理
+      {
+        category: 'データ管理',
+        text: '[[データベース]] と [[GitHub]] の違いとして正しいものはどれ？',
+        choices: ['GitHub はデータ保存場所、データベースはコード管理場所','どちらも同じ目的で使える','GitHub はコード（設計図）の置き場、データベースはユーザーデータの保存場所','データベースを使えば GitHub は不要になる'],
+        answer: 2,
+        hint: '「設計図（コード）」は GitHub、「ユーザーが入力したデータ」はデータベース。役割が全く異なります。',
+      },
+      {
+        category: 'データ管理',
+        text: 'アプリを閉じてもデータが端末をまたいで残るようにするには何が必要？',
+        choices: ['GitHub にプッシュする','[[データベース]]（Firebase 等）にデータを保存する','CSS ファイルに記述する','JavaScript の変数に入れておく'],
+        answer: 1,
+        hint: '変数はタブを閉じると消え、GitHub はコードの置き場。ユーザーデータの永続化・共有には[[データベース]]が必要です。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[localStorage]] を使った場合の説明として正しいものはどれ？',
+        choices: ['スマホと PC でデータが自動同期される','アプリを閉じてもデータは残るが、同じ端末・ブラウザ内でのみ有効','データがクラウドに自動バックアップされる','Git で管理できる'],
+        answer: 1,
+        hint: 'localStorage はブラウザ内の「引き出し」。別のスマホや別ブラウザとは共有できません。複数端末での共有には[[データベース]]が必要です。',
+      },
+      {
+        category: 'データ管理',
+        text: 'Safari の [[ITP]]（Intelligent Tracking Prevention）が Google 認証を妨げることがある理由は？',
+        choices: ['Safari は JavaScript をサポートしていないから','ITP がサードパーティ Cookie やリダイレクト後のセッションを制限するから','Safari は HTTPS 通信を拒否するから','ITP が localStorage を完全に無効化するから'],
+        answer: 1,
+        hint: 'ITP はプライバシー保護機能。外部サービスへのリダイレクトを経由した認証のセッション情報を削除することがあります。',
+      },
+      {
+        category: 'データ管理',
+        text: 'Safari / [[ITP]] の制限を避けて Google 認証を実装する方法として推奨されるのは？',
+        choices: ['signInWithRedirect（リダイレクト方式）','signInWithPopup（ポップアップ方式）','Cookie を手動で設定する','認証なしで実装する'],
+        answer: 1,
+        hint: 'リダイレクト後のセッション情報が ITP に削除されるため、ポップアップ方式の方が Safari で安定して動作します。',
+      },
+      {
+        category: 'データ管理',
+        text: 'LINE のインアプリブラウザで Google 認証が動作しない主な理由は？',
+        choices: ['LINE が JavaScript を無効化しているから','[[SessionStorage]] の制限により OAuth 認証フローが完了できないから','LINE は HTTPS 通信を拒否するから','Google 認証はモバイルで動作しないから'],
+        answer: 1,
+        hint: 'LINE のインアプリブラウザは [[SessionStorage]] を制限します。外部ブラウザ（Safari / Chrome）で開くよう案内するのが現実的な解決策です。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Firebase]] アプリで [[OAuth]] 認証を使うとき、Google Cloud コンソールの「承認済みドメイン」に登録すべきものは？',
+        choices: ['localhost のみ','web.app ドメインのみ','firebaseapp.com と web.app の両方','github.io ドメインのみ'],
+        answer: 2,
+        hint: 'Firebase プロジェクトは `<id>.firebaseapp.com` と `<id>.web.app` の 2 ドメインを持ちます。どちらも登録しないと認証エラーになります。',
+      },
+      {
+        category: 'データ管理',
+        text: 'ログイン済みユーザーが [[Firestore]] に新しいドキュメントを作成しようとしたらエラーになった。最も考えられる原因は？',
+        choices: ['Firestore が有料プランでないから','[[セキュリティルール]] で create 権限が許可されていないから','インターネット接続が不安定だから','JavaScript のバージョンが古いから'],
+        answer: 1,
+        hint: 'Firestore はデフォルト全拒否。`allow create: if request.auth != null;` のように [[セキュリティルール]] で明示的に許可する必要があります。',
+      },
+      {
+        category: 'データ管理',
+        text: '`file://` プロトコルで HTML ファイルを開いたとき、[[Firebase]] 認証が動作しない理由は？',
+        choices: ['Firebase は無料プランでローカル動作を制限しているから','Firebase 認証は [[HTTPS]] 必須のため、`file://` では動作しないから','ローカルでは JavaScript が実行されないから','ファイルサイズが大きすぎるから'],
+        answer: 1,
+        hint: 'セキュリティ上の理由から、Firebase 認証は HTTPS 環境（本番ドメインか `firebase serve`）でのみ動作します。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Firebase]] の説明として正しいものはどれ？',
+        choices: ['Gitリポジトリのホスティングサービス','Google が提供する BaaS で、認証・データベース・ホスティングなどをまとめて提供するサービス','JavaScript のフレームワーク','ブラウザのセキュリティ機能'],
+        answer: 1,
+        hint: 'BaaS（Backend as a Service）とは、サーバー側の機能をクラウドサービスとして提供するもの。自分でサーバーを立てずに本番品質のアプリを作れます。',
+      },
+    ];
+
+    // ── Word List Groups ──────────────────────────────────────────
+    const WORD_LIST_GROUPS = [
+      { cat: 'コマンド', color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
+      { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ'] },
+      { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド'] },
+      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS'] },
+      { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
-    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all';
+    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false;
 
     // ── Utils ─────────────────────────────────────────────────────
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -696,12 +877,13 @@
 
     // ── Filter Grid ───────────────────────────────────────────────
     const CATS = [
-      { key: 'all',      label: 'すべて' },
-      { key: 'コマンド', label: 'コマンド' },
-      { key: 'Git',      label: 'Git' },
+      { key: 'all',        label: 'すべて' },
+      { key: 'コマンド',   label: 'コマンド' },
+      { key: 'Git',        label: 'Git' },
       { key: '言語の違い', label: '言語の違い' },
-      { key: 'Web基礎',  label: 'Web 基礎' },
-      { key: 'npm',      label: 'npm' },
+      { key: 'Web基礎',    label: 'Web 基礎' },
+      { key: 'npm',        label: 'npm' },
+      { key: 'データ管理', label: 'データ管理' },
     ];
 
     function initFilterGrid() {
@@ -769,6 +951,41 @@
       tipEl.style.top  = y + 'px';
     });
 
+    // ── Word List ─────────────────────────────────────────────────
+    function buildWordList() {
+      const section = document.getElementById('wordListSection');
+      section.innerHTML = '';
+      WORD_LIST_GROUPS.forEach(({ cat, color, terms }) => {
+        const header = document.createElement('div');
+        header.className = 'wl-cat-header';
+        header.style.color = color;
+        header.textContent = cat;
+        section.appendChild(header);
+        terms.forEach(term => {
+          const def = GLOSSARY[term];
+          if (!def) return;
+          const row = document.createElement('div');
+          row.className = 'wl-item';
+          row.innerHTML = `<span class="wl-term">${escapeHtml(term)}</span><span class="wl-def">${escapeHtml(def)}</span>`;
+          section.appendChild(row);
+        });
+      });
+    }
+
+    let wordListOpen = false;
+    function toggleWordList() {
+      wordListOpen = !wordListOpen;
+      document.getElementById('wordListSection').style.display = wordListOpen ? '' : 'none';
+      document.getElementById('wordListToggle').textContent =
+        wordListOpen ? '📚 単語リストを閉じる ▴' : '📚 単語リストを確認する ▾';
+    }
+
+    // ── Retry ─────────────────────────────────────────────────────
+    function retryQuestion() {
+      retriedCurrent = true;
+      renderQuestion();
+    }
+
     // ── Quiz Flow ─────────────────────────────────────────────────
     function startQuiz() {
       const pool = selectedCategory === 'all'
@@ -777,6 +994,7 @@
       questions = shuffle(pool).slice(0, Math.min(10, pool.length));
       currentIndex = 0;
       score = 0;
+      retriedCurrent = false;
       showScreen('quiz');
       renderQuestion();
     }
@@ -808,6 +1026,7 @@
 
       document.getElementById('feedback').className = 'feedback';
       document.getElementById('nextBtn').classList.remove('show');
+      document.getElementById('retryBtn').classList.remove('show');
     }
 
     function selectAnswer(idx) {
@@ -822,7 +1041,7 @@
       btns[idx].classList.add(ok ? 'correct' : 'wrong');
       if (!ok) btns[q.answer].classList.add('correct');
 
-      if (ok) score++;
+      if (ok && !retriedCurrent) score++;
 
       const fb = document.getElementById('feedback');
       fb.className = 'feedback ' + (ok ? 'correct-fb' : 'wrong-fb') + ' show';
@@ -830,12 +1049,15 @@
       document.getElementById('fbMain').textContent = ok ? '正解！すばらしい！' : `不正解… 正解は「${'ABCD'[q.answer]}」でした。`;
       document.getElementById('fbHint').textContent = q.hint;
 
+      if (!ok) document.getElementById('retryBtn').classList.add('show');
+
       const nb = document.getElementById('nextBtn');
       nb.textContent = currentIndex + 1 < questions.length ? '次の問題へ →' : '結果を見る 🎉';
       nb.classList.add('show');
     }
 
     function nextQuestion() {
+      retriedCurrent = false;
       currentIndex++;
       currentIndex < questions.length ? renderQuestion() : showResult();
     }
@@ -863,6 +1085,7 @@
 
     // ── Init ──────────────────────────────────────────────────────
     initFilterGrid();
+    buildWordList();
     showScreen('start');
   </script>
 </body>
