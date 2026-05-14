@@ -188,7 +188,19 @@
     .category-badge[data-cat="データ管理"] { background: rgba(0,180,216,0.15);   border-color: rgba(0,180,216,0.35);   color: #00b4d8; }
 
     /* ── Question ── */
-    .question-number { font-size: 0.75rem; color: #8b949e; margin-bottom: 8px; }
+    .question-number {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #8b949e;
+      margin-bottom: 8px;
+    }
+
+    .difficulty-stars { letter-spacing: 0.05em; font-size: 0.82rem; }
+    .difficulty-stars.d1 { color: #3fb950; }
+    .difficulty-stars.d2 { color: #e3b341; }
+    .difficulty-stars.d3 { color: #f85149; }
 
     .question-text {
       font-size: 1.25rem;
@@ -620,6 +632,7 @@
         text: '`cd` コマンドの正式名称・意味として正しいものはどれ？',
         choices: ['Copy Directory（ディレクトリをコピーする）','Change Directory（ディレクトリを移動する）','Create Directory（ディレクトリを作成する）','Current Directory（現在地を表示する）'],
         answer: 1,
+        difficulty: 1,
         hint: '`cd ..` で一つ上の階層へ、`cd ~/Desktop` でデスクトップへ移動できます。',
       },
       {
@@ -627,6 +640,7 @@
         text: '新しいディレクトリを作成するコマンドはどれ？',
         choices: ['`touch`','`ls`','`mkdir`','`rm`'],
         answer: 2,
+        difficulty: 1,
         hint: 'make directory の略。`mkdir myApp` のように使います。',
       },
       {
@@ -634,6 +648,7 @@
         text: 'ターミナルで現在いるディレクトリのパスを確認するコマンドは？',
         choices: ['`ls`','`pwd`','`cat`','`echo`'],
         answer: 1,
+        difficulty: 1,
         hint: 'print working directory の略。`/Users/名前/...` のように表示されます。',
       },
       {
@@ -641,6 +656,7 @@
         text: 'カレントディレクトリのファイル・フォルダ一覧を表示するコマンドは？',
         choices: ['`pwd`','`mv`','`ls`','`touch`'],
         answer: 2,
+        difficulty: 1,
         hint: '`ls -la` とすると隠しファイルや詳細情報も表示されます。',
       },
       {
@@ -648,6 +664,7 @@
         text: '空のファイルを新しく作成するコマンドはどれ？',
         choices: ['`mkdir`','`touch`','`cat`','`cp`'],
         answer: 1,
+        difficulty: 1,
         hint: '`touch index.html` で空の HTML ファイルが作成されます。',
       },
       {
@@ -655,6 +672,7 @@
         text: 'ファイルを移動またはリネーム（名前変更）するコマンドはどれ？',
         choices: ['`cp`','`ls`','`rm`','`mv`'],
         answer: 3,
+        difficulty: 2,
         hint: 'move の略。`mv old.txt new.txt` でリネーム、`mv file.txt ./dir/` で移動できます。',
       },
       {
@@ -662,6 +680,7 @@
         text: 'ファイルを削除するコマンドはどれ？（元に戻せないので注意！）',
         choices: ['`del`','`rm`','`mv`','`cut`'],
         answer: 1,
+        difficulty: 2,
         hint: 'remove の略。`rm -r フォルダ名` でフォルダごと削除できますが、慎重に！',
       },
       // Git
@@ -670,6 +689,7 @@
         text: '変更ファイルを[[ステージングエリア]]に追加する Git コマンドは？',
         choices: ['`git commit`','`git push`','`git add`','`git status`'],
         answer: 2,
+        difficulty: 1,
         hint: '`git add .` で全変更ファイルをまとめてステージングできます。',
       },
       {
@@ -677,6 +697,7 @@
         text: 'ステージングした変更を[[リポジトリ]]に記録（保存）する Git コマンドは？',
         choices: ['`git add`','`git save`','`git commit`','`git push`'],
         answer: 2,
+        difficulty: 1,
         hint: '`git commit -m "コメント"` でコミットメッセージを付けて記録します。',
       },
       {
@@ -684,6 +705,7 @@
         text: 'ローカルのコミットをリモート[[リポジトリ]]に送信するコマンドは？',
         choices: ['`git pull`','`git fetch`','`git merge`','`git push`'],
         answer: 3,
+        difficulty: 1,
         hint: '「押し出す」イメージ。`git push origin main` で main ブランチに送信します。',
       },
       {
@@ -691,6 +713,7 @@
         text: 'リモート[[リポジトリ]]の変更をローカルに取得・統合するコマンドは？',
         choices: ['`git push`','`git clone`','`git pull`','`git init`'],
         answer: 2,
+        difficulty: 2,
         hint: 'fetch（取得）＋ merge（統合）を一度に行います。チーム開発で頻繁に使います。',
       },
       {
@@ -698,6 +721,7 @@
         text: 'カレントディレクトリを新しい Git [[リポジトリ]]として初期化するコマンドは？',
         choices: ['`git start`','`git new`','`git create`','`git init`'],
         answer: 3,
+        difficulty: 1,
         hint: 'プロジェクト開始時に一度だけ実行します。`.git` フォルダが作成されます。',
       },
       {
@@ -705,6 +729,7 @@
         text: '作業ツリーの変更状態（変更済み・ステージング済みかどうか）を確認するコマンドは？',
         choices: ['`git log`','`git status`','`git diff`','`git show`'],
         answer: 1,
+        difficulty: 1,
         hint: 'こまめに `git status` を確認する習慣をつけると、作業の見通しが良くなります。',
       },
       {
@@ -712,6 +737,7 @@
         text: 'コミットの履歴（ログ）を一覧表示するコマンドは？',
         choices: ['`git history`','`git status`','`git log`','`git show`'],
         answer: 2,
+        difficulty: 2,
         hint: '`git log --oneline` で一行ずつコンパクトに表示できます。',
       },
       {
@@ -719,6 +745,7 @@
         text: 'リモート[[リポジトリ]]をローカルにまるごとコピーするコマンドは？',
         choices: ['`git pull`','`git init`','`git fetch`','`git clone`'],
         answer: 3,
+        difficulty: 2,
         hint: 'GitHub の URL を指定して `git clone <URL>` と実行します。',
       },
       {
@@ -726,6 +753,7 @@
         text: '`git remote add origin <URL>` コマンドの役割として正しいものはどれ？',
         choices: ['リモート[[リポジトリ]]からファイルをダウンロードする','ローカル[[リポジトリ]]と [[GitHub]] の[[リポジトリ]]を紐付ける','ファイルの変更をコミットする','リモート[[リポジトリ]]を削除する'],
         answer: 1,
+        difficulty: 2,
         hint: '`origin` はリモートリポジトリの「あだ名」。この設定をしないと `git push` の送り先がわかりません。',
       },
       {
@@ -733,6 +761,7 @@
         text: '`git push -u origin main` の `-u` フラグの意味として正しいものはどれ？',
         choices: ['強制的に上書きして push する','upstream（追跡先）を設定し、次回から `git push` だけで済むようにする','ユーザー認証を求める','アンドゥ（取り消し）する'],
         answer: 1,
+        difficulty: 3,
         hint: '`-u` は `--set-upstream` の略。一度設定すれば次回から `git push` だけで OK になります。',
       },
       {
@@ -740,6 +769,7 @@
         text: '[[GitHub]] の Public リポジトリについて正しい説明はどれ？',
         choices: ['パスワードを知っている人だけ見られる','コードは誰でも閲覧可能だが、URL を知らなければ実質アクセスされにくい','チームメンバーだけがアクセスできる','有料プランでないと設定できない'],
         answer: 1,
+        difficulty: 1,
         hint: 'Public でも URL を共有しない限り検索で引っかかる可能性はほぼゼロ。「鍵のない倉庫だが場所を誰も知らない」イメージ。',
       },
       // 言語の違い
@@ -748,6 +778,7 @@
         text: '[[Java]] と [[JavaScript]] の関係として最も正確な説明はどれ？',
         choices: ['Java の軽量バージョンが JavaScript である','名前が似ているだけで、別会社が開発した全く異なる言語','JavaScript は Java のブラウザ向け方言である','現在は同じ規格に統一されている'],
         answer: 1,
+        difficulty: 1,
         hint: 'Java は Sun Microsystems、JavaScript は Netscape が開発。当時の Java 人気にあやかった命名です。',
       },
       {
@@ -755,6 +786,7 @@
         text: '[[JavaScript]] が主に動作する環境として最も適切なものはどれ？',
         choices: ['サーバーサイドのみ','ブラウザ（クライアントサイド）、および [[Node.js]] でサーバーサイドも可','モバイルアプリ専用','データベース操作専用'],
         answer: 1,
+        difficulty: 2,
         hint: 'Node.js の登場でブラウザ外でも実行できるようになりました。',
       },
       {
@@ -762,6 +794,7 @@
         text: '[[フロントエンド]] と [[バックエンド]] の説明として正しいものはどれ？',
         choices: ['フロントエンド＝サーバー処理 ／ バックエンド＝画面表示','フロントエンド＝画面表示・操作 ／ バックエンド＝サーバー処理・データ管理','どちらも同じ意味で使われる','フロントエンド＝データベース ／ バックエンド＝デザイン'],
         answer: 1,
+        difficulty: 1,
         hint: 'ユーザーが「見る・触る」側がフロント、「見えない裏側」がバックエンドです。',
       },
       {
@@ -769,6 +802,7 @@
         text: '次の中で [[フロントエンド]] の技術に当てはまるものはどれ？',
         choices: ['Python / Django','Ruby / Ruby on Rails','[[HTML]] / [[CSS]] / [[JavaScript]]','Java / Spring Boot'],
         answer: 2,
+        difficulty: 1,
         hint: '「ブラウザで動く」技術がフロントエンドです。',
       },
       {
@@ -776,6 +810,7 @@
         text: 'プログラムを実行前に機械語に変換（コンパイル）が必要な言語の分類は？',
         choices: ['インタープリタ言語','スクリプト言語','マークアップ言語','コンパイル言語'],
         answer: 3,
+        difficulty: 3,
         hint: 'Java や C++ が代表例。実行前に変換するため速度が速い傾向があります。',
       },
       // Web基礎
@@ -784,6 +819,7 @@
         text: '[[HTML]]・[[CSS]]・[[JavaScript]] それぞれの役割として正しいものはどれ？',
         choices: ['HTML＝デザイン ／ CSS＝構造 ／ JS＝アニメーション','HTML＝構造 ／ CSS＝装飾・レイアウト ／ JS＝動的処理','HTML＝プログラム ／ CSS＝データ ／ JS＝表示','HTML＝色指定 ／ CSS＝文章 ／ JS＝画像'],
         answer: 1,
+        difficulty: 1,
         hint: '「骨格・外見・動き」で覚えると整理しやすいです。',
       },
       {
@@ -791,6 +827,7 @@
         text: '[[HTTP]] と [[HTTPS]] の違いとして正しいものはどれ？',
         choices: ['HTTPS の方が古い通信規格である','HTTP は高速、HTTPS は低速なので用途が異なる','HTTPS は HTTP に暗号化（SSL/TLS）を追加した安全な通信規格','2つは全く別のプロトコルで互換性がない'],
         answer: 2,
+        difficulty: 1,
         hint: 'ブラウザの🔒マークが HTTPS の証拠。パスワードや決済には HTTPS が必須です。',
       },
       {
@@ -798,6 +835,7 @@
         text: 'ブラウザの主な役割として正しいものはどれ？',
         choices: ['サーバーにデータを保存する','[[HTML]]/[[CSS]]/[[JavaScript]] を解釈してWebページを画面に表示する','データベースを管理する','プログラムをコンパイルして配布する'],
         answer: 1,
+        difficulty: 1,
         hint: 'Chrome・Firefox・Safari などがブラウザ。HTML を読んで画面を描画（レンダリング）します。',
       },
       {
@@ -805,6 +843,7 @@
         text: 'クライアントサイドとサーバーサイドの説明として正しいものはどれ？',
         choices: ['クライアント＝データを保存する側 ／ サーバー＝要求する側','クライアント＝データを要求する側（ブラウザ）／ サーバー＝データを提供する側','どちらも同じ意味','クライアント＝プログラミング言語 ／ サーバー＝データベース'],
         answer: 1,
+        difficulty: 2,
         hint: '「お客さん（client）がお店（server）に注文する」イメージです。',
       },
       {
@@ -812,6 +851,7 @@
         text: '[[HTML]] で最大の見出し（タイトル）を表すタグとして正しいものはどれ？',
         choices: ['`<head>`','`<title>`','`<h1>`','`<p>`'],
         answer: 2,
+        difficulty: 1,
         hint: 'h は heading（見出し）の略。h1 が最大で h6 まであります。`<p>` は段落、`<head>` はメタ情報。',
       },
       {
@@ -819,6 +859,7 @@
         text: '[[GitHub Pages]] の説明として正しいものはどれ？',
         choices: ['GitHub が提供する有料のサーバーホスティングサービス','[[GitHub]] リポジトリの [[HTML]] ファイルをそのまま Webサイトとして無料公開できるサービス','データベースを提供するクラウドサービス','Git のコマンドを視覚的に操作できるツール'],
         answer: 1,
+        difficulty: 1,
         hint: '[[静的サイト]]（HTML/CSS/JS のみ）なら無料で公開できます。認証やデータベースが不要なアプリに最適です。',
       },
       {
@@ -826,6 +867,7 @@
         text: '[[静的サイト]] と [[動的サイト]] の違いとして正しいものはどれ？',
         choices: ['静的サイト＝アニメーションあり ／ 動的サイト＝アニメーションなし','静的サイト＝HTML をそのまま配信 ／ 動的サイト＝サーバーがデータに応じて内容を生成','静的サイト＝スマホ対応 ／ 動的サイト＝PC 専用','静的サイト＝無料 ／ 動的サイト＝有料'],
         answer: 1,
+        difficulty: 2,
         hint: '虎の巻クイズは[[静的サイト]]（問題がコードに書いてある）。ikuzi-log は[[動的サイト]]（Firestore にデータを保存・取得）。',
       },
       {
@@ -833,6 +875,7 @@
         text: '[[静的サイト]] に[[データベース]]が不要な理由として正しいものはどれ？',
         choices: ['静的サイトはデータを表示できないから','表示する内容が HTML などのファイルに最初から全部書いてあるから','静的サイトは [[JavaScript]] が使えないから','[[データベース]]は有料だから'],
         answer: 1,
+        difficulty: 2,
         hint: '虎の巻の問題はすべて index.html の中に書いてあります。ユーザーが入力・保存するデータがないので倉庫（[[データベース]]）は不要です。',
       },
       // npm
@@ -841,6 +884,7 @@
         text: '[[npm]] の正式名称として正しいものはどれ？',
         choices: ['New Package Manager','Node Package Manager','Node Program Module','Network Package Module'],
         answer: 1,
+        difficulty: 1,
         hint: '[[Node.js]] のパッケージ管理ツール。世界最大のソフトウェアレジストリです。',
       },
       {
@@ -848,6 +892,7 @@
         text: '`npm install` を実行すると何が起こる？',
         choices: ['Node.js 本体をインストールする','[[package.json]] に記載されたパッケージをダウンロード・インストールする','プロジェクトを初期化して [[package.json]] を生成する','インストール済みパッケージの一覧を表示する'],
         answer: 1,
+        difficulty: 2,
         hint: 'ダウンロードされたパッケージは [[node_modules]] フォルダに保存されます。',
       },
       {
@@ -855,6 +900,7 @@
         text: '[[package.json]] の主な役割として正しいものはどれ？',
         choices: ['HTML テンプレートを定義するファイル','プロジェクトの情報・依存パッケージ・スクリプトなどを記述する設定ファイル','CSS の変数をまとめるファイル','Git の設定を記述するファイル'],
         answer: 1,
+        difficulty: 2,
         hint: '`npm init` を実行すると自動生成されます。依存関係の「設計図」です。',
       },
       {
@@ -862,6 +908,7 @@
         text: '[[node_modules]] フォルダについて正しい説明はどれ？',
         choices: ['Git で必ずコミットしてチームで共有すべきフォルダ','npm でインストールしたパッケージが入るフォルダで、通常は .gitignore に追加する','自分で書いたコードを置くフォルダ','CSS や画像ファイルを置く専用フォルダ'],
         answer: 1,
+        difficulty: 2,
         hint: 'サイズが大きくなるため .gitignore に追加し、Git の管理対象外にするのが慣例です。',
       },
       // データ管理
@@ -870,6 +917,7 @@
         text: '[[データベース]] と [[GitHub]] の違いとして正しいものはどれ？',
         choices: ['GitHub はデータ保存場所、データベースはコード管理場所','どちらも同じ目的で使える','GitHub はコード（設計図）の置き場、データベースはユーザーデータの保存場所','データベースを使えば GitHub は不要になる'],
         answer: 2,
+        difficulty: 1,
         hint: '「設計図（コード）」は GitHub、「ユーザーが入力したデータ」はデータベース。役割が全く異なります。',
       },
       {
@@ -877,6 +925,7 @@
         text: 'アプリを閉じてもデータが端末をまたいで残るようにするには何が必要？',
         choices: ['GitHub にプッシュする','[[データベース]]（Firebase 等）にデータを保存する','CSS ファイルに記述する','JavaScript の変数に入れておく'],
         answer: 1,
+        difficulty: 1,
         hint: '変数はタブを閉じると消え、GitHub はコードの置き場。ユーザーデータの永続化・共有には[[データベース]]が必要です。',
       },
       {
@@ -884,6 +933,7 @@
         text: '[[localStorage]] を使った場合の説明として正しいものはどれ？',
         choices: ['スマホと PC でデータが自動同期される','アプリを閉じてもデータは残るが、同じ端末・ブラウザ内でのみ有効','データがクラウドに自動バックアップされる','Git で管理できる'],
         answer: 1,
+        difficulty: 2,
         hint: 'localStorage はブラウザ内の「引き出し」。別のスマホや別ブラウザとは共有できません。複数端末での共有には[[データベース]]が必要です。',
       },
       {
@@ -891,6 +941,7 @@
         text: 'Safari の [[ITP]]（Intelligent Tracking Prevention）が Google 認証を妨げることがある理由は？',
         choices: ['Safari は JavaScript をサポートしていないから','ITP がサードパーティ Cookie やリダイレクト後のセッションを制限するから','Safari は HTTPS 通信を拒否するから','ITP が localStorage を完全に無効化するから'],
         answer: 1,
+        difficulty: 3,
         hint: 'ITP はプライバシー保護機能。外部サービスへのリダイレクトを経由した認証のセッション情報を削除することがあります。',
       },
       {
@@ -898,6 +949,7 @@
         text: 'Safari / [[ITP]] の制限を避けて Google 認証を実装する方法として推奨されるのは？',
         choices: ['signInWithRedirect（リダイレクト方式）','signInWithPopup（ポップアップ方式）','Cookie を手動で設定する','認証なしで実装する'],
         answer: 1,
+        difficulty: 3,
         hint: 'リダイレクト後のセッション情報が ITP に削除されるため、ポップアップ方式の方が Safari で安定して動作します。',
       },
       {
@@ -905,6 +957,7 @@
         text: 'LINE のインアプリブラウザで Google 認証が動作しない主な理由は？',
         choices: ['LINE が JavaScript を無効化しているから','[[SessionStorage]] の制限により OAuth 認証フローが完了できないから','LINE は HTTPS 通信を拒否するから','Google 認証はモバイルで動作しないから'],
         answer: 1,
+        difficulty: 3,
         hint: 'LINE のインアプリブラウザは [[SessionStorage]] を制限します。外部ブラウザ（Safari / Chrome）で開くよう案内するのが現実的な解決策です。',
       },
       {
@@ -912,6 +965,7 @@
         text: '[[Firebase]] アプリで [[OAuth]] 認証を使うとき、Google Cloud コンソールの「承認済みドメイン」に登録すべきものは？',
         choices: ['localhost のみ','web.app ドメインのみ','firebaseapp.com と web.app の両方','github.io ドメインのみ'],
         answer: 2,
+        difficulty: 3,
         hint: 'Firebase プロジェクトは `<id>.firebaseapp.com` と `<id>.web.app` の 2 ドメインを持ちます。どちらも登録しないと認証エラーになります。',
       },
       {
@@ -919,6 +973,7 @@
         text: 'ログイン済みユーザーが [[Firestore]] に新しいドキュメントを作成しようとしたらエラーになった。最も考えられる原因は？',
         choices: ['Firestore が有料プランでないから','[[セキュリティルール]] で create 権限が許可されていないから','インターネット接続が不安定だから','JavaScript のバージョンが古いから'],
         answer: 1,
+        difficulty: 3,
         hint: 'Firestore はデフォルト全拒否。`allow create: if request.auth != null;` のように [[セキュリティルール]] で明示的に許可する必要があります。',
       },
       {
@@ -926,6 +981,7 @@
         text: '`file://` プロトコルで HTML ファイルを開いたとき、[[Firebase]] 認証が動作しない理由は？',
         choices: ['Firebase は無料プランでローカル動作を制限しているから','Firebase 認証は [[HTTPS]] 必須のため、`file://` では動作しないから','ローカルでは JavaScript が実行されないから','ファイルサイズが大きすぎるから'],
         answer: 1,
+        difficulty: 2,
         hint: 'セキュリティ上の理由から、Firebase 認証は HTTPS 環境（本番ドメインか `firebase serve`）でのみ動作します。',
       },
       {
@@ -933,6 +989,7 @@
         text: '[[Firebase]] の説明として正しいものはどれ？',
         choices: ['Gitリポジトリのホスティングサービス','Google が提供する BaaS で、認証・データベース・ホスティングなどをまとめて提供するサービス','JavaScript のフレームワーク','ブラウザのセキュリティ機能'],
         answer: 1,
+        difficulty: 2,
         hint: 'BaaS（Backend as a Service）とは、サーバー側の機能をクラウドサービスとして提供するもの。自分でサーバーを立てずに本番品質のアプリを作れます。',
       },
     ];
@@ -1162,7 +1219,10 @@
       badge.textContent = q.category;
       badge.dataset.cat = q.category;
 
-      document.getElementById('questionNumber').textContent = `Q${currentIndex + 1}`;
+      const stars = ['★☆☆','★★☆','★★★'][q.difficulty - 1] || '★☆☆';
+      const dClass = `d${q.difficulty || 1}`;
+      document.getElementById('questionNumber').innerHTML =
+        `<span>Q${currentIndex + 1}</span><span class="difficulty-stars ${dClass}">${stars}</span>`;
       document.getElementById('questionText').innerHTML = renderText(q.text);
 
       const container = document.getElementById('choicesContainer');
