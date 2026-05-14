@@ -3,64 +3,64 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>🔥 プッシュ四目並べ</title>
+  <title>⬇️ プッシュ四目並べ</title>
   <style>
     :root {
-      --cell: 52px;
-      --gap:  8px;
-      --slide: 60px; /* cell + gap */
+      --cell: 72px;
+      --gap:  10px;
+      --step: 82px; /* cell + gap */
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       min-height: 100vh;
-      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 20px 12px;
+      padding: 24px 16px;
     }
 
     h1 {
+      font-size: 2rem;
       color: #fff;
-      font-size: 1.8rem;
-      text-shadow: 0 2px 14px rgba(0,0,0,0.25);
-      margin-bottom: 10px;
-      letter-spacing: 0.03em;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.25);
+      margin-bottom: 12px;
+      letter-spacing: 0.04em;
     }
 
     .how-to {
-      background: rgba(255,255,255,0.22);
-      backdrop-filter: blur(8px);
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(10px);
       border-radius: 10px;
-      padding: 7px 18px;
+      padding: 7px 20px;
       color: #fff;
-      font-size: 0.8rem;
-      margin-bottom: 16px;
+      font-size: 0.82rem;
+      margin-bottom: 18px;
       text-align: center;
       line-height: 1.6;
     }
 
     /* ── Score ── */
-    .score-wrap { display: flex; gap: 14px; margin-bottom: 14px; }
+    .score-wrap { display: flex; gap: 16px; margin-bottom: 16px; }
 
     .score-card {
       background: rgba(255,255,255,0.18);
-      backdrop-filter: blur(8px);
-      border-radius: 12px;
-      padding: 8px 22px;
-      color: #fff;
+      backdrop-filter: blur(10px);
+      border-radius: 14px;
+      padding: 10px 28px;
       text-align: center;
-      min-width: 105px;
+      color: #fff;
+      min-width: 110px;
     }
 
-    .score-card .s-name { font-size: 0.75rem; opacity: 0.85; margin-bottom: 2px; }
-    .score-card .s-num  { font-size: 1.8rem; font-weight: 700; }
-    .p1-card .s-num { color: #ffd6d6; }
-    .p2-card .s-num { color: #d6eeff; }
+    .score-card .s-name { font-size: 0.78rem; opacity: 0.85; margin-bottom: 2px; }
+    .score-card .s-num  { font-size: 2rem; font-weight: 700; }
+    .p1-card .s-num { color: #ff8a80; }
+    .p2-card .s-num { color: #fff59d; }
 
     /* ── Turn ── */
     .turn-display {
@@ -68,136 +68,130 @@
       align-items: center;
       gap: 10px;
       background: rgba(255,255,255,0.22);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       border-radius: 50px;
-      padding: 9px 22px;
-      margin-bottom: 18px;
+      padding: 10px 24px;
+      margin-bottom: 22px;
       color: #fff;
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 700;
+      min-width: 220px;
+      justify-content: center;
     }
 
     .turn-piece {
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       border-radius: 50%;
       flex-shrink: 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
       transition: background 0.3s;
     }
 
-    /* ── Game layout ── */
-    .game-area {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .arrow-col {
+    /* ── Board wrap (contains push buttons + grid) ── */
+    .board-wrap {
+      background: #1565c0;
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.45), inset 0 2px 4px rgba(255,255,255,0.12);
       display: flex;
       flex-direction: column;
+      gap: 8px;
+    }
+
+    /* ── Push buttons row ── */
+    .push-row {
+      display: flex;
       gap: var(--gap);
     }
 
-    /* ── Push buttons ── */
     .push-btn {
-      width: 44px;
-      height: var(--cell);
+      width: var(--cell);
+      height: 42px;
       border: none;
       border-radius: 10px;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       cursor: pointer;
-      font-family: inherit;
       color: #fff;
+      font-family: inherit;
       transition: transform 0.12s, opacity 0.15s, background 0.2s;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255,255,255,0.22);
+      background: rgba(255,255,255,0.18);
     }
 
-    .push-btn.p1-style { background: rgba(245,87,108,0.55); }
-    .push-btn.p2-style { background: rgba(79,172,254,0.55); }
-    .push-btn:hover:not(:disabled) { transform: scale(1.12); }
-    .push-btn:active:not(:disabled) { transform: scale(0.93); }
-    .push-btn:disabled { opacity: 0.25; cursor: not-allowed; transform: none; }
+    .push-btn.p1-style { background: rgba(244,67,54,0.55); }
+    .push-btn.p2-style { background: rgba(255,235,59,0.55); }
+    .push-btn:hover:not(:disabled) { transform: scale(1.1); }
+    .push-btn:active:not(:disabled) { transform: scale(0.92); }
+    .push-btn:disabled { opacity: 0.3; cursor: not-allowed; transform: none; }
 
-    /* ── Board ── */
-    .board-wrap {
-      background: #1a1a2e;
-      border-radius: 18px;
-      padding: 12px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.45), inset 0 1px 2px rgba(255,255,255,0.07);
-    }
-
+    /* ── Board grid ── */
     .board {
+      display: flex;
+      gap: var(--gap);
+    }
+
+    /* Column: overflow hidden clips the slide-in animation */
+    .col-wrap {
+      overflow: hidden;
+      border-radius: 6px;
+    }
+
+    .col-inner {
       display: flex;
       flex-direction: column;
       gap: var(--gap);
     }
 
-    /* Row with overflow clip for slide animation */
-    .row-wrap {
-      overflow: hidden;
-      border-radius: 6px;
+    @keyframes slideFromTop {
+      from { transform: translateY(calc(-1 * var(--step))); }
+      to   { transform: translateY(0); }
     }
 
-    .row-inner {
-      display: flex;
-      gap: var(--gap);
+    .col-inner.anim-down {
+      animation: slideFromTop 0.28s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
-
-    @keyframes slideFromLeft {
-      from { transform: translateX(calc(-1 * var(--slide))); }
-      to   { transform: translateX(0); }
-    }
-
-    @keyframes slideFromRight {
-      from { transform: translateX(var(--slide)); }
-      to   { transform: translateX(0); }
-    }
-
-    .row-inner.anim-left  { animation: slideFromLeft  0.28s cubic-bezier(0.25,0.46,0.45,0.94); }
-    .row-inner.anim-right { animation: slideFromRight 0.28s cubic-bezier(0.25,0.46,0.45,0.94); }
 
     /* ── Cells ── */
     .cell {
       width: var(--cell);
       height: var(--cell);
       border-radius: 50%;
-      background: #16213e;
-      box-shadow: inset 0 3px 10px rgba(0,0,0,0.5);
+      background: #0d47a1;
+      box-shadow: inset 0 4px 10px rgba(0,0,0,0.45);
       flex-shrink: 0;
     }
 
     .cell.p1 {
-      background: #f5576c;
-      box-shadow: 0 4px 14px rgba(245,87,108,0.65), inset 0 2px 4px rgba(255,255,255,0.2);
+      background: #f44336;
+      box-shadow: 0 4px 14px rgba(244,67,54,0.6), inset 0 2px 4px rgba(255,255,255,0.25);
     }
 
     .cell.p2 {
-      background: #4facfe;
-      box-shadow: 0 4px 14px rgba(79,172,254,0.6), inset 0 2px 4px rgba(255,255,255,0.2);
+      background: #ffeb3b;
+      box-shadow: 0 4px 14px rgba(255,235,59,0.6), inset 0 2px 4px rgba(255,255,255,0.35);
     }
 
     .cell.win { animation: winPulse 0.55s ease-in-out infinite alternate; }
 
     @keyframes winPulse {
-      from { transform: scale(1);    filter: brightness(1); }
-      to   { transform: scale(1.14); filter: brightness(1.45); }
+      from { transform: scale(1);    box-shadow: 0 4px 14px rgba(255,255,255,0.3); }
+      to   { transform: scale(1.12); box-shadow: 0 0 28px rgba(255,255,255,0.85); }
     }
 
-    /* ── Buttons ── */
-    .btn-row { display: flex; gap: 12px; margin-top: 18px; }
+    /* ── Action buttons ── */
+    .btn-row { display: flex; gap: 12px; margin-top: 20px; }
 
     .action-btn {
-      padding: 11px 26px;
+      padding: 11px 28px;
       background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       border: 2px solid rgba(255,255,255,0.4);
       border-radius: 50px;
       color: #fff;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       font-weight: 700;
       cursor: pointer;
       font-family: inherit;
@@ -216,7 +210,7 @@
       top: 50%; left: 50%;
       background: #fff;
       border-radius: 24px;
-      padding: 40px 56px;
+      padding: 44px 60px;
       text-align: center;
       box-shadow: 0 24px 80px rgba(0,0,0,0.4);
       z-index: 100;
@@ -232,13 +226,13 @@
       to   { transform: translate(-50%,-50%) scale(1);   opacity: 1; }
     }
 
-    .win-emoji { font-size: 3.5rem; margin-bottom: 10px; }
-    .win-title { font-size: 1.8rem; font-weight: 700; color: #333; margin-bottom: 6px; }
-    .win-sub   { font-size: 0.92rem; color: #888; margin-bottom: 24px; }
+    .win-emoji  { font-size: 4rem; margin-bottom: 12px; }
+    .win-title  { font-size: 1.9rem; font-weight: 700; color: #333; margin-bottom: 6px; }
+    .win-sub    { font-size: 1rem; color: #888; margin-bottom: 28px; }
 
     .play-again-btn {
-      padding: 13px 32px;
-      background: linear-gradient(135deg, #f093fb, #f5576c);
+      padding: 14px 36px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
       border: none;
       border-radius: 50px;
       color: #fff;
@@ -251,14 +245,13 @@
 
     .play-again-btn:hover { opacity: 0.88; transform: translateY(-2px); }
 
-    @media (max-width: 540px) {
-      :root { --cell: 38px; --gap: 5px; --slide: 43px; }
-      h1 { font-size: 1.3rem; }
-      .push-btn { width: 34px; font-size: 1rem; }
-      .game-area { gap: 6px; }
-      .board-wrap { padding: 9px; }
-      .win-banner { padding: 28px 22px; width: 88vw; }
-      .win-title { font-size: 1.35rem; }
+    @media (max-width: 500px) {
+      :root { --cell: 56px; --gap: 8px; --step: 64px; }
+      h1 { font-size: 1.5rem; }
+      .push-btn { height: 36px; font-size: 1.2rem; }
+      .board-wrap { padding: 10px; gap: 6px; }
+      .win-banner { padding: 32px 28px; width: 90vw; }
+      .win-title { font-size: 1.4rem; }
     }
   </style>
 </head>
@@ -274,10 +267,10 @@
     <button class="play-again-btn" onclick="newRound()">もう一度遊ぶ 🔄</button>
   </div>
 
-  <h1>🔥 プッシュ四目並べ</h1>
+  <h1>⬇️ プッシュ四目並べ</h1>
 
   <div class="how-to">
-    ← / → を押して行にコマを挿入 → 反対端のコマが押し出される！<br>
+    ↓ を押して列にコマを挿入 → 一番下のコマが押し出される！<br>
     縦・横・斜めに4つ並べたら勝ち 🏆
   </div>
 
@@ -287,7 +280,7 @@
       <div class="s-num" id="score1">0</div>
     </div>
     <div class="score-card p2-card">
-      <div class="s-name">🔵 プレイヤー 2</div>
+      <div class="s-name">🟡 プレイヤー 2</div>
       <div class="s-num" id="score2">0</div>
     </div>
   </div>
@@ -297,12 +290,9 @@
     <span id="turnText"></span>
   </div>
 
-  <div class="game-area">
-    <div class="arrow-col" id="leftArrows"></div>
-    <div class="board-wrap">
-      <div class="board" id="board"></div>
-    </div>
-    <div class="arrow-col" id="rightArrows"></div>
+  <div class="board-wrap">
+    <div class="push-row" id="pushRow"></div>
+    <div class="board"    id="board"></div>
   </div>
 
   <div class="btn-row">
@@ -310,16 +300,14 @@
   </div>
 
   <script>
-    const ROWS = 6, COLS = 7;
-    const EMPTY = 0, P1 = 1, P2 = 2;
-    const COLOR = { [P1]: '#f5576c', [P2]: '#4facfe' };
+    const ROWS = 4, COLS = 4, EMPTY = 0, P1 = 1, P2 = 2;
+    const COLOR = { [P1]: '#f44336', [P2]: '#ffeb3b' };
     const NAME  = { [P1]: 'プレイヤー 1', [P2]: 'プレイヤー 2' };
-    const EMOJI = { [P1]: '🔴', [P2]: '🔵' };
+    const EMOJI = { [P1]: '🔴', [P2]: '🟡' };
 
     let board, current, over, animating;
     const scores = { [P1]: 0, [P2]: 0 };
 
-    // ── Cell helper ───────────────────────────────────────────────
     function cellEl(r, c) { return document.getElementById(`c${r}-${c}`); }
 
     function renderCell(r, c) {
@@ -331,29 +319,27 @@
 
     // ── Build DOM (once) ──────────────────────────────────────────
     function buildDOM() {
-      ['board','leftArrows','rightArrows'].forEach(id =>
-        document.getElementById(id).innerHTML = '');
-
+      const pushRow = document.getElementById('pushRow');
       const boardEl = document.getElementById('board');
-      const leftEl  = document.getElementById('leftArrows');
-      const rightEl = document.getElementById('rightArrows');
+      pushRow.innerHTML = '';
+      boardEl.innerHTML = '';
 
-      for (let r = 0; r < ROWS; r++) {
-        // Left button
-        const lb = document.createElement('button');
-        lb.className = 'push-btn';
-        lb.id = `lb${r}`;
-        lb.textContent = '←';
-        lb.onclick = () => push(r, 'left');
-        leftEl.appendChild(lb);
+      for (let c = 0; c < COLS; c++) {
+        // Push button
+        const btn = document.createElement('button');
+        btn.className = 'push-btn';
+        btn.id = `pb${c}`;
+        btn.textContent = '↓';
+        btn.onclick = () => push(c);
+        pushRow.appendChild(btn);
 
-        // Row
+        // Column
         const wrap  = document.createElement('div');
-        wrap.className = 'row-wrap';
+        wrap.className = 'col-wrap';
         const inner = document.createElement('div');
-        inner.className = 'row-inner';
-        inner.id = `row${r}`;
-        for (let c = 0; c < COLS; c++) {
+        inner.className = 'col-inner';
+        inner.id = `col${c}`;
+        for (let r = 0; r < ROWS; r++) {
           const div = document.createElement('div');
           div.className = 'cell';
           div.id = `c${r}-${c}`;
@@ -361,40 +347,27 @@
         }
         wrap.appendChild(inner);
         boardEl.appendChild(wrap);
-
-        // Right button
-        const rb = document.createElement('button');
-        rb.className = 'push-btn';
-        rb.id = `rb${r}`;
-        rb.textContent = '→';
-        rb.onclick = () => push(r, 'right');
-        rightEl.appendChild(rb);
       }
     }
 
     // ── Push logic ────────────────────────────────────────────────
-    function push(row, dir) {
+    function push(col) {
       if (over || animating) return;
       animating = true;
       lockButtons(true);
 
-      if (dir === 'left') {
-        for (let c = COLS - 1; c > 0; c--) board[row][c] = board[row][c - 1];
-        board[row][0] = current;
-      } else {
-        for (let c = 0; c < COLS - 1; c++) board[row][c] = board[row][c + 1];
-        board[row][COLS - 1] = current;
-      }
+      // New piece enters row 0; bottom row (ROWS-1) is ejected
+      for (let r = ROWS - 1; r > 0; r--) board[r][col] = board[r - 1][col];
+      board[0][col] = current;
 
-      // Update DOM
-      for (let c = 0; c < COLS; c++) renderCell(row, c);
+      // Update DOM cells
+      for (let r = 0; r < ROWS; r++) renderCell(r, col);
 
-      // Slide animation
-      const rowEl = document.getElementById(`row${row}`);
-      const animClass = dir === 'left' ? 'anim-left' : 'anim-right';
-      rowEl.classList.add(animClass);
-      rowEl.addEventListener('animationend', () => {
-        rowEl.classList.remove(animClass);
+      // Slide-down animation
+      const colEl = document.getElementById(`col${col}`);
+      colEl.classList.add('anim-down');
+      colEl.addEventListener('animationend', () => {
+        colEl.classList.remove('anim-down');
         animating = false;
 
         const win = checkWin();
@@ -451,9 +424,7 @@
     // ── UI helpers ────────────────────────────────────────────────
     function updateTurn() {
       const cls = current === P1 ? 'p1-style' : 'p2-style';
-      document.querySelectorAll('.push-btn').forEach(b => {
-        b.className = `push-btn ${cls}`;
-      });
+      document.querySelectorAll('.push-btn').forEach(b => b.className = `push-btn ${cls}`);
       document.getElementById('turnPiece').style.background = COLOR[current];
       document.getElementById('turnText').textContent = `${NAME[current]} のターン`;
     }
@@ -462,7 +433,6 @@
       document.querySelectorAll('.push-btn').forEach(b => b.disabled = lock);
     }
 
-    // ── Win banner ────────────────────────────────────────────────
     function showWinBanner(p) {
       document.getElementById('winEmoji').textContent = EMOJI[p];
       document.getElementById('winTitle').textContent = `${NAME[p]} の勝ち！`;
@@ -480,15 +450,15 @@
     function launchConfetti(base) {
       canvas.width  = window.innerWidth;
       canvas.height = window.innerHeight;
-      const palette = [base, '#fff', '#ffd700', '#f093fb', '#4facfe', '#f5576c'];
-      particles = Array.from({length: 110}, () => ({
+      const palette = [base, '#fff', '#ffd700', '#ff6b6b', '#00ffb4', '#a78bfa'];
+      particles = Array.from({length: 100}, () => ({
         x: Math.random() * canvas.width,
-        y: -20 - Math.random() * 120,
-        w: Math.random() * 10 + 4,
+        y: -20 - Math.random() * 100,
+        w: Math.random() * 10 + 5,
         h: Math.random() * 6 + 3,
         color: palette[Math.floor(Math.random() * palette.length)],
-        vy: Math.random() * 2.5 + 1.5,
-        vx: (Math.random() - 0.5) * 2.5,
+        vy: Math.random() * 2 + 2,
+        vx: (Math.random() - 0.5) * 2,
         rot: Math.random() * 360,
         rotSpeed: (Math.random() - 0.5) * 6,
       }));
@@ -500,10 +470,10 @@
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       particles.forEach(p => {
         ctx.save();
-        ctx.translate(p.x + p.w / 2, p.y + p.h / 2);
+        ctx.translate(p.x + p.w/2, p.y + p.h/2);
         ctx.rotate(p.rot * Math.PI / 180);
         ctx.fillStyle = p.color;
-        ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+        ctx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
         ctx.restore();
         p.y += p.vy; p.x += p.vx; p.rot += p.rotSpeed;
       });
