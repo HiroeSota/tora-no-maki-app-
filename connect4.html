@@ -345,8 +345,10 @@
       hovCol = -1;
       renderBoard();
       requestAnimationFrame(() => {
-        const colEls = document.getElementById('board').children;
-        if (colEls[col]) colEls[col].children[row].classList.add('dropping');
+        requestAnimationFrame(() => {
+          const colEls = document.getElementById('board').children;
+          if (colEls[col]) colEls[col].children[row].classList.add('dropping');
+        });
       });
 
       const win = checkWin(row, col);
