@@ -384,6 +384,20 @@
       animation: ejectFall 0.38s ease-in forwards;
     }
 
+    /* ── First player toast ── */
+    .first-toast {
+      font-size: 0.88rem;
+      color: rgba(255,255,255,0.9);
+      background: rgba(255,255,255,0.18);
+      backdrop-filter: blur(8px);
+      border-radius: 50px;
+      padding: 5px 18px;
+      margin-bottom: 10px;
+      min-height: 28px;
+      text-align: center;
+      transition: opacity 0.4s;
+    }
+
     /* ── Mute button ── */
     .mute-btn {
       background: rgba(255,255,255,0.2);
@@ -438,8 +452,9 @@
   <div id="startScreen">
     <h1>🔴 プッシュ４</h1>
     <p class="tagline">
-      列の上から駒を押し込んで4つ並べろ！<br>
-      制限時間 20秒・押し出しあり
+      ↓ ボタンで列の上からコマを押し込む！<br>
+      <span style="font-size:0.85em">一番下のコマは押し出されて消える</span><br>
+      <span style="font-size:0.9em">縦 <b>↓</b> ・ 横 <b>→</b> ・ 斜め <b>↘ ↗</b> どこでも4つ並べたら勝ち！</span>
     </p>
     <div class="mode-cards">
       <button class="card-btn mode-card" onclick="selectMode('2p')">
@@ -514,8 +529,11 @@
   <div id="gameScreen">
     <h1>🔴 プッシュ４</h1>
     <div class="how-to">
-      ↓ を押して列にコマを挿入 → 一番下のコマが押し出される！<br>
-      縦・横・斜めに4つ並べたら勝ち 🏆
+      <b>↓</b> ボタンを押す → 列の上からコマが入り、一番下が押し出される！<br>
+      <span style="letter-spacing:0.05em">
+        縦 <b style="color:#fff9c4">↓</b> ・ 横 <b style="color:#fff9c4">→</b> ・ 斜め <b style="color:#fff9c4">↘</b> <b style="color:#fff9c4">↗</b>
+        どこでも <b style="color:#ff8a80">4つ並べたら勝ち 🏆</b>
+      </span>
     </div>
 
     <div class="score-wrap">
@@ -533,6 +551,7 @@
       <div class="turn-piece" id="turnPiece"></div>
       <span id="turnText"></span>
     </div>
+    <div class="first-toast" id="firstToast"></div>
 
     <div class="timer-wrap">
       <div class="timer-bar" id="timerBar"></div>
@@ -876,7 +895,7 @@
     function newRound() {
       stopTimer();
       board     = Array.from({length: ROWS}, () => Array(COLS).fill(EMPTY));
-      current   = P1;
+      current   = Math.random() < 0.5 ? P1 : P2;
       over      = false;
       animating = false;
       document.getElementById('winBanner').classList.remove('show');
@@ -886,7 +905,23 @@
         for (let c = 0; c < COLS; c++) renderCell(r, c);
       updateTurn();
       lockButtons(false);
-      startTimer();
+      showFirstToast();
+    }
+
+    function showFirstToast() {
+      const toast = document.getElementById('firstToast');
+      const isCPU = cpuMode && current === P2;
+      const name  = isCPU ? `🤖 CPU (${CPU_LEVELS[cpuLevel].label})` : `${EMOJI[current]} ${NAME[current]}`;
+      toast.textContent = `先攻：${name}`;
+      toast.style.opacity = '1';
+      setTimeout(() => { toast.style.opacity = '0'; }, 2500);
+      if (isCPU) {
+        lockButtons(true);
+        showCPUThinking();
+        setTimeout(doCPUMove, CPU_LEVELS[cpuLevel].delay);
+      } else {
+        startTimer();
+      }
     }
 
     // ── UI helpers ────────────────────────────────────────────────
