@@ -5,11 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>⬇️ プッシュ四目並べ</title>
   <style>
-    :root {
-      --cell: 72px;
-      --gap:  10px;
-      --step: 82px;
-    }
+    :root { --cell: 72px; --gap: 10px; --step: 82px; }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -41,39 +37,69 @@
     }
 
     /* ── Screens ── */
-    #startScreen, #difficultyScreen, #gameScreen {
+    #startScreen, #sizeScreen, #difficultyScreen, #gameScreen {
       display: none;
       flex-direction: column;
       align-items: center;
     }
 
-    /* ── Mode cards ── */
-    .mode-cards { display: flex; gap: 20px; }
-
-    .mode-card {
+    /* ── Card base ── */
+    .card-btn {
       background: rgba(255,255,255,0.16);
       backdrop-filter: blur(12px);
       border: 2px solid rgba(255,255,255,0.28);
-      border-radius: 22px;
-      padding: 32px 36px;
+      border-radius: 20px;
       color: #fff;
       cursor: pointer;
       font-family: inherit;
       text-align: center;
-      min-width: 140px;
       transition: background 0.2s, transform 0.18s, border-color 0.2s;
     }
 
-    .mode-card:hover {
+    .card-btn:hover {
       background: rgba(255,255,255,0.26);
       border-color: rgba(255,255,255,0.6);
       transform: translateY(-5px);
     }
 
-    .mode-card:active { transform: translateY(-2px); }
+    .card-btn:active { transform: translateY(-2px); }
+
+    /* ── Mode cards ── */
+    .mode-cards { display: flex; gap: 20px; }
+
+    .mode-card {
+      padding: 32px 36px;
+      min-width: 140px;
+    }
+
     .mode-icon { font-size: 3.2rem; margin-bottom: 14px; }
     .mode-name { font-size: 1.25rem; font-weight: 700; margin-bottom: 6px; }
     .mode-desc { font-size: 0.8rem; opacity: 0.75; }
+
+    /* ── Size cards ── */
+    .size-cards { display: flex; gap: 16px; }
+
+    .size-card { padding: 22px 20px; min-width: 110px; }
+
+    .size-preview {
+      display: grid;
+      gap: 3px;
+      margin: 0 auto 12px;
+      width: 54px;
+      height: 54px;
+    }
+
+    .size-preview.s4 { grid-template-columns: repeat(4, 1fr); grid-template-rows: repeat(4, 1fr); }
+    .size-preview.s5 { grid-template-columns: repeat(5, 1fr); grid-template-rows: repeat(5, 1fr); }
+    .size-preview.s6 { grid-template-columns: repeat(6, 1fr); grid-template-rows: repeat(6, 1fr); }
+
+    .dot {
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+    }
+
+    .size-label { font-size: 1.1rem; font-weight: 700; margin-bottom: 4px; }
+    .size-desc  { font-size: 0.75rem; opacity: 0.75; }
 
     /* ── Difficulty cards ── */
     .diff-cards {
@@ -84,32 +110,11 @@
       max-width: 360px;
     }
 
-    .diff-card {
-      background: rgba(255,255,255,0.16);
-      backdrop-filter: blur(12px);
-      border: 2px solid rgba(255,255,255,0.28);
-      border-radius: 18px;
-      padding: 20px 14px;
-      color: #fff;
-      cursor: pointer;
-      font-family: inherit;
-      text-align: center;
-      transition: background 0.2s, transform 0.18s, border-color 0.2s;
-    }
-
-    .diff-card:hover {
-      background: rgba(255,255,255,0.26);
-      border-color: rgba(255,255,255,0.6);
-      transform: translateY(-4px);
-    }
-
-    .diff-card:active { transform: translateY(-1px); }
-
+    .diff-card { padding: 20px 14px; }
     .diff-card.diff-max {
       border-color: rgba(255,100,100,0.6);
       background: rgba(180,0,50,0.22);
     }
-
     .diff-card.diff-max:hover { background: rgba(180,0,50,0.36); }
 
     .diff-icon { font-size: 2rem; margin-bottom: 8px; }
@@ -177,8 +182,7 @@
     }
 
     .turn-piece {
-      width: 22px;
-      height: 22px;
+      width: 22px; height: 22px;
       border-radius: 50%;
       flex-shrink: 0;
       box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -187,8 +191,7 @@
 
     /* ── Timer ── */
     .timer-wrap {
-      width: 310px;
-      height: 26px;
+      width: 310px; height: 26px;
       background: rgba(255,255,255,0.15);
       border-radius: 50px;
       margin-bottom: 18px;
@@ -232,11 +235,10 @@
     .push-row { display: flex; gap: var(--gap); }
 
     .push-btn {
-      width: var(--cell);
-      height: 42px;
+      width: var(--cell); height: 42px;
       border: none;
       border-radius: 10px;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       cursor: pointer;
       color: #fff;
       font-family: inherit;
@@ -268,8 +270,7 @@
 
     /* ── Cells ── */
     .cell {
-      width: var(--cell);
-      height: var(--cell);
+      width: var(--cell); height: var(--cell);
       border-radius: 50%;
       background: radial-gradient(circle at 38% 30%, #1a6fd4, #0d47a1 55%, #082d6e);
       box-shadow: inset 0 4px 10px rgba(0,0,0,0.5);
@@ -293,10 +294,9 @@
       to   { transform: scale(1.14); filter: brightness(1.35); }
     }
 
-    /* ── Buttons ── */
+    /* ── Action buttons ── */
     .btn-row {
-      display: flex;
-      gap: 12px;
+      display: flex; gap: 12px;
       margin-top: 20px;
       flex-wrap: wrap;
       justify-content: center;
@@ -352,13 +352,9 @@
     .play-again-btn {
       padding: 13px 24px;
       background: linear-gradient(135deg, #667eea, #764ba2);
-      border: none;
-      border-radius: 50px;
-      color: #fff;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
+      border: none; border-radius: 50px;
+      color: #fff; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
       transition: opacity 0.15s, transform 0.1s;
     }
 
@@ -366,27 +362,24 @@
 
     .back-btn {
       padding: 13px 24px;
-      background: #f0f0f0;
-      border: none;
-      border-radius: 50px;
-      color: #555;
-      font-size: 0.95rem;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
+      background: #f0f0f0; border: none; border-radius: 50px;
+      color: #555; font-size: 0.95rem; font-weight: 700;
+      cursor: pointer; font-family: inherit;
       transition: background 0.15s, transform 0.1s;
     }
 
     .back-btn:hover { background: #e0e0e0; transform: translateY(-2px); }
 
     @media (max-width: 500px) {
-      :root { --cell: 56px; --gap: 8px; --step: 64px; }
       h1 { font-size: 1.5rem; }
       .mode-cards { gap: 14px; }
-      .mode-card { padding: 24px 22px; min-width: 120px; }
+      .mode-card { padding: 24px 20px; min-width: 120px; }
       .mode-icon { font-size: 2.4rem; }
+      .size-cards { gap: 10px; }
+      .size-card { padding: 16px 12px; min-width: 88px; }
+      .size-preview { width: 44px; height: 44px; }
       .diff-cards { max-width: 300px; gap: 10px; }
-      .push-btn { height: 36px; font-size: 1.2rem; }
+      .push-btn { height: 34px; font-size: 1.1rem; }
       .board-wrap { padding: 10px; gap: 6px; }
       .timer-wrap { width: 260px; }
       .win-banner { padding: 32px 24px; width: 90vw; }
@@ -408,7 +401,7 @@
     </div>
   </div>
 
-  <!-- ① Start screen -->
+  <!-- ① Mode selection -->
   <div id="startScreen">
     <h1>⬇️ プッシュ四目並べ</h1>
     <p class="tagline">
@@ -416,12 +409,12 @@
       制限時間 20秒・押し出しあり
     </p>
     <div class="mode-cards">
-      <button class="mode-card" onclick="startGame('2p')">
+      <button class="card-btn mode-card" onclick="selectMode('2p')">
         <div class="mode-icon">👥</div>
         <div class="mode-name">2人対戦</div>
         <div class="mode-desc">友達と対決</div>
       </button>
-      <button class="mode-card" onclick="showDifficulty()">
+      <button class="card-btn mode-card" onclick="selectMode('cpu')">
         <div class="mode-icon">🤖</div>
         <div class="mode-name">CPU対戦</div>
         <div class="mode-desc">AIに挑戦</div>
@@ -429,36 +422,62 @@
     </div>
   </div>
 
-  <!-- ② Difficulty screen -->
-  <div id="difficultyScreen">
+  <!-- ② Board size selection -->
+  <div id="sizeScreen">
     <h1>⬇️ プッシュ四目並べ</h1>
-    <p class="tagline">CPU の強さを選んでください</p>
-    <div class="diff-cards">
-      <button class="diff-card" onclick="startGame('easy')">
-        <div class="diff-icon">😊</div>
-        <div class="diff-name">かんたん</div>
-        <div class="diff-desc">ランダムに動く</div>
+    <p class="tagline">盤面のサイズを選んでください<br>
+      <span style="font-size:0.8em;opacity:0.8">すべて「4つ並べ」で勝利</span>
+    </p>
+    <div class="size-cards">
+      <button class="card-btn size-card" onclick="selectSize(4)">
+        <div class="size-preview s4" id="prev4"></div>
+        <div class="size-label">4 × 4</div>
+        <div class="size-desc">コンパクト</div>
       </button>
-      <button class="diff-card" onclick="startGame('normal')">
-        <div class="diff-icon">🙂</div>
-        <div class="diff-name">ふつう</div>
-        <div class="diff-desc">勝てる手を優先</div>
+      <button class="card-btn size-card" onclick="selectSize(5)">
+        <div class="size-preview s5" id="prev5"></div>
+        <div class="size-label">5 × 5</div>
+        <div class="size-desc">スタンダード</div>
       </button>
-      <button class="diff-card" onclick="startGame('hard')">
-        <div class="diff-icon">😤</div>
-        <div class="diff-name">むずかしい</div>
-        <div class="diff-desc">5手先まで読む</div>
-      </button>
-      <button class="diff-card diff-max" onclick="startGame('max')">
-        <div class="diff-icon">💀</div>
-        <div class="diff-name">最強</div>
-        <div class="diff-desc">8手先・完全読み</div>
+      <button class="card-btn size-card" onclick="selectSize(6)">
+        <div class="size-preview s6" id="prev6"></div>
+        <div class="size-label">6 × 6</div>
+        <div class="size-desc">ワイド</div>
       </button>
     </div>
     <button class="back-link" onclick="goToStart()">← モード選択に戻る</button>
   </div>
 
-  <!-- ③ Game screen -->
+  <!-- ③ Difficulty selection (CPU only) -->
+  <div id="difficultyScreen">
+    <h1>⬇️ プッシュ四目並べ</h1>
+    <p class="tagline">CPU の強さを選んでください</p>
+    <div class="diff-cards">
+      <button class="card-btn diff-card" onclick="startGame('easy')">
+        <div class="diff-icon">😊</div>
+        <div class="diff-name">かんたん</div>
+        <div class="diff-desc">ランダムに動く</div>
+      </button>
+      <button class="card-btn diff-card" onclick="startGame('normal')">
+        <div class="diff-icon">🙂</div>
+        <div class="diff-name">ふつう</div>
+        <div class="diff-desc">勝てる手を優先</div>
+      </button>
+      <button class="card-btn diff-card" onclick="startGame('hard')">
+        <div class="diff-icon">😤</div>
+        <div class="diff-name">むずかしい</div>
+        <div class="diff-desc" id="hardDesc">5手先まで読む</div>
+      </button>
+      <button class="card-btn diff-card diff-max" onclick="startGame('max')">
+        <div class="diff-icon">💀</div>
+        <div class="diff-name">最強</div>
+        <div class="diff-desc" id="maxDesc">8手先・完全読み</div>
+      </button>
+    </div>
+    <button class="back-link" onclick="showSize()">← 盤面選択に戻る</button>
+  </div>
+
+  <!-- ④ Game -->
   <div id="gameScreen">
     <h1>⬇️ プッシュ四目並べ</h1>
     <div class="how-to">
@@ -499,21 +518,37 @@
   </div>
 
   <script>
-    const ROWS = 4, COLS = 4, EMPTY = 0, P1 = 1, P2 = 2;
     const TURN_TIME = 20;
+    const EMPTY = 0, P1 = 1, P2 = 2;
     const COLOR = { [P1]: '#f44336', [P2]: '#ffeb3b' };
     const NAME  = { [P1]: 'プレイヤー 1', [P2]: 'プレイヤー 2' };
     const EMOJI = { [P1]: '🔴', [P2]: '🟡' };
 
+    // Cell sizes [desktop, mobile] per board size
+    const CELL_PX = { 4: [72, 58], 5: [62, 50], 6: [54, 43] };
+
     const CPU_LEVELS = {
-      easy:   { label: 'かんたん', emoji: '😊', delay: 400,  depth: 0 },
-      normal: { label: 'ふつう',   emoji: '🙂', delay: 600,  depth: 1 },
-      hard:   { label: 'むずかしい', emoji: '😤', delay: 900,  depth: 5 },
-      max:    { label: '最強',     emoji: '💀', delay: 1400, depth: 8 },
+      easy:   { label: 'かんたん', emoji: '😊', delay: 400 },
+      normal: { label: 'ふつう',   emoji: '🙂', delay: 600 },
+      hard:   { label: 'むずかしい', emoji: '😤', delay: 900 },
+      max:    { label: '最強',     emoji: '💀', delay: 1400 },
     };
 
-    // Pre-compute all 4-length winning lines on the board
-    const ALL_LINES = (() => {
+    // Minimax depth by level and board size
+    const DEPTH_TABLE = {
+      hard: { 4: 5, 5: 4, 6: 3 },
+      max:  { 4: 8, 5: 6, 6: 5 },
+    };
+
+    let ROWS, COLS, ALL_LINES;
+    let board, current, over, animating;
+    let pendingMode = '2p', boardSize = 4;
+    let cpuMode = false, cpuLevel = 'normal';
+    let timerRAF = null, timerStart = null;
+    const scores = { [P1]: 0, [P2]: 0 };
+
+    // ── Line precomputation ───────────────────────────────────────
+    function computeLines() {
       const lines = [];
       for (let r = 0; r < ROWS; r++) {
         for (let c = 0; c < COLS; c++) {
@@ -529,16 +564,24 @@
         }
       }
       return lines;
-    })();
+    }
 
-    let board, current, over, animating;
-    let cpuMode = false, cpuLevel = 'normal';
-    let timerRAF = null, timerStart = null;
-    const scores = { [P1]: 0, [P2]: 0 };
+    // ── Cell size ─────────────────────────────────────────────────
+    function applySize() {
+      const mobile = window.innerWidth <= 500;
+      const cell = CELL_PX[boardSize][mobile ? 1 : 0];
+      const gap  = mobile ? 7 : 9;
+      const root = document.documentElement.style;
+      root.setProperty('--cell', `${cell}px`);
+      root.setProperty('--gap',  `${gap}px`);
+      root.setProperty('--step', `${cell + gap}px`);
+    }
 
     // ── Screen control ────────────────────────────────────────────
+    const SCREENS = ['startScreen','sizeScreen','difficultyScreen','gameScreen'];
+
     function show(id) {
-      ['startScreen','difficultyScreen','gameScreen'].forEach(s =>
+      SCREENS.forEach(s =>
         document.getElementById(s).style.display = s === id ? 'flex' : 'none'
       );
     }
@@ -550,25 +593,47 @@
       show('startScreen');
     }
 
-    function showDifficulty() { show('difficultyScreen'); }
+    function selectMode(mode) {
+      pendingMode = mode;
+      showSize();
+    }
 
-    function startGame(mode) {
-      cpuMode  = mode !== '2p';
-      cpuLevel = cpuMode ? mode : 'normal';
+    function showSize() {
+      // Fill dot previews
+      [4, 5, 6].forEach(n => {
+        const el = document.getElementById(`prev${n}`);
+        el.innerHTML = Array(n * n).fill('<span class="dot"></span>').join('');
+      });
+      show('sizeScreen');
+    }
+
+    function selectSize(n) {
+      boardSize = n;
+      ROWS = COLS = n;
+      ALL_LINES = computeLines();
+      applySize();
+      // Update depth descriptions
+      document.getElementById('hardDesc').textContent = `${DEPTH_TABLE.hard[n]}手先まで読む`;
+      document.getElementById('maxDesc').textContent  = `${DEPTH_TABLE.max[n]}手先・完全読み`;
+      if (pendingMode === 'cpu') { show('difficultyScreen'); }
+      else { startGame('2p'); }
+    }
+
+    function startGame(level) {
+      cpuMode  = level !== '2p';
+      cpuLevel = cpuMode ? level : 'normal';
       scores[P1] = scores[P2] = 0;
       document.getElementById('score1').textContent = '0';
       document.getElementById('score2').textContent = '0';
-
       const cfg = CPU_LEVELS[cpuLevel];
       document.getElementById('p2Label').textContent =
         cpuMode ? `🤖 CPU (${cfg.label})` : '🟡 プレイヤー 2';
-
       show('gameScreen');
       buildDOM();
       newRound();
     }
 
-    // ── Build board DOM (once per game) ──────────────────────────
+    // ── Build board DOM ───────────────────────────────────────────
     function buildDOM() {
       const pushRow = document.getElementById('pushRow');
       const boardEl = document.getElementById('board');
@@ -663,14 +728,13 @@
 
     function tickTimer() {
       const remaining = Math.max(0, TURN_TIME - (Date.now() - timerStart) / 1000);
-      const pct = (remaining / TURN_TIME) * 100;
       const bar = document.getElementById('timerBar');
       const txt = document.getElementById('timerText');
-      bar.style.width = `${pct}%`;
+      bar.style.width = `${(remaining / TURN_TIME) * 100}%`;
       txt.textContent = Math.ceil(remaining);
       bar.className = 'timer-bar';
-      if (remaining <= 5)       bar.classList.add('danger');
-      else if (remaining <= 8)  bar.classList.add('warning');
+      if (remaining <= 5)      bar.classList.add('danger');
+      else if (remaining <= 8) bar.classList.add('warning');
 
       if (remaining <= 0) { stopTimer(); autoRandomPush(); return; }
       timerRAF = requestAnimationFrame(tickTimer);
@@ -682,37 +746,31 @@
     }
 
     function showCPUThinking() {
-      const cfg = CPU_LEVELS[cpuLevel];
       const bar = document.getElementById('timerBar');
       const txt = document.getElementById('timerText');
       bar.className = 'timer-bar cpu';
       bar.style.width = '100%';
-      txt.textContent = `${cfg.emoji} CPU が考え中…`;
+      txt.textContent = `${CPU_LEVELS[cpuLevel].emoji} CPU が考え中…`;
     }
 
     // ── CPU logic ─────────────────────────────────────────────────
-    function doCPUMove() {
-      if (over) return;
-      push(cpuPickCol());
-    }
+    function doCPUMove() { if (!over) push(cpuPickCol()); }
 
     function cpuPickCol() {
-      const depth = CPU_LEVELS[cpuLevel].depth;
+      if (cpuLevel === 'easy') return randCol();
 
-      if (depth === 0) return Math.floor(Math.random() * COLS);
-
-      if (depth === 1) {
-        const cols = shuffled();
+      const cols = shuffled();
+      if (cpuLevel === 'normal') {
         for (const c of cols) if (checkWinOnBoard(simulatePush(board, c, P2), P2)) return c;
         for (const c of cols) if (checkWinOnBoard(simulatePush(board, c, P1), P1)) return c;
         return cols[0];
       }
 
-      // Minimax
-      let bestScore = -Infinity, bestCol = 0;
-      for (const c of shuffled()) {
+      const depth = DEPTH_TABLE[cpuLevel][boardSize];
+      let best = -Infinity, bestCol = cols[0];
+      for (const c of cols) {
         const score = minimax(simulatePush(board, c, P2), depth - 1, -Infinity, Infinity, false);
-        if (score > bestScore) { bestScore = score; bestCol = c; }
+        if (score > best) { best = score; bestCol = c; }
       }
       return bestCol;
     }
@@ -748,10 +806,6 @@
       return score;
     }
 
-    function shuffled() {
-      return [0,1,2,3].sort(() => Math.random() - 0.5);
-    }
-
     function simulatePush(b, col, player) {
       const copy = b.map(r => [...r]);
       for (let r = ROWS - 1; r > 0; r--) copy[r][col] = copy[r - 1][col];
@@ -761,15 +815,12 @@
 
     function checkWinOnBoard(b, player = null) {
       const targets = player ? [player] : [P1, P2];
-      for (const p of targets) {
-        for (const line of ALL_LINES) {
+      for (const p of targets)
+        for (const line of ALL_LINES)
           if (line.every(([r, c]) => b[r][c] === p)) return true;
-        }
-      }
       return false;
     }
 
-    // ── Win check (returns winning cells) ─────────────────────────
     function checkWin() {
       for (const line of ALL_LINES) {
         const p = board[line[0][0]][line[0][1]];
@@ -777,6 +828,9 @@
       }
       return null;
     }
+
+    function shuffled() { return [0,1,2,3,4,5].slice(0, COLS).sort(() => Math.random() - 0.5); }
+    function randCol()   { return Math.floor(Math.random() * COLS); }
 
     // ── New round ─────────────────────────────────────────────────
     function newRound() {
