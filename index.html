@@ -148,6 +148,7 @@
     .filter-btn[data-cat="Web基礎"].active    { background: #3fb950; border-color: #3fb950; }
     .filter-btn[data-cat="npm"].active        { background: #f85149; border-color: #f85149; }
     .filter-btn[data-cat="データ管理"].active { background: #00b4d8; border-color: #00b4d8; }
+    .filter-btn[data-cat="PWA"].active        { background: #f0883e; border-color: #f0883e; }
 
     .start-btn {
       width: 100%;
@@ -186,6 +187,7 @@
     .category-badge[data-cat="Web基礎"]   { background: rgba(63,185,80,0.15);   border-color: rgba(63,185,80,0.35);   color: #3fb950; }
     .category-badge[data-cat="npm"]        { background: rgba(248,81,73,0.15);   border-color: rgba(248,81,73,0.35);   color: #f85149; }
     .category-badge[data-cat="データ管理"] { background: rgba(0,180,216,0.15);   border-color: rgba(0,180,216,0.35);   color: #00b4d8; }
+    .category-badge[data-cat="PWA"]       { background: rgba(240,136,62,0.15);  border-color: rgba(240,136,62,0.35);  color: #f0883e; }
 
     /* ── Question ── */
     .question-number {
@@ -622,6 +624,10 @@
       '静的サイト':        '表示する内容がHTMLなどのファイルに最初から書いてあるWebサイト。サーバー処理やデータベースが不要。',
       '動的サイト':        'ユーザーの操作やデータに応じてサーバーが内容を生成するWebサイト。データベースとサーバー処理が必要。',
       'git remote':       'ローカルリポジトリと接続するリモートリポジトリの設定。`git remote add origin <URL>` でGitHubと紐付ける。',
+      'PWA':              'Progressive Web App。manifest.json と Service Worker を追加することで、WebアプリをネイティブアプリのようにホームScreen追加・オフライン動作・プッシュ通知に対応させる技術。',
+      'Service Worker':   'バックグラウンドで動作するJavaScriptスクリプト（慣例でsw.js）。キャッシュ管理・プッシュ通知の受信などを処理する。PWAに必須。',
+      'manifest.json':    'PWAに必要な設定ファイル。アプリ名・アイコン・テーマカラー・起動URLなどを定義し、ホーム画面への追加（インストール）を可能にする。npm の package.json とは別物。',
+      'Canvas':           'HTML要素の一つ（`<canvas>`）。JavaScriptのCanvas APIで2Dグラフィックスをリアルタイムに描画できる。ゲームやチャート・アニメーションに使われる。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1008,6 +1014,47 @@
         difficulty: 2,
         hint: 'セキュリティ上の理由から、Firebase 認証は HTTPS 環境（本番ドメインか `firebase serve`）でのみ動作します。',
       },
+      // PWA
+      {
+        category: 'PWA',
+        text: '[[PWA]]（Progressive Web App）の説明として正しいものはどれ？',
+        choices: ['iOSアプリ専用の開発フレームワーク','Webアプリをネイティブアプリのように動作させる技術（ホーム画面追加・オフライン動作・通知など）','Googleが提供するクラウドデータベースサービス','Python製のWebサーバーフレームワーク'],
+        answer: 1,
+        difficulty: 1,
+        hint: '[[manifest.json]] と [[Service Worker]] の2ファイルを用意するだけで PWA 化できます。',
+      },
+      {
+        category: 'PWA',
+        text: '[[PWA]] に必要な [[manifest.json]] の役割として正しいものはどれ？',
+        choices: ['サーバーの起動設定を記述するファイル','npmのパッケージ依存を管理するファイル','アプリ名・アイコン・テーマカラーなどを定義し、ホーム画面への追加を可能にするファイル','ユーザーデータを保存するファイル'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`"name"`, `"icons"`, `"start_url"`, `"display": "standalone"` などを定義します。npm の package.json とは別物です。',
+      },
+      {
+        category: 'PWA',
+        text: '[[Service Worker]]（sw.js）の役割として最も正確なものはどれ？',
+        choices: ['ユーザーのパスワードを管理するスクリプト','アプリの CSS をビルド時に最適化するツール','ブラウザとネットワークの間でバックグラウンド処理（キャッシュ・プッシュ通知など）を担うスクリプト','データベースへのアクセスを管理するサーバープログラム'],
+        answer: 2,
+        difficulty: 2,
+        hint: 'アプリを閉じていても通知を受信できるのは [[Service Worker]] があるから。sw.js という名前が慣例です。',
+      },
+      {
+        category: 'PWA',
+        text: 'iOS でWebアプリからプッシュ通知を受け取るために必要な条件として正しいものはどれ？',
+        choices: ['App Store からダウンロードする必要がある','Safari 以外のブラウザを使う必要がある','iOSはブラウザ通知を一切サポートしていない','[[PWA]] としてホーム画面に追加されていること（iOS 16.4 以降）'],
+        answer: 3,
+        difficulty: 3,
+        hint: 'iOS 16.4 からPWAのプッシュ通知が解禁。ブラウザのタブで開いただけでは通知は受け取れません。',
+      },
+      {
+        category: 'PWA',
+        text: 'ブラウザ通知を送るには、まず何をリクエストする必要がある？',
+        choices: ['Firebase のセットアップ','ユーザーへの通知権限の許可（`Notification.requestPermission()`）','サーバーへのポーリング設定','manifest.json の登録'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'ユーザーが「許可」を押さないと通知は送れません。一度「拒否」するとブラウザ設定から変更が必要です。',
+      },
       {
         category: 'データ管理',
         text: '[[Firebase]] の説明として正しいものはどれ？',
@@ -1016,6 +1063,22 @@
         difficulty: 2,
         hint: 'BaaS（Backend as a Service）とは、サーバー側の機能をクラウドサービスとして提供するもの。自分でサーバーを立てずに本番品質のアプリを作れます。',
       },
+      {
+        category: 'データ管理',
+        text: '育児アプリで通知のON/OFF設定を [[Firestore]] でなく [[localStorage]] に保存することにした。最も適切な理由は？',
+        choices: ['[[localStorage]] の方が [[Firestore]] より保存容量が大きいから','[[Firestore]] は設定データの保存をサポートしていないから','通知設定はデバイス固有の設定のため端末間で同期する必要がなく、[[Firestore]] への通信コストを省ける','[[localStorage]] の方がセキュリティが高いから'],
+        answer: 2,
+        difficulty: 2,
+        hint: '「どのデータをどこに置くか」の判断が重要。端末固有で他端末と共有不要なデータは [[localStorage]] が適切。ユーザーデータの同期には [[Firestore]] を使います。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[HTML]] の `<canvas>` 要素の説明として正しいものはどれ？',
+        choices: ['動画プレイヤーを埋め込む要素','[[JavaScript]] で2Dグラフィックスをリアルタイムに描画できる要素。ゲームやビジュアライゼーションに使われる','CSSアニメーション専用の要素','データベースの内容を表示する要素'],
+        answer: 1,
+        difficulty: 2,
+        hint: '育児アプリの哺乳瓶グラフも `<canvas>` で実装。`getContext("2d")` で描画APIにアクセスします。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -1023,9 +1086,10 @@
       { cat: 'コマンド', color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
       { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド'] },
-      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト'] },
+      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール'] },
+      { cat: 'PWA',       color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
@@ -1059,6 +1123,7 @@
       { key: 'Web基礎',    label: 'Web 基礎' },
       { key: 'npm',        label: 'npm' },
       { key: 'データ管理', label: 'データ管理' },
+      { key: 'PWA',        label: 'PWA' },
     ];
 
     function initFilterGrid() {
