@@ -628,6 +628,9 @@
       'Service Worker':   'バックグラウンドで動作するJavaScriptスクリプト（慣例でsw.js）。キャッシュ管理・プッシュ通知の受信などを処理する。PWAに必須。',
       'manifest.json':    'PWAに必要な設定ファイル。アプリ名・アイコン・テーマカラー・起動URLなどを定義し、ホーム画面への追加（インストール）を可能にする。npm の package.json とは別物。',
       'Canvas':           'HTML要素の一つ（`<canvas>`）。JavaScriptのCanvas APIで2Dグラフィックスをリアルタイムに描画できる。ゲームやチャート・アニメーションに使われる。',
+      'Firebase CLI':     'ターミナルからFirebaseを操作するコマンドラインツール。`npm install -g firebase-tools` でインストール。デプロイ・ローカル確認・設定変更などに使う。',
+      'firebase deploy':  'ローカルのファイルを Firebase Hosting に公開するコマンド。実行前に `firebase login` と `firebase init` が必要。',
+      'firebase serve':   'Firebase Hosting のローカルプレビューサーバーを起動するコマンド。本番デプロイ前に動作確認ができる。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1065,6 +1068,38 @@
       },
       {
         category: 'データ管理',
+        text: '[[Firebase CLI]] をインストールするコマンドとして正しいものはどれ？',
+        choices: ['`npm install firebase`','`npm install -g firebase-tools`','`git install firebase`','`brew install firebase-cli`'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`-g` はグローバルインストールの意味。どのディレクトリからでも `firebase` コマンドが使えるようになります。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[firebase deploy]] コマンドの役割として正しいものはどれ？',
+        choices: ['[[Firebase]] プロジェクトを初期化して設定ファイルを生成する','ローカルのファイルを [[Firebase]] Hosting に本番公開する','ローカルプレビューサーバーを起動する','[[Firebase]] のセキュリティルールを確認する'],
+        answer: 1,
+        difficulty: 1,
+        hint: '`git push` がGitHubへの反映なら、`firebase deploy` はFirebase Hostingへの反映。両方やって初めて本番に届きます。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[firebase serve]] と [[firebase deploy]] の違いとして正しいものはどれ？',
+        choices: ['まったく同じ動作をする','`firebase serve` はローカル確認用 / `firebase deploy` は本番公開','`firebase serve` は本番公開 / `firebase deploy` はローカル確認用','両方とも本番サーバーに公開する'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'デプロイ前に `firebase serve` でローカル確認 → 問題なければ `firebase deploy` で本番反映、という流れが安全です。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[GitHub Pages]] と [[Firebase]] Hosting の使い分けとして適切なものはどれ？',
+        choices: ['どちらも全く同じ用途で使える','GitHub Pages は[[静的サイト]]向け / Firebase Hosting は認証・[[データベース]]と連携するアプリにも適している','Firebase Hosting は有料プランのみ利用可能','GitHub Pages の方が高機能で常に優先すべき'],
+        answer: 1,
+        difficulty: 2,
+        hint: '虎の巻（静的）は GitHub Pages で十分。ikuzi-log（Firebase認証・Firestore使用）はFirebase Hostingが適切です。',
+      },
+      {
+        category: 'データ管理',
         text: '育児アプリで通知のON/OFF設定を [[Firestore]] でなく [[localStorage]] に保存することにした。最も適切な理由は？',
         choices: ['[[localStorage]] の方が [[Firestore]] より保存容量が大きいから','[[Firestore]] は設定データの保存をサポートしていないから','通知設定はデバイス固有の設定のため端末間で同期する必要がなく、[[Firestore]] への通信コストを省ける','[[localStorage]] の方がセキュリティが高いから'],
         answer: 2,
@@ -1088,7 +1123,7 @@
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド'] },
       { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
-      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve'] },
       { cat: 'PWA',       color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
     ];
 
