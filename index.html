@@ -719,6 +719,12 @@
       'ソフトウェア':     'コンピュータ上で動作するプログラムやデータの総称。OS・アプリ・Webアプリなどが含まれる。物理的な機器（ハードウェア）と対になる概念。',
       'LLM':              '大規模言語モデル（Large Language Model）。膨大なテキストデータで学習したAI。自然言語の生成・要約・翻訳・コード生成などが得意。ChatGPT・Claude・Geminiなどが代表例。',
       'リライト':         '既存のコードを一から書き直すこと。バグ修正（部分的な修正）とは異なり、設計や構造ごと作り直す。技術的負債の解消や言語・フレームワーク移行で行われるが、リスクも大きい。',
+      'JS':               'JavaScriptの略称。エンジニア間の会話やコード内では "JS" と略すことがほとんど。意味はJavaScriptとまったく同じ。',
+      '関数':             '一連の処理をまとめて名前をつけたもの。`function greet() { ... }` のように定義し、何度でも呼び出して再利用できる。JSの基本構成要素。',
+      '変数':             'データに名前をつけて保存する箱。`const`・`let`・`var` で宣言する。例：`const name = "太郎";`',
+      'const':            '再代入できない変数宣言キーワード。値が変わらないものに使う。例：`const PI = 3.14;`。基本的にまず `const` を使い、変更が必要なときだけ `let` を使うのが現代のJS流儀。',
+      'let':              '再代入できる変数宣言キーワード。値が後から変わるものに使う。例：`let count = 0; count++;`',
+      'DOM':              'Document Object Model。ブラウザがHTMLを読み込んだ後に作るツリー構造。JavaScriptから `document.getElementById()` などでHTML要素を取得・変更できる仕組み。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1236,6 +1242,47 @@
         difficulty: 1,
         hint: '「言語モデル」という名前の通り、テキストを理解・生成するのが得意。コード生成もテキスト生成の一種です。',
       },
+      // ── JS基礎 ──
+      {
+        category: 'JS基礎',
+        text: '[[JS]] とは何の略？',
+        choices: ['Java System','Just Script','JavaScript','JSON Script'],
+        answer: 2,
+        difficulty: 1,
+        hint: 'エンジニア同士の会話では「JS」と略すことがほとんど。意味はJavaScriptとまったく同じです。',
+      },
+      {
+        category: 'JS基礎',
+        text: '[[関数]]の説明として正しいものはどれ？',
+        choices: ['変数に数値を足す演算子','一連の処理をまとめて名前をつけ、何度でも呼び出せる仕組み','HTMLタグの一種','CSSのプロパティ'],
+        answer: 1,
+        difficulty: 1,
+        hint: '`function greet() { ... }` のように定義します。同じ処理を何度も書かずに済むのが関数の利点です。',
+      },
+      {
+        category: 'JS基礎',
+        text: '[[変数]]を宣言するキーワードとして正しいものはどれ？',
+        choices: ['define / set / val','class / type / func','const / let / var','import / export / use'],
+        answer: 2,
+        difficulty: 1,
+        hint: '現代のJSでは `const`（再代入不可）と `let`（再代入可）を使います。`var` は古い書き方です。',
+      },
+      {
+        category: 'JS基礎',
+        text: '[[const]] と [[let]] の違いとして正しいものはどれ？',
+        choices: ['constはサーバー側、letはブラウザ側で使う','constは再代入できない、letは再代入できる','constは文字列専用、letは数値専用','違いはなく、どちらを使っても同じ'],
+        answer: 1,
+        difficulty: 1,
+        hint: '基本は `const` を使い、後から値が変わる場合だけ `let` にするのが現代JSの流儀です。',
+      },
+      {
+        category: 'JS基礎',
+        text: '[[DOM]] の説明として正しいものはどれ？',
+        choices: ['データを暗号化する仕組み','ブラウザがHTMLを読み込んだ後に作るツリー構造。JSからHTML要素を取得・変更できる','npmのパッケージ管理システム','CSSのレイアウトモデル'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`document.getElementById("btn")` などのコードがDOMを使った操作です。JSでページを動かすために必須の概念。',
+      },
       // ── リライト ──
       {
         category: 'Git',
@@ -1277,6 +1324,8 @@
       'ITP':3,'OAuth':3,'セキュリティルール':3,
       // PWA
       'PWA':2,'manifest.json':2,'Service Worker':3,
+      // JS基礎
+      'JS':1,'関数':1,'変数':1,'const':1,'let':1,'DOM':2,
     };
 
     const WORD_LIST_GROUPS = [
@@ -1287,6 +1336,7 @@
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve'] },
       { cat: 'PWA',       color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
+      { cat: 'JS基礎',   color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
@@ -1321,6 +1371,7 @@
       { key: 'npm',        label: 'npm' },
       { key: 'データ管理', label: 'データ管理' },
       { key: 'PWA',        label: 'PWA' },
+      { key: 'JS基礎',    label: 'JS 基礎' },
     ];
 
     function initFilterGrid() {
