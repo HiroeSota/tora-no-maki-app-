@@ -495,6 +495,33 @@
       border-radius: 12px;
       overflow: hidden;
     }
+    .wl-search-wrap {
+      padding: 10px 12px;
+      background: #1c2128;
+      border-bottom: 1px solid #21262d;
+    }
+    .wl-search {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 8px 12px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .wl-search::placeholder { color: #484f58; }
+    .wl-search:focus { border-color: #58a6ff; }
+    .wl-no-result {
+      padding: 20px;
+      text-align: center;
+      color: #484f58;
+      font-size: 0.85rem;
+      display: none;
+    }
 
     .wl-cat-header {
       display: flex;
@@ -1479,9 +1506,24 @@
     function buildWordList() {
       const section = document.getElementById('wordListSection');
       section.innerHTML = '';
+
+      // 検索バー
+      const searchWrap = document.createElement('div');
+      searchWrap.className = 'wl-search-wrap';
+      searchWrap.innerHTML = '<input class="wl-search" id="wlSearch" type="text" placeholder="🔍 用語を検索…" oninput="filterWordList(this.value)">';
+      section.appendChild(searchWrap);
+
+      // 見つからない時のメッセージ
+      const noResult = document.createElement('div');
+      noResult.className = 'wl-no-result';
+      noResult.id = 'wlNoResult';
+      noResult.textContent = '見つかりませんでした。用語集への追加を検討しましょう！';
+      section.appendChild(noResult);
+
       WORD_LIST_GROUPS.forEach(({ cat, color, terms }) => {
         const header = document.createElement('div');
         header.className = 'wl-cat-header';
+        header.dataset.cat = cat;
         header.style.color = color;
         header.textContent = cat;
         section.appendChild(header);
@@ -1491,6 +1533,9 @@
           if (!def) return;
           const row = document.createElement('div');
           row.className = 'wl-item';
+          row.dataset.term = term.toLowerCase();
+          row.dataset.def = def.toLowerCase();
+          row.dataset.cat = cat;
           const lv = GLOSSARY_LEVEL[term] || 1;
           const stars = '★'.repeat(lv) + '☆'.repeat(3 - lv);
           row.innerHTML = `
@@ -1509,6 +1554,28 @@
           section.appendChild(row);
         });
       });
+    }
+
+    function filterWordList(query) {
+      const q = query.trim().toLowerCase();
+      const items = document.querySelectorAll('.wl-item');
+      const headers = document.querySelectorAll('.wl-cat-header');
+
+      items.forEach(item => {
+        const match = !q || item.dataset.term.includes(q) || item.dataset.def.includes(q);
+        item.style.display = match ? '' : 'none';
+      });
+
+      // カテゴリヘッダーは配下に表示中のアイテムがある場合だけ表示
+      headers.forEach(header => {
+        const cat = header.dataset.cat;
+        const hasVisible = [...items].some(i => i.dataset.cat === cat && i.style.display !== 'none');
+        header.style.display = hasVisible ? '' : 'none';
+      });
+
+      // 1件もなければ「見つかりません」を表示
+      const anyVisible = [...items].some(i => i.style.display !== 'none');
+      document.getElementById('wlNoResult').style.display = anyVisible ? 'none' : '';
     }
 
     let wordListOpen = false;
