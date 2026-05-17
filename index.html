@@ -1348,7 +1348,8 @@
         header.style.color = color;
         header.textContent = cat;
         section.appendChild(header);
-        terms.forEach(term => {
+        const sorted = [...terms].sort((a, b) => (GLOSSARY_LEVEL[a] || 1) - (GLOSSARY_LEVEL[b] || 1));
+        sorted.forEach(term => {
           const def = GLOSSARY[term];
           if (!def) return;
           const row = document.createElement('div');
