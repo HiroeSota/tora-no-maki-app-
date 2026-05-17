@@ -1171,6 +1171,29 @@
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
+    // 1=基本(緑) 2=中級(黄) 3=応用(赤)
+    const GLOSSARY_LEVEL = {
+      // コマンド
+      'cd':1,'mkdir':1,'pwd':1,'ls':1,'rm':1,'touch':1,'cat':1,'cp':1,'mv':1,
+      // Git
+      'git':1,'git init':1,'git add':1,'git commit':1,'git push':1,'git pull':1,
+      'git status':1,'git log':1,'git clone':1,'リポジトリ':1,
+      'ステージングエリア':2,'ブランチ':2,'git remote':2,'リライト':2,
+      // 言語の違い
+      'JavaScript':1,'Java':1,'Node.js':2,'フロントエンド':1,'バックエンド':1,'LLM':1,
+      // Web基礎
+      'HTML':1,'CSS':1,'HTTP':1,'HTTPS':1,'ソフトウェア':1,
+      'GitHub Pages':1,'静的サイト':2,'動的サイト':2,'Canvas':3,
+      // npm
+      'npm':1,'package.json':2,'node_modules':2,
+      // データ管理
+      'データベース':1,'GitHub':1,'Firebase':1,
+      'Firestore':2,'localStorage':2,'SessionStorage':2,'Firebase CLI':2,'firebase deploy':2,'firebase serve':2,
+      'ITP':3,'OAuth':3,'セキュリティルール':3,
+      // PWA
+      'PWA':2,'manifest.json':2,'Service Worker':3,
+    };
+
     const WORD_LIST_GROUPS = [
       { cat: 'コマンド', color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
       { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト'] },
@@ -1330,7 +1353,9 @@
           if (!def) return;
           const row = document.createElement('div');
           row.className = 'wl-item';
-          row.innerHTML = `<span class="wl-term">${escapeHtml(term)}</span><span class="wl-def">${escapeHtml(def)}</span>`;
+          const lv = GLOSSARY_LEVEL[term] || 1;
+          const stars = '★'.repeat(lv) + '☆'.repeat(3 - lv);
+          row.innerHTML = `<span class="wl-term">${escapeHtml(term)}</span><span class="wl-def">${escapeHtml(def)}<span class="difficulty-stars d${lv}" style="margin-left:6px">${stars}</span></span>`;
           section.appendChild(row);
         });
       });
