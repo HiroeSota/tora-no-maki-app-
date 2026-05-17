@@ -510,6 +510,23 @@
     }
     .retry-btn:hover { background: rgba(248,81,73,0.1); transform: translateY(-1px); }
     .retry-btn.show  { display: block; }
+
+    .weak-btn {
+      width: 100%;
+      padding: 13px;
+      background: transparent;
+      border: 1.5px solid #f85149;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #f85149;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+      margin-top: 10px;
+    }
+    .weak-btn:hover { background: rgba(248,81,73,0.1); transform: translateY(-1px); }
   </style>
 </head>
 <body>
@@ -535,6 +552,7 @@
       <div class="filter-label">カテゴリを選択</div>
       <div class="filter-grid" id="filterGrid"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
+      <button class="weak-btn" id="weakBtn" onclick="startWeakQuiz()" style="display:none">🎯 苦手モードで挑戦 <span id="weakCount"></span></button>
       <button class="word-list-toggle" id="wordListToggle" onclick="toggleWordList()">📚 単語リストを確認する ▾</button>
       <div class="word-list-section" id="wordListSection" style="display:none"></div>
     </div>
@@ -1250,6 +1268,7 @@
           selectedCategory = key;
           document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
           btn.classList.add('active');
+          updateWeakBtn();
         };
         grid.appendChild(btn);
       });
@@ -1460,6 +1479,13 @@
 
       if (ok && !retriedCurrent) score++;
 
+      if (!retriedCurrent) {
+        const weak = loadWeak();
+        ok ? weak.delete(q.text) : weak.add(q.text);
+        saveWeak(weak);
+        updateWeakBtn();
+      }
+
       const fb = document.getElementById('feedback');
       fb.className = 'feedback ' + (ok ? 'correct-fb' : 'wrong-fb') + ' show';
       document.getElementById('fbIcon').textContent = ok ? '✅' : '❌';
@@ -1500,9 +1526,43 @@
       showScreen('result');
     }
 
+    // ── Weak Questions ────────────────────────────────────────────
+    const WEAK_KEY = 'tora_weak';
+    function loadWeak() { return new Set(JSON.parse(localStorage.getItem(WEAK_KEY) || '[]')); }
+    function saveWeak(s) { localStorage.setItem(WEAK_KEY, JSON.stringify([...s])); }
+
+    function updateWeakBtn() {
+      const weak = loadWeak();
+      const btn = document.getElementById('weakBtn');
+      const pool = ALL_QUESTIONS.filter(q =>
+        (selectedCategory === 'all' || q.category === selectedCategory) && weak.has(q.text)
+      );
+      if (pool.length > 0) {
+        btn.style.display = '';
+        document.getElementById('weakCount').textContent = `(${pool.length}問)`;
+      } else {
+        btn.style.display = 'none';
+      }
+    }
+
+    function startWeakQuiz() {
+      const weak = loadWeak();
+      const pool = ALL_QUESTIONS.filter(q =>
+        (selectedCategory === 'all' || q.category === selectedCategory) && weak.has(q.text)
+      );
+      if (pool.length === 0) return;
+      questions = shuffle(pool);
+      currentIndex = 0;
+      score = 0;
+      retriedCurrent = false;
+      showScreen('quiz');
+      renderQuestion();
+    }
+
     // ── Init ──────────────────────────────────────────────────────
     initFilterGrid();
     buildWordList();
+    updateWeakBtn();
     showScreen('start');
   </script>
 </body>
