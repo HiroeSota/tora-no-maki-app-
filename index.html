@@ -428,6 +428,48 @@
       .action-row { flex-direction: column; }
     }
 
+    /* ── Category Breakdown ── */
+    .cat-breakdown {
+      margin-top: 20px;
+      text-align: left;
+      border: 1px solid #21262d;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .cat-breakdown-title {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #8b949e;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      background: #1c2128;
+      border-bottom: 1px solid #21262d;
+    }
+    .cat-row {
+      display: grid;
+      grid-template-columns: 80px 1fr 44px;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-bottom: 1px solid #21262d;
+      font-size: 0.8rem;
+    }
+    .cat-row:last-child { border-bottom: none; }
+    .cat-row-name { color: #e6edf3; font-weight: 600; }
+    .cat-bar-bg {
+      height: 6px;
+      background: #21262d;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+    .cat-bar-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.6s ease;
+    }
+    .cat-row-pct { color: #8b949e; font-size: 0.75rem; text-align: right; }
+
     /* ── Word List ── */
     .word-list-toggle {
       width: 100%;
@@ -609,6 +651,7 @@
       <div class="result-emoji" id="resultEmoji"></div>
       <div class="result-title" id="resultTitle"></div>
       <div class="result-score" id="resultScore"></div>
+      <div id="catBreakdown"></div>
       <div class="result-buttons">
         <button class="change-cat-btn" onclick="showScreen('start')">カテゴリ変更</button>
         <button class="restart-btn"    onclick="startQuiz()">もう一度 🔄</button>
@@ -1247,7 +1290,7 @@
     ];
 
     // ── State ─────────────────────────────────────────────────────
-    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1;
+    let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1, catStats = {};
 
     // ── Utils ─────────────────────────────────────────────────────
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -1461,6 +1504,7 @@
       questions = shuffle(pool).slice(0, Math.min(10, pool.length));
       currentIndex = 0;
       score = 0;
+      catStats = {};
       retriedCurrent = false;
       showScreen('quiz');
       renderQuestion();
@@ -1520,6 +1564,10 @@
         ok ? weak.delete(q.text) : weak.add(q.text);
         saveWeak(weak);
         updateWeakBtn();
+
+        if (!catStats[q.category]) catStats[q.category] = { correct: 0, total: 0 };
+        catStats[q.category].total++;
+        if (ok) catStats[q.category].correct++;
       }
 
       const fb = document.getElementById('feedback');
@@ -1559,6 +1607,24 @@
       document.getElementById('resultScore').innerHTML =
         `正解数：<strong>${score} / ${questions.length}</strong>（正解率 ${pct}%）`;
 
+      const cats = Object.keys(catStats);
+      const bd = document.getElementById('catBreakdown');
+      if (cats.length > 1) {
+        const rows = cats.map(cat => {
+          const { correct, total } = catStats[cat];
+          const p = Math.round((correct / total) * 100);
+          const color = p >= 80 ? '#3fb950' : p >= 60 ? '#e3b341' : '#f85149';
+          return `<div class="cat-row">
+            <span class="cat-row-name">${escapeHtml(cat)}</span>
+            <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${p}%;background:${color}"></div></div>
+            <span class="cat-row-pct">${correct}/${total}</span>
+          </div>`;
+        }).join('');
+        bd.innerHTML = `<div class="cat-breakdown"><div class="cat-breakdown-title">カテゴリ別正答率</div>${rows}</div>`;
+      } else {
+        bd.innerHTML = '';
+      }
+
       showScreen('result');
     }
 
@@ -1590,6 +1656,7 @@
       questions = shuffle(pool);
       currentIndex = 0;
       score = 0;
+      catStats = {};
       retriedCurrent = false;
       showScreen('quiz');
       renderQuestion();
