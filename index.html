@@ -425,7 +425,6 @@
       .question-text { font-size: 1.1rem; }
       .filter-btn { min-width: 80px; padding: 10px 14px; }
       .result-buttons { flex-direction: column; }
-      .wl-item { grid-template-columns: 1fr; gap: 3px; }
       .action-row { flex-direction: column; }
     }
 
@@ -469,26 +468,51 @@
     }
 
     .wl-item {
-      display: grid;
-      grid-template-columns: minmax(90px, 150px) 1fr;
-      gap: 12px;
-      align-items: start;
-      padding: 9px 16px;
+      padding: 10px 16px;
       border-bottom: 1px solid #21262d;
-      font-size: 0.83rem;
-      line-height: 1.5;
+      cursor: pointer;
       transition: background 0.1s;
+      user-select: none;
     }
     .wl-item:last-child { border-bottom: none; }
-    .wl-item:hover { background: rgba(255,255,255,0.03); }
+    .wl-item:hover { background: rgba(255,255,255,0.04); }
+    .wl-front {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
     .wl-term {
       font-family: 'Consolas','Monaco',monospace;
       color: #e6edf3;
       font-weight: 600;
-      font-size: 0.8rem;
-      padding-top: 1px;
+      font-size: 0.82rem;
     }
-    .wl-def { color: #8b949e; }
+    .wl-front-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .wl-hint {
+      font-size: 0.7rem;
+      color: #484f58;
+      transition: color 0.2s;
+    }
+    .wl-item.open .wl-hint { color: #58a6ff; }
+    .wl-back {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.28s ease, padding-top 0.28s;
+      color: #8b949e;
+      font-size: 0.82rem;
+      line-height: 1.55;
+      padding-top: 0;
+    }
+    .wl-item.open .wl-back {
+      max-height: 300px;
+      padding-top: 7px;
+    }
 
     /* ── Action Row (retry + next) ── */
     .action-row { display: flex; gap: 10px; margin-top: 16px; }
@@ -1375,7 +1399,19 @@
           row.className = 'wl-item';
           const lv = GLOSSARY_LEVEL[term] || 1;
           const stars = '★'.repeat(lv) + '☆'.repeat(3 - lv);
-          row.innerHTML = `<span class="wl-term">${escapeHtml(term)}</span><span class="wl-def">${escapeHtml(def)}<span class="difficulty-stars d${lv}" style="margin-left:6px">${stars}</span></span>`;
+          row.innerHTML = `
+            <div class="wl-front">
+              <span class="wl-term">${escapeHtml(term)}</span>
+              <div class="wl-front-right">
+                <span class="difficulty-stars d${lv}">${stars}</span>
+                <span class="wl-hint">タップで確認 ▾</span>
+              </div>
+            </div>
+            <div class="wl-back">${escapeHtml(def)}</div>`;
+          row.addEventListener('click', () => {
+            const isOpen = row.classList.toggle('open');
+            row.querySelector('.wl-hint').textContent = isOpen ? '閉じる ▴' : 'タップで確認 ▾';
+          });
           section.appendChild(row);
         });
       });
