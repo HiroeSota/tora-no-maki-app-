@@ -617,7 +617,7 @@
       'Firestore':        'Firebaseが提供するNoSQLクラウドデータベース。リアルタイム同期とセキュリティルール設定が特徴。',
       'localStorage':     'ブラウザに永続データを保存するWeb API。タブを閉じても残るが、同じ端末・ブラウザ内のみ有効。複数端末での共有は不可。',
       'SessionStorage':   'ブラウザにデータを一時保存するWeb API。タブを閉じると消える。LINEのインアプリブラウザでは制限される。',
-      'ITP':              'Intelligent Tracking Prevention。SafariのプライバシーProtection機能。サードパーティCookieやリダイレクト後のセッションを制限し、Google認証フローに影響することがある。',
+      'ITP':              'Intelligent Tracking Prevention。Safariのプライバシー保護機能。サードパーティCookieやリダイレクト後のセッションを制限し、Google認証フローに影響することがある。',
       'OAuth':            'Open Authorization。パスワードを共有せず第三者サービスへ認証を委任する仕組み。Google認証などで使われる。',
       'セキュリティルール': 'Firestoreでデータへのアクセス権限を定義する設定。デフォルトは全拒否で、`allow create: if request.auth != null;` のように明示的に許可する必要がある。',
       'GitHub Pages':     'GitHubが提供する静的サイトホスティングサービス。リポジトリのHTMLファイルをそのままWebサイトとして無料公開できる。',
@@ -631,6 +631,9 @@
       'Firebase CLI':     'ターミナルからFirebaseを操作するコマンドラインツール。`npm install -g firebase-tools` でインストール。デプロイ・ローカル確認・設定変更などに使う。',
       'firebase deploy':  'ローカルのファイルを Firebase Hosting に公開するコマンド。実行前に `firebase login` と `firebase init` が必要。',
       'firebase serve':   'Firebase Hosting のローカルプレビューサーバーを起動するコマンド。本番デプロイ前に動作確認ができる。',
+      'ソフトウェア':     'コンピュータ上で動作するプログラムやデータの総称。OS・アプリ・Webアプリなどが含まれる。物理的な機器（ハードウェア）と対になる概念。',
+      'LLM':              '大規模言語モデル（Large Language Model）。膨大なテキストデータで学習したAI。自然言語の生成・要約・翻訳・コード生成などが得意。ChatGPT・Claude・Geminiなどが代表例。',
+      'リライト':         '既存のコードを一から書き直すこと。バグ修正（部分的な修正）とは異なり、設計や構造ごと作り直す。技術的負債の解消や言語・フレームワーク移行で行われるが、リスクも大きい。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -776,10 +779,10 @@
       {
         category: 'Git',
         text: '[[GitHub]] の Public リポジトリについて正しい説明はどれ？',
-        choices: ['パスワードを知っている人だけ見られる','コードは誰でも閲覧可能だが、URL を知らなければ実質アクセスされにくい','チームメンバーだけがアクセスできる','有料プランでないと設定できない'],
+        choices: ['パスワードを知っている人だけ見られる','コードは誰でも閲覧・クローン可能で、GitHub 検索にもヒットする','チームメンバーだけがアクセスできる','有料プランでないと設定できない'],
         answer: 1,
         difficulty: 1,
-        hint: 'Public でも URL を共有しない限り検索で引っかかる可能性はほぼゼロ。「鍵のない倉庫だが場所を誰も知らない」イメージ。',
+        hint: 'Public リポジトリは GitHub 検索にヒットし、誰でも閲覧・クローンできます。API キーや個人情報などの機密情報は絶対にコミットしてはいけません。',
       },
       {
         category: 'Git',
@@ -918,7 +921,7 @@
         choices: ['New Package Manager','Node Package Manager','Node Program Module','Network Package Module'],
         answer: 1,
         difficulty: 1,
-        hint: '[[Node.js]] のパッケージ管理ツール。世界最大のソフトウェアレジストリです。',
+        hint: '[[Node.js]] のパッケージ管理ツール。世界最大のソフトウェアレジストリです。※ npm 公式は現在「頭字語ではない」とも述べていますが、入門教材では Node Package Manager として説明されるのが一般的です。',
       },
       {
         category: 'npm',
@@ -1114,14 +1117,65 @@
         difficulty: 2,
         hint: '育児アプリの哺乳瓶グラフも `<canvas>` で実装。`getContext("2d")` で描画APIにアクセスします。',
       },
+      // ── ソフトウェア ──
+      {
+        category: 'Web基礎',
+        text: '[[ソフトウェア]]の説明として正しいものはどれ？',
+        choices: ['コンピュータの物理部品のこと','コンピュータ上で動作するプログラムやデータの総称','インターネット回線そのもの','マウスやキーボードなどの入力機器'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'OS・アプリ・Webアプリなどはすべてソフトウェア。物理的な機器（CPU・画面・キーボードなど）は「ハードウェア」と呼びます。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[ソフトウェア]]の対義語はどれ？',
+        choices: ['ウェアハウス','ハードウェア','ファームウェア','グループウェア'],
+        answer: 1,
+        difficulty: 1,
+        hint: '「ハード」＝硬いもの＝物理的な機器。「ソフト」＝柔らかいもの＝プログラム・データ。セットで覚えましょう。',
+      },
+      // ── LLM ──
+      {
+        category: '言語の違い',
+        text: '[[LLM]] の正式名称として正しいものはどれ？',
+        choices: ['Large Learning Machine','Large Language Model','Logical Language Module','Linked Logic Memory'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'ChatGPT・Claude・Gemini はすべて LLM です。「大規模言語モデル」と訳されます。',
+      },
+      {
+        category: '言語の違い',
+        text: '[[LLM]] が特に得意なタスクはどれ？',
+        choices: ['画像の3D変換','自然言語の生成・要約・翻訳・コード生成','物理演算シミュレーション','センサーからのリアルタイムデータ収集'],
+        answer: 1,
+        difficulty: 1,
+        hint: '「言語モデル」という名前の通り、テキストを理解・生成するのが得意。コード生成もテキスト生成の一種です。',
+      },
+      // ── リライト ──
+      {
+        category: 'Git',
+        text: '[[リライト]]とはどういう作業？',
+        choices: ['コードのコメントだけを書き直す作業','既存のコードを一から設計ごと書き直すこと','ファイル名を変更する作業','テキストを別の言語に翻訳すること'],
+        answer: 1,
+        difficulty: 1,
+        hint: '「修正（fix）」は部分的な変更、「リライト」は構造・設計ごと作り直す大工事。リスクも大きいため、テストが重要になります。',
+      },
+      {
+        category: 'Git',
+        text: 'バグ修正（fix）と[[リライト]]の違いとして正しいものはどれ？',
+        choices: ['リライトは1行だけ直すこと','バグ修正は部分的な修正、リライトは設計や構造ごと作り直すこと','両方まったく同じ意味','バグ修正はテストを書くことを指す'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'リライトは技術的負債の解消や言語・フレームワーク移行で行われます。既存動作を壊すリスクがあるため、慎重に計画する必要があります。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
     const WORD_LIST_GROUPS = [
       { cat: 'コマンド', color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
-      { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote'] },
-      { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド'] },
-      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas'] },
+      { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト'] },
+      { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
+      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve'] },
       { cat: 'PWA',       color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
