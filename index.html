@@ -470,6 +470,59 @@
     }
     .cat-row-pct { color: #8b949e; font-size: 0.75rem; text-align: right; }
 
+    /* ── Streak & Daily ── */
+    .streak-wrap { text-align: center; margin-bottom: 10px; }
+    .streak-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(227,179,65,0.12);
+      border: 1px solid rgba(227,179,65,0.35);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #e3b341;
+    }
+    .streak-zero { color: #484f58; border-color: #21262d; background: transparent; }
+    .daily-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: linear-gradient(135deg,#f0883e,#e3b341);
+      border: none;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #0d1117;
+      cursor: pointer;
+      font-family: inherit;
+      transition: opacity 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+    }
+    .daily-btn:hover { opacity: 0.9; transform: translateY(-1px); }
+    .daily-done-badge {
+      width: 100%;
+      margin-top: 10px;
+      padding: 12px;
+      box-sizing: border-box;
+      background: rgba(63,185,80,0.08);
+      border: 1px solid rgba(63,185,80,0.3);
+      border-radius: 12px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: #3fb950;
+      text-align: center;
+    }
+    .daily-label {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      color: #e3b341;
+      margin-bottom: 4px;
+    }
+
     /* ── Word List ── */
     .word-list-toggle {
       width: 100%;
@@ -640,10 +693,12 @@
 
     <!-- Start Screen -->
     <div id="startScreen">
+      <div class="streak-wrap"><span class="streak-badge" id="streakBadge"></span></div>
       <div class="start-lead">カテゴリを選んでスタート！</div>
       <div class="start-sub">問題中の用語を <code>タップ / ホバー</code> すると意味が表示されます 💡</div>
       <div class="filter-label">カテゴリを選択</div>
       <div class="filter-grid" id="filterGrid"></div>
+      <div id="dailyArea"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
       <button class="weak-btn" id="weakBtn" onclick="startWeakQuiz()" style="display:none">🎯 苦手モードで挑戦 <span id="weakCount"></span></button>
       <button class="word-list-toggle" id="wordListToggle" onclick="toggleWordList()">📚 単語リストを確認する ▾</button>
@@ -656,6 +711,7 @@
         <button class="back-btn" onclick="backToTop()">← トップへ</button>
         <div class="category-badge" id="categoryBadge"></div>
       </div>
+      <div class="daily-label" id="dailyLabel" style="display:none"></div>
       <div class="question-number" id="questionNumber"></div>
       <div class="question-text" id="questionText"></div>
       <div class="choices" id="choicesContainer"></div>
@@ -679,7 +735,7 @@
       <div class="result-title" id="resultTitle"></div>
       <div class="result-score" id="resultScore"></div>
       <div id="catBreakdown"></div>
-      <div class="result-buttons">
+      <div class="result-buttons" id="resultButtons">
         <button class="change-cat-btn" onclick="showScreen('start')">カテゴリ変更</button>
         <button class="restart-btn"    onclick="startQuiz()">もう一度 🔄</button>
       </div>
@@ -1368,6 +1424,7 @@
 
     // ── State ─────────────────────────────────────────────────────
     let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1, catStats = {};
+    let isDaily = false, isDailyReview = false, dailyWrongFirst = [], dailyReviewWrong = [];
 
     // ── Utils ─────────────────────────────────────────────────────
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -1611,11 +1668,16 @@
 
     function backToTop() {
       retriedCurrent = false;
+      isDaily = false;
+      isDailyReview = false;
+      renderDailyBtn();
       showScreen('start');
     }
 
     // ── Quiz Flow ─────────────────────────────────────────────────
     function startQuiz() {
+      isDaily = false;
+      isDailyReview = false;
       const pool = selectedCategory === 'all'
         ? ALL_QUESTIONS
         : ALL_QUESTIONS.filter(q => q.category === selectedCategory);
@@ -1635,6 +1697,14 @@
 
       document.getElementById('progressLabel').textContent = `${currentIndex + 1} / ${total}`;
       document.getElementById('progressBar').style.width = `${(currentIndex / total) * 100}%`;
+
+      const dailyLabel = document.getElementById('dailyLabel');
+      if (isDaily) {
+        dailyLabel.style.display = '';
+        dailyLabel.textContent = isDailyReview ? '🔁 復習ラウンド' : '📅 デイリークイズ';
+      } else {
+        dailyLabel.style.display = 'none';
+      }
 
       const badge = document.getElementById('categoryBadge');
       badge.textContent = q.category;
@@ -1686,6 +1756,11 @@
         if (!catStats[q.category]) catStats[q.category] = { correct: 0, total: 0 };
         catStats[q.category].total++;
         if (ok) catStats[q.category].correct++;
+
+        if (isDaily && !ok) {
+          if (!isDailyReview) dailyWrongFirst.push(q);
+          else dailyReviewWrong.push(q);
+        }
       }
 
       const fb = document.getElementById('feedback');
@@ -1743,7 +1818,132 @@
         bd.innerHTML = '';
       }
 
+      // デイリークイズ 第1ラウンド終了
+      if (isDaily && !isDailyReview) {
+        if (dailyWrongFirst.length > 0) {
+          document.getElementById('resultEmoji').textContent = '📝';
+          document.getElementById('resultTitle').textContent = `${dailyWrongFirst.length}問を復習しましょう！`;
+          document.getElementById('resultButtons').innerHTML =
+            `<button class="restart-btn" onclick="startDailyReview()">復習スタート →</button>`;
+        } else {
+          completeDailyQuiz();
+          document.getElementById('resultEmoji').textContent = '🔥';
+          document.getElementById('resultTitle').textContent = '完璧！デイリー完了！';
+          document.getElementById('resultScore').innerHTML =
+            `<strong>${getStreak()}日連続達成！</strong>`;
+          document.getElementById('catBreakdown').innerHTML = '';
+          document.getElementById('resultButtons').innerHTML =
+            `<button class="restart-btn" onclick="goHome()">トップへ 🏠</button>`;
+        }
+        showScreen('result');
+        return;
+      }
+
+      // デイリー 復習ラウンド終了
+      if (isDaily && isDailyReview) {
+        if (dailyReviewWrong.length > 0) {
+          questions = [...dailyReviewWrong];
+          dailyReviewWrong = [];
+          currentIndex = 0;
+          score = 0;
+          catStats = {};
+          retriedCurrent = false;
+          renderQuestion();
+          return;
+        }
+        completeDailyQuiz();
+        document.getElementById('resultEmoji').textContent = '🔥';
+        document.getElementById('resultTitle').textContent = 'デイリー完了！';
+        document.getElementById('resultScore').innerHTML =
+          `全問クリア！<strong>${getStreak()}日連続達成！</strong>`;
+        document.getElementById('catBreakdown').innerHTML = '';
+        document.getElementById('resultButtons').innerHTML =
+          `<button class="restart-btn" onclick="goHome()">トップへ 🏠</button>`;
+        showScreen('result');
+        return;
+      }
+
+      // 通常クイズ
+      document.getElementById('resultButtons').innerHTML = `
+        <button class="change-cat-btn" onclick="isDaily=false;showScreen('start')">カテゴリ変更</button>
+        <button class="restart-btn" onclick="startQuiz()">もう一度 🔄</button>`;
       showScreen('result');
+    }
+
+    // ── Daily Quiz & Streak ───────────────────────────────────────
+    function getToday() {
+      return new Date().toLocaleDateString('sv-SE');
+    }
+    function getYesterday() {
+      const d = new Date(); d.setDate(d.getDate() - 1);
+      return d.toLocaleDateString('sv-SE');
+    }
+    function updateStreak() {
+      const today = getToday();
+      const last = localStorage.getItem('tora_streak_date') || '';
+      const count = parseInt(localStorage.getItem('tora_streak_count') || '0');
+      if (last === today) return count;
+      const newCount = last === getYesterday() ? count + 1 : 1;
+      localStorage.setItem('tora_streak_date', today);
+      localStorage.setItem('tora_streak_count', String(newCount));
+      return newCount;
+    }
+    function getStreak() {
+      return parseInt(localStorage.getItem('tora_streak_count') || '0');
+    }
+    function renderStreak() {
+      const n = getStreak();
+      const el = document.getElementById('streakBadge');
+      if (n >= 2) { el.textContent = `🔥 ${n}日連続！`; el.className = 'streak-badge'; }
+      else if (n === 1) { el.textContent = '🔥 1日目！続けよう！'; el.className = 'streak-badge'; }
+      else { el.textContent = '今日から始めよう！'; el.className = 'streak-badge streak-zero'; }
+    }
+    function isDailyDone() {
+      return localStorage.getItem('tora_daily_date') === getToday();
+    }
+    function completeDailyQuiz() {
+      localStorage.setItem('tora_daily_date', getToday());
+      renderDailyBtn();
+      renderStreak();
+    }
+    function renderDailyBtn() {
+      const area = document.getElementById('dailyArea');
+      if (isDailyDone()) {
+        area.innerHTML = '<div class="daily-done-badge">✅ 今日のデイリー完了！明日また来よう！</div>';
+      } else {
+        area.innerHTML = '<button class="daily-btn" onclick="startDailyQuiz()">📅 デイリークイズ（10問）</button>';
+      }
+    }
+    function startDailyQuiz() {
+      isDaily = true;
+      isDailyReview = false;
+      dailyWrongFirst = [];
+      dailyReviewWrong = [];
+      questions = shuffle(ALL_QUESTIONS).slice(0, 10);
+      currentIndex = 0;
+      score = 0;
+      catStats = {};
+      retriedCurrent = false;
+      showScreen('quiz');
+      renderQuestion();
+    }
+    function startDailyReview() {
+      isDailyReview = true;
+      dailyReviewWrong = [];
+      questions = [...dailyWrongFirst];
+      currentIndex = 0;
+      score = 0;
+      catStats = {};
+      retriedCurrent = false;
+      showScreen('quiz');
+      renderQuestion();
+    }
+    function goHome() {
+      isDaily = false;
+      isDailyReview = false;
+      renderDailyBtn();
+      renderStreak();
+      showScreen('start');
     }
 
     // ── Weak Questions ────────────────────────────────────────────
@@ -1766,6 +1966,8 @@
     }
 
     function startWeakQuiz() {
+      isDaily = false;
+      isDailyReview = false;
       const weak = loadWeak();
       const pool = ALL_QUESTIONS.filter(q =>
         (selectedCategory === 'all' || q.category === selectedCategory) && weak.has(q.text)
@@ -1784,6 +1986,9 @@
     initFilterGrid();
     buildWordList();
     updateWeakBtn();
+    updateStreak();
+    renderStreak();
+    renderDailyBtn();
     showScreen('start');
   </script>
 </body>
