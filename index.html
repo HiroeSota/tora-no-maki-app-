@@ -605,15 +605,42 @@
     .wl-cat-header {
       display: flex;
       align-items: center;
+      justify-content: space-between;
       gap: 8px;
-      padding: 8px 16px;
+      padding: 12px 16px;
       background: #1c2128;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       font-weight: 700;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.08em;
       text-transform: uppercase;
       border-bottom: 1px solid #21262d;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s;
     }
+    .wl-cat-header:hover { background: #21262d; }
+
+    .wl-cat-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .wl-cat-count {
+      font-size: 0.65rem;
+      color: #8b949e;
+      font-weight: 400;
+      letter-spacing: 0;
+      text-transform: none;
+    }
+    .wl-cat-arrow {
+      font-size: 0.72rem;
+      color: #8b949e;
+      transition: transform 0.2s;
+    }
+    .wl-cat-group.open .wl-cat-arrow { transform: rotate(180deg); }
+
+    .wl-cat-items { display: none; }
+    .wl-cat-group.open .wl-cat-items { display: block; }
 
     .wl-item {
       padding: 10px 16px;
@@ -1871,19 +1898,38 @@
           return;
         }
         const { cat, color, terms } = group;
+
+        // フォルダ（グループ全体のラッパー）
+        const groupEl = document.createElement('div');
+        groupEl.className = 'wl-cat-group';
+        groupEl.dataset.cat = cat;
+        section.appendChild(groupEl);
+
+        // カテゴリヘッダー（タップで開閉）
+        const termCount = terms.filter(t => GLOSSARY[t]).length;
         const header = document.createElement('div');
         header.className = 'wl-cat-header';
         header.dataset.cat = cat;
         header.style.color = color;
-        header.textContent = cat;
-        section.appendChild(header);
+        header.innerHTML = `<span>${escapeHtml(cat)}</span><span class="wl-cat-right"><span class="wl-cat-count">${termCount}語</span><span class="wl-cat-arrow">▾</span></span>`;
+        groupEl.appendChild(header);
+
+        // 中身コンテナ（初期は非表示）
+        const itemsEl = document.createElement('div');
+        itemsEl.className = 'wl-cat-items';
+        groupEl.appendChild(itemsEl);
+
+        header.addEventListener('click', () => {
+          groupEl.classList.toggle('open');
+        });
+
+        // 各用語
         const sorted = [...terms].sort((a, b) => (GLOSSARY_LEVEL[a] || 1) - (GLOSSARY_LEVEL[b] || 1));
         sorted.forEach(term => {
           const def = GLOSSARY[term];
           if (!def) return;
           const row = document.createElement('div');
-          const autoOpen = cat === 'IT基礎';
-          row.className = 'wl-item' + (autoOpen ? ' open' : '');
+          row.className = 'wl-item';
           row.dataset.term = term.toLowerCase();
           row.dataset.def = def.toLowerCase();
           row.dataset.cat = cat;
@@ -1894,7 +1940,7 @@
               <span class="wl-term">${escapeHtml(term)}</span>
               <div class="wl-front-right">
                 <span class="difficulty-stars d${lv}">${stars}</span>
-                <span class="wl-hint">${autoOpen ? '閉じる ▴' : 'タップで確認 ▾'}</span>
+                <span class="wl-hint">タップで確認 ▾</span>
               </div>
             </div>
             <div class="wl-back">${escapeHtml(def)}</div>`;
@@ -1902,41 +1948,44 @@
             const isOpen = row.classList.toggle('open');
             row.querySelector('.wl-hint').textContent = isOpen ? '閉じる ▴' : 'タップで確認 ▾';
           });
-          section.appendChild(row);
+          itemsEl.appendChild(row);
         });
       });
     }
 
     function filterWordList(query) {
       const q = query.trim().toLowerCase();
-      const items = document.querySelectorAll('.wl-item');
-      const headers = document.querySelectorAll('.wl-cat-header');
+      const groups = document.querySelectorAll('.wl-cat-group');
 
-      items.forEach(item => {
-        const match = !q || item.dataset.term.includes(q) || item.dataset.def.includes(q);
-        item.style.display = match ? '' : 'none';
+      groups.forEach(group => {
+        const items = group.querySelectorAll('.wl-item');
+        let hasMatch = false;
+        items.forEach(item => {
+          const match = !q || item.dataset.term.includes(q) || item.dataset.def.includes(q);
+          item.style.display = match ? '' : 'none';
+          if (match) hasMatch = true;
+        });
+        group.style.display = hasMatch ? '' : 'none';
+        // 検索中は一致カテゴリを自動展開、検索解除時は全部閉じる
+        if (q && hasMatch) {
+          group.classList.add('open');
+        } else if (!q) {
+          group.classList.remove('open');
+        }
       });
 
-      // カテゴリヘッダーは配下に表示中のアイテムがある場合だけ表示
-      headers.forEach(header => {
-        const cat = header.dataset.cat;
-        const hasVisible = [...items].some(i => i.dataset.cat === cat && i.style.display !== 'none');
-        header.style.display = hasVisible ? '' : 'none';
-      });
-
-      // セクションラベル（入門/発展）は配下のヘッダーが1つでも見えていれば表示
+      // セクションラベルは配下に表示中グループがあれば表示
       document.querySelectorAll('.wl-section-label').forEach(lbl => {
         let next = lbl.nextElementSibling;
         let hasVisible = false;
         while (next && !next.classList.contains('wl-section-label')) {
-          if (next.classList.contains('wl-cat-header') && next.style.display !== 'none') hasVisible = true;
+          if (next.classList.contains('wl-cat-group') && next.style.display !== 'none') hasVisible = true;
           next = next.nextElementSibling;
         }
         lbl.style.display = hasVisible ? '' : 'none';
       });
 
-      // 1件もなければ「見つかりません」を表示
-      const anyVisible = [...items].some(i => i.style.display !== 'none');
+      const anyVisible = [...groups].some(g => g.style.display !== 'none');
       document.getElementById('wlNoResult').style.display = anyVisible ? 'none' : '';
     }
 
