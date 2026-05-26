@@ -857,6 +857,9 @@
       'ITP':              'Intelligent Tracking Prevention。Safariのプライバシー保護機能。サードパーティCookieやリダイレクト後のセッションを制限し、Google認証フローに影響することがある。',
       'OAuth':            'Open Authorization。パスワードを共有せず第三者サービスへ認証を委任する仕組み。Google認証などで使われる。',
       'セキュリティルール': 'Firestoreでデータへのアクセス権限を定義する設定。デフォルトは全拒否で、`allow create: if request.auth != null;` のように明示的に許可する必要がある。',
+      'RLS':              'Row Level Security（行レベルセキュリティ）。PostgreSQL（Supabase）の機能で、テーブルの行単位でアクセス権限を制御する。有効化後はポリシーを定義するまで全行が非公開になる。',
+      'UUID':             'Universally Unique Identifier。128ビットのランダムな一意識別子。`550e8400-e29b-41d4-a716-446655440000` のような形式で、DBの主キーによく使われる。',
+      'ON DELETE CASCADE': '外部キー制約のオプション。参照先（親テーブル）のレコードが削除されたとき、参照元（子テーブル）の関連行も自動で削除する。孤立レコードが残るのを防ぐ。',
       'GitHub Pages':     'GitHubが提供する静的サイトホスティングサービス。リポジトリのHTMLファイルをそのままWebサイトとして無料公開できる。',
       '静的サイト':        '表示する内容がHTMLなどのファイルに最初から書いてあるWebサイト。サーバー処理やデータベースが不要。',
       '動的サイト':        'ユーザーの操作やデータに応じてサーバーが内容を生成するWebサイト。データベースとサーバー処理が必要。',
@@ -901,6 +904,9 @@
       'プロトコル':       'コンピュータ同士が通信するときの「ルール・手順の取り決め」。HTTPやHTTPSがWebの通信プロトコルの例。このルールに従って会話することで、ブラウザとサーバーが情報をやり取りできる。',
       'レンダリング':     'データやコードを処理して、画面に表示できる形に変換する処理。ブラウザがHTMLを読んでWebページを描画することを「レンダリング」と言う。',
       'マークアップ言語': 'テキストに「見出し」「段落」「リンク」などの意味や構造を示すタグを付けて記述する言語。HTMLが代表例。計算や処理をするプログラミング言語とは別のカテゴリ。',
+      'layout.tsx':       'Next.js App Routerで共通レイアウト（ヘッダー・フッターなど）を定義するファイル。同フォルダ以下の全ページを包むラッパーになる。`app/layout.tsx` が最上位のルートレイアウト。',
+      'Server Components': 'Next.js App Routerのデフォルトコンポーネント方式。サーバー上で実行されDB・環境変数へのアクセスが可能。クライアントには静的なHTMLのみ送られる。`useState` 等が必要な場合は `"use client"` でクライアントコンポーネントにする。',
+      'middleware.ts':    'Next.jsのミドルウェア定義ファイル。リクエストがページに届く前に実行され、認証チェック・リダイレクト・ヘッダー操作などを一元管理できる。',
       // 技術スタック
       'TypeScript':       'MicrosoftがJavaScriptに静的型付けを追加したスーパーセット言語。コンパイルするとJavaScriptになる。型エラーを実行前に検出でき、大規模開発での品質向上に役立つ。拡張子は `.ts` / `.tsx`。',
       'Next.js':          'Vercel製のReactベースWebフレームワーク。SSR（サーバーサイドレンダリング）・SSG（静的生成）・ISR・APIルートをサポート。App Routerではフォルダ構造がURLになる。',
@@ -1786,6 +1792,96 @@
         difficulty: 2,
         hint: '「マークアップ（mark up）」＝「印をつける」こと。HTMLで `<h1>見出し</h1>` のようにタグで囲って「ここが見出しです」と意味を付けるのがマークアップです。計算はしません！',
       },
+      // ── データ管理（Supabase/RLS/UUID） ──
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] の [[RLS]]（Row Level Security）の説明として正しいものはどれ？',
+        choices: ['テーブルにインデックスを張ってSQLの実行速度を上げる機能','テーブルの行単位でアクセス権限を制御する仕組み。ポリシーを定義しないとRLS有効化後は全行が非公開になる','テーブルの列（カラム）を暗号化するPostgreSQL拡張','テーブルを自動バックアップするスケジューラ'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'RLSを有効化した後、ポリシーを1つも定義しないと全行がアクセス不可になります。`auth.uid() = user_id` のようなポリシーで「自分のレコードだけ読める」制御が実現できます。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] のRLSポリシーで `auth.uid() = user_id` という条件はどんな意味？',
+        choices: ['管理者ユーザーのみアクセスを許可する','全ての認証済みユーザーにアクセスを許可する','ログイン中のユーザーのIDと、レコードの user_id が一致する行だけ許可する','user_id が空（NULL）でないレコードだけ許可する'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`auth.uid()` はSupabaseが提供する関数で、現在ログイン中のユーザーのUUIDを返します。これをテーブルの `user_id` と比較することで「自分のデータだけ操作できる」という制御が実現します。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLの `REFERENCES auth.users(id) ON DELETE CASCADE` の説明として正しいものはどれ？',
+        choices: ['users テーブルへのINSERTをトリガーに、関連テーブルへも自動でデータを追加する','auth.users の該当ユーザーが削除されたとき、このテーブルの関連行も自動で削除される','users テーブルと常にリアルタイム同期する設定','auth.users テーブルの読み取り権限を付与するSQL構文'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'CASCADE は「連鎖」の意味。ユーザーアカウントを削除したときにそのユーザーの作業ログも自動的に消えてほしい場合に使います。孤立レコード（参照先のないデータ）が残るのを防げます。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[UUID]] の説明として正しいものはどれ？',
+        choices: ['ユーザーが手動で入力する4桁の暗証番号','1から順に増える連番ID（例：1, 2, 3…）','128ビットのランダムな一意識別子。`550e8400-e29b-...` のような形式で重複がほぼ起きない','IPアドレスを変換したハッシュ値'],
+        answer: 2,
+        difficulty: 1,
+        hint: 'UUID は Universally Unique Identifier の略。連番と違ってIDから件数や順序が推測できないためセキュリティ面でも有利です。SupabaseのDBでは `gen_random_uuid()` で主キーを自動生成できます。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLの `NUMERIC(4,1)` 型で保存できる数値として正しいものはどれ？',
+        choices: ['最大4ビットの整数のみ（0〜15）','小数点以下なし・最大4桁の整数（例：1234）','合計4桁で小数点以下1桁まで（例：123.4 や 8.5）','最大4文字の文字列として数値を保存する'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`NUMERIC(精度, スケール)` の書式で、精度＝有効桁数の合計、スケール＝小数点以下の桁数。稼働時間を `8.5` 時間のように記録したいときに便利な型です。',
+      },
+      // ── 技術スタック（Next.js深堀り・TypeScript型） ──
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] App Router の `layout.tsx` の説明として正しいものはどれ？',
+        choices: ['ページ固有のスタイルを書くCSSファイルの別名','同じフォルダ以下の全ページを包む共通レイアウトを定義するファイル。ヘッダーやフッターをここに置く','APIルートを定義するファイル（`route.ts` の別名）','テスト用のモックデータを定義するファイル'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`app/layout.tsx` が全ページ共通のルートレイアウト。`app/dashboard/layout.tsx` を作ればダッシュボード配下のページだけに適用される入れ子レイアウトにもなります。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] App Router での「サーバーコンポーネント」の説明として正しいものはどれ？',
+        choices: ['ファイル先頭に `"use client"` と書いたコンポーネント','App Router ではデフォルトがサーバーコンポーネント。サーバー上で実行されDBアクセス・環境変数参照が可能で、クライアントにはHTMLのみ送られる','`useState` や `useEffect` が使えるコンポーネントの総称','ブラウザ上でリアルタイムに更新されるインタラクティブなコンポーネント'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'サーバーコンポーネントは `async` 関数にできるのが特徴。`await supabase.from(...)` のようにDBを直接呼べます。ブラウザAPIや `useState` が必要な場合は `"use client"` を付けてクライアントコンポーネントにします。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] の `middleware.ts` の役割として正しいものはどれ？',
+        choices: ['データベースのスキーマ定義を管理するファイル','リクエストが各ページに届く前に実行される処理を定義するファイル。認証チェック・リダイレクト・ヘッダー操作などに使う','APIエンドポイントを定義するための設定ファイル','テスト実行前に初期化処理を行うファイル'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'ミドルウェアはリクエストとレスポンスの「中間処理」担当。「ログインしていなければ `/login` にリダイレクト」という処理を全ページで一元管理できます。`export const config = { matcher: [...] }` で対象パスを絞れます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Supabase]] でServer Componentsから認証情報を取得するとき `@supabase/ssr` の `createServerClient` を使う主な理由はどれ？',
+        choices: ['サーバー側はRLSが適用されないため特別なクライアントが必要だから','ブラウザの `document.cookie` にアクセスできないサーバー環境で、リクエストのCookieを読み書きしてセッションを維持するため','`createClient` よりもクエリ速度が2倍速いから','Next.jsのApp RouterではPages Router専用の `createClient` が動かないから'],
+        answer: 1,
+        difficulty: 3,
+        hint: 'ブラウザでは `document.cookie` でCookieを読めますが、サーバーサイドではそれができません。`@supabase/ssr` の `createServerClient` に `getAll`/`setAll` のCookie操作関数を渡すことで、Next.jsのリクエストからセッションを取り出せます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[TypeScript]] の `type` キーワードで次のように書いた場合の意味は？ `type WorkLog = { id: string; hours: number; description: string }`',
+        choices: ['WorkLog というクラスを定義している','`WorkLog` という型エイリアスを定義している。この型を使うとオブジェクトのプロパティ名と型を保証できる','WorkLog という変数に空のオブジェクトを代入している','WorkLog インターフェースをクラスに実装させる宣言'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`type` で定義した型は変数の型注釈として使えます。例：`const log: WorkLog = { id: "abc", hours: 8, description: "開発" }` のように書くと、プロパティの過不足をTypeScriptがコンパイル時に検出してくれます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[TypeScript]] で `checked_by: string | null` と型を定義した場合の意味はどれ？',
+        choices: ['`checked_by` は必ず string 型でなければならない（null は代入不可）','`checked_by` は string 型か null のどちらかを取ることができる。値が未確定のフィールドに使う','`checked_by` は string か number のどちらかを取る','`checked_by` はオプショナルなプロパティで省略可能（`checked_by?` と同じ意味）'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`|`（パイプ）は「または」を表し、ユニオン型と言います。`string | null` は「文字列か、まだ値がない（null）か」という状態を型レベルで表現できます。DBのNULL許容カラムに対応する型です。',
+      },
       // ── リライト ──
       {
         category: 'Git',
@@ -1825,6 +1921,7 @@
       'データベース':1,'GitHub':1,'Firebase':1,
       'Firestore':2,'localStorage':2,'SessionStorage':2,'Firebase CLI':2,'firebase deploy':2,'firebase serve':2,
       'ITP':3,'OAuth':3,'セキュリティルール':3,
+      'RLS':2,'UUID':1,'ON DELETE CASCADE':3,
       // PWA
       'PWA':2,'manifest.json':2,'Service Worker':3,
       // JS基礎
@@ -1837,6 +1934,7 @@
       // 技術スタック
       'TypeScript':1,'Next.js':1,'React':1,'Supabase':1,'pnpm':1,'Biome':2,
       'Tailwind CSS':1,'Vercel':1,'Docker':2,'Prisma':2,'ESLint':2,'Prettier':2,
+      'layout.tsx':2,'Server Components':2,'middleware.ts':2,
     };
 
     const WORD_LIST_GROUPS = [
@@ -1849,9 +1947,9 @@
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
       { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
-      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
