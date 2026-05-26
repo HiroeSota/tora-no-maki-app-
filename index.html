@@ -769,7 +769,7 @@
       'ステージングエリア': 'コミット前に変更を一時的に登録しておく準備ゾーン（舞台袖のイメージ）。',
       'ブランチ':         '開発の作業ラインを分岐させる機能。本流（main）を壊さず並行作業できる。',
       'npm':              'Node Package Manager。Node.js のパッケージ（ライブラリ）を管理するツール。',
-      'Node.js':          'JavaScript をブラウザ外（サーバーサイドなど）で実行できる環境。',
+      'Node.js':          'JavaScript をブラウザ外（サーバーやターミナルなど）で実行できる環境。npm・pnpm など、開発ツールを動かす土台にもなっている。',
       'JavaScript':       'ブラウザで動作するプログラミング言語。Node.js でサーバーサイドにも使える。',
       'Java':             'Sun Microsystems（現Oracle）が開発した汎用プログラミング言語。',
       'HTML':             'HyperText Markup Language。Webページの構造（骨格）を作るマークアップ言語。',
@@ -814,14 +814,14 @@
       'Next.js':          'Vercel製のReactベースWebフレームワーク。SSR（サーバーサイドレンダリング）・SSG（静的生成）・ISR・APIルートをサポート。App Routerではフォルダ構造がURLになる。',
       'React':            'Meta（旧Facebook）製のUIコンポーネントライブラリ。仮想DOMで差分のみ更新する仕組みを持ち、コンポーネント単位でUIを組み立てる。Next.js / Remix などのフレームワークのベースにもなる。',
       'Supabase':         'PostgreSQLをベースにしたオープンソースのBaaS（Backend as a Service）。認証・リアルタイムDB・ストレージ・Edge Functionsをワンセットで提供。FirebaseのPostgreSQL版と言われる。',
-      'pnpm':             'Performant npm。npmの代替パッケージマネージャー。パッケージをグローバルストアに一元管理しハードリンクで参照するため、ディスク節約・インストール高速化ができる。モノレポ管理にも強い。',
+      'pnpm':             'Performant npm。npmの代替パッケージマネージャー。パッケージをPC内の共有ストアに一元管理し、プロジェクトからはショートカット（ハードリンク）で参照するため、ディスク節約・インストール高速化ができる。複数プロジェクトをまとめて管理するモノレポ構成にも強い。',
       'Biome':            'RustベースのJavaScript/TypeScript向けオールインワンツール。リンター（ESLint相当）とフォーマッター（Prettier相当）を1つで代替し、Rustの速度で高速に動作する。設定ファイルは `biome.json`。',
       'Tailwind CSS':     'ユーティリティファーストのCSSフレームワーク。`flex`, `p-4`, `text-blue-500` などのクラスをHTMLに直接付与してスタイリングする。カスタムCSS記述量を大幅に削減できる。',
       'Vercel':           'Next.jsの開発元が提供するデプロイ・ホスティングプラットフォーム。GitHubにプッシュするだけでビルド＆本番デプロイが自動実行される。サーバーレス関数・Edge Networkも内蔵。',
       'Docker':           'コンテナ技術を使いアプリの実行環境をパッケージ化するプラットフォーム。`Dockerfile` に環境を定義し `docker build` でイメージ作成・`docker run` で起動。「自分のPCでは動く」問題を解消する。',
-      'Prisma':           'TypeScript向けのORM（Object Relational Mapper）。スキーマファイル（`schema.prisma`）からDBテーブルとTypeScript型を自動生成する。PostgreSQL・MySQL・SQLiteなど複数DBに対応。',
-      'ESLint':           'JavaScriptのコード品質を静的解析するリンター。コーディングルールに違反した箇所を指摘・自動修正する。Biomeに代替されることも増えてきた。設定ファイルは `eslint.config.js`。',
-      'Prettier':         'JavaScriptやHTML・CSSなど多言語対応のコードフォーマッター。インデント・クォート・セミコロンなどを自動整形する。Biomeに代替されることも増えてきた。',
+      'Prisma':           'TypeScript向けのORM（Object Relational Mapper）。スキーマファイル（`schema.prisma`）にテーブル設計を書くと、DBテーブルの作成とTypeScript型が自動生成される。SQLを直接書く代わりに `db.user.findMany()` のような直感的なコードでDBを操作できる。PostgreSQL・MySQL・SQLiteなど複数DBに対応。',
+      'ESLint':           'JavaScriptのコードの問題点を自動チェックするリンター（静的解析ツール）。未使用変数や危険な書き方などルール違反を指摘・自動修正する。Biomeに代替されることも増えてきた。設定ファイルは `eslint.config.js`。',
+      'Prettier':         'コードの見た目を自動で統一するフォーマッター。インデント・クォート・セミコロンの有無などをルールに従って自動整形し、チーム内のコードスタイルのばらつきをなくす。JavaScript・HTML・CSSなど多言語対応。Biomeに代替されることも増えてきた。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1387,7 +1387,7 @@
         choices: ['TypeScriptはJavaScriptと全く別の言語','TypeScriptはJavaScriptに静的型付けを追加したスーパーセットで、最終的にJSにコンパイルされる','TypeScriptはPythonのJSバインディング','TypeScriptはサーバー専用でブラウザでは動かない'],
         answer: 1,
         difficulty: 1,
-        hint: 'スーパーセット＝上位互換。`.ts` ファイルに書いたコードはコンパイルで `.js` になり、型エラーを実行前に発見できます。',
+        hint: 'スーパーセット＝TypeScriptはJavaScriptの全機能を含んだ拡張版。今あるJavaScriptのコードはそのままTypeScriptでも動きます。`.ts` ファイルはコンパイルで `.js` になり、型エラーを実行前に発見できるのが最大のメリットです。',
       },
       {
         category: '技術スタック',
@@ -1435,7 +1435,7 @@
         choices: ['キャッシュをクラウドに保存するから','パッケージをグローバルストアに一元管理し、プロジェクトからハードリンクで参照するため重複ダウンロードが起きない','JavaScriptではなくRustで書かれているから','インターネット通信を並列化しているから'],
         answer: 1,
         difficulty: 2,
-        hint: '同じパッケージをA・Bプロジェクトで使っても、実体はグローバルストアに1つだけ。各プロジェクトはハードリンクで参照します。',
+        hint: '同じパッケージをA・Bプロジェクトで使っても、PC上の実体は1つだけ。各プロジェクトからはショートカット（ハードリンク）で参照するためコピーが発生せず、ディスク容量もインストール時間も節約できます。',
       },
       {
         category: '技術スタック',
@@ -1499,7 +1499,7 @@
         choices: ['CSS-in-JSのスタイリングライブラリ','TypeScript向けのORM。スキーマ定義からDBテーブルとTS型を自動生成する','JavaScriptのテストランナー','Dockerコンテナ間の通信を管理するツール'],
         answer: 1,
         difficulty: 2,
-        hint: 'ORM＝Object Relational Mapper。`schema.prisma` にモデルを書くと、TypeScriptの型付きクエリが使えるようになります。',
+        hint: 'ORM＝データベースをJSのオブジェクトとして操作できるツール。`schema.prisma` にテーブル設計を書くと、`db.user.findMany()` のようなコードでDBを操作できます。SQLを直接書かなくて済むのが便利です。',
       },
       // ── リライト ──
       {
