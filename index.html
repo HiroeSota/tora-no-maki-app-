@@ -485,6 +485,20 @@
     }
     .cat-row-pct { color: #8b949e; font-size: 0.75rem; text-align: right; }
 
+    .stats-overall {
+      padding: 14px 16px 10px;
+      font-size: 0.85rem;
+      color: #8b949e;
+      border-bottom: 1px solid #21262d;
+    }
+    .stats-overall strong { color: #e6edf3; }
+    .stats-empty {
+      padding: 20px;
+      text-align: center;
+      color: #484f58;
+      font-size: 0.85rem;
+    }
+
     /* ── Streak & Daily ── */
     .streak-wrap { text-align: center; margin-bottom: 10px; }
     .streak-badge {
@@ -754,6 +768,8 @@
       <div id="dailyArea"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
       <button class="weak-btn" id="weakBtn" onclick="startWeakQuiz()" style="display:none">🎯 苦手モードで挑戦 <span id="weakCount"></span></button>
+      <button class="word-list-toggle" id="statsToggle" onclick="toggleStats()">📊 累計成績を見る ▾</button>
+      <div class="word-list-section" id="statsSection" style="display:none"></div>
       <button class="word-list-toggle" id="wordListToggle" onclick="toggleWordList()">📚 単語リストを確認する ▾</button>
       <div class="word-list-section" id="wordListSection" style="display:none"></div>
     </div>
@@ -2110,6 +2126,7 @@
         if (!catStats[q.category]) catStats[q.category] = { correct: 0, total: 0 };
         catStats[q.category].total++;
         if (ok) catStats[q.category].correct++;
+        updateAllStats(q.category, ok);
 
         if (isDaily && !ok) {
           if (!isDailyReview) dailyWrongFirst.push(q);
@@ -2301,9 +2318,67 @@
     }
 
     // ── Weak Questions ────────────────────────────────────────────
-    const WEAK_KEY = 'tora_weak';
+    const WEAK_KEY  = 'tora_weak';
     function loadWeak() { return new Set(JSON.parse(localStorage.getItem(WEAK_KEY) || '[]')); }
     function saveWeak(s) { localStorage.setItem(WEAK_KEY, JSON.stringify([...s])); }
+
+    // ── 累計成績 ──────────────────────────────────────────────────
+    const STATS_KEY = 'tora_stats_v1';
+    function loadAllStats() { return JSON.parse(localStorage.getItem(STATS_KEY) || '{}'); }
+    function updateAllStats(cat, correct) {
+      const s = loadAllStats();
+      if (!s[cat]) s[cat] = { c: 0, t: 0 };
+      s[cat].t++;
+      if (correct) s[cat].c++;
+      localStorage.setItem(STATS_KEY, JSON.stringify(s));
+    }
+
+    let statsOpen = false;
+    function toggleStats() {
+      statsOpen = !statsOpen;
+      document.getElementById('statsSection').style.display = statsOpen ? '' : 'none';
+      document.getElementById('statsToggle').textContent =
+        statsOpen ? '📊 累計成績を閉じる ▴' : '📊 累計成績を見る ▾';
+      if (statsOpen) renderStats();
+    }
+
+    function renderStats() {
+      const sec = document.getElementById('statsSection');
+      const s = loadAllStats();
+      const cats = Object.keys(s);
+      if (cats.length === 0) {
+        sec.innerHTML = '<div class="stats-empty">まだデータがありません。クイズを解いてみよう！</div>';
+        return;
+      }
+      const totalT = cats.reduce((a, k) => a + s[k].t, 0);
+      const totalC = cats.reduce((a, k) => a + s[k].c, 0);
+      const overallPct = Math.round((totalC / totalT) * 100);
+
+      // カテゴリをCATS順に並べる（__label__を除く）
+      const catOrder = CATS.filter(c => c.key !== '__label__').map(c => c.key);
+      const sorted = [...cats].sort((a, b) => {
+        const ia = catOrder.indexOf(a), ib = catOrder.indexOf(b);
+        return (ia === -1 ? 99 : ia) - (ib === -1 ? 99 : ib);
+      });
+
+      const rows = sorted.map(cat => {
+        const { c, t } = s[cat];
+        const p = Math.round((c / t) * 100);
+        const color = p >= 80 ? '#3fb950' : p >= 60 ? '#e3b341' : '#f85149';
+        return `<div class="cat-row">
+          <span class="cat-row-name">${escapeHtml(cat)}</span>
+          <div class="cat-bar-bg"><div class="cat-bar-fill" style="width:${p}%;background:${color}"></div></div>
+          <span class="cat-row-pct">${c}/${t}</span>
+        </div>`;
+      }).join('');
+
+      sec.innerHTML = `
+        <div class="stats-overall">累計 <strong>${totalT}</strong> 問回答 ／ 正答率 <strong>${overallPct}%</strong></div>
+        <div class="cat-breakdown" style="margin:0;border:none;border-radius:0">
+          <div class="cat-breakdown-title">カテゴリ別（正解数/回答数）</div>
+          ${rows}
+        </div>`;
+    }
 
     function updateWeakBtn() {
       const weak = loadWeak();
