@@ -188,6 +188,7 @@
     .category-badge[data-cat="npm"]        { background: rgba(248,81,73,0.15);   border-color: rgba(248,81,73,0.35);   color: #f85149; }
     .category-badge[data-cat="データ管理"] { background: rgba(0,180,216,0.15);   border-color: rgba(0,180,216,0.35);   color: #00b4d8; }
     .category-badge[data-cat="PWA"]       { background: rgba(240,136,62,0.15);  border-color: rgba(240,136,62,0.35);  color: #f0883e; }
+    .category-badge[data-cat="技術スタック"] { background: rgba(255,123,114,0.15); border-color: rgba(255,123,114,0.35); color: #ff7b72; }
 
     /* ── Question ── */
     .question-number {
@@ -808,6 +809,19 @@
       'const':            '再代入できない変数宣言キーワード。値が変わらないものに使う。例：`const PI = 3.14;`。基本的にまず `const` を使い、変更が必要なときだけ `let` を使うのが現代のJS流儀。',
       'let':              '再代入できる変数宣言キーワード。値が後から変わるものに使う。例：`let count = 0; count++;`',
       'DOM':              'Document Object Model。ブラウザがHTMLを読み込んだ後に作るツリー構造。JavaScriptから `document.getElementById()` などでHTML要素を取得・変更できる仕組み。',
+      // 技術スタック
+      'TypeScript':       'MicrosoftがJavaScriptに静的型付けを追加したスーパーセット言語。コンパイルするとJavaScriptになる。型エラーを実行前に検出でき、大規模開発での品質向上に役立つ。拡張子は `.ts` / `.tsx`。',
+      'Next.js':          'Vercel製のReactベースWebフレームワーク。SSR（サーバーサイドレンダリング）・SSG（静的生成）・ISR・APIルートをサポート。App Routerではフォルダ構造がURLになる。',
+      'React':            'Meta（旧Facebook）製のUIコンポーネントライブラリ。仮想DOMで差分のみ更新する仕組みを持ち、コンポーネント単位でUIを組み立てる。Next.js / Remix などのフレームワークのベースにもなる。',
+      'Supabase':         'PostgreSQLをベースにしたオープンソースのBaaS（Backend as a Service）。認証・リアルタイムDB・ストレージ・Edge Functionsをワンセットで提供。FirebaseのPostgreSQL版と言われる。',
+      'pnpm':             'Performant npm。npmの代替パッケージマネージャー。パッケージをグローバルストアに一元管理しハードリンクで参照するため、ディスク節約・インストール高速化ができる。モノレポ管理にも強い。',
+      'Biome':            'RustベースのJavaScript/TypeScript向けオールインワンツール。リンター（ESLint相当）とフォーマッター（Prettier相当）を1つで代替し、Rustの速度で高速に動作する。設定ファイルは `biome.json`。',
+      'Tailwind CSS':     'ユーティリティファーストのCSSフレームワーク。`flex`, `p-4`, `text-blue-500` などのクラスをHTMLに直接付与してスタイリングする。カスタムCSS記述量を大幅に削減できる。',
+      'Vercel':           'Next.jsの開発元が提供するデプロイ・ホスティングプラットフォーム。GitHubにプッシュするだけでビルド＆本番デプロイが自動実行される。サーバーレス関数・Edge Networkも内蔵。',
+      'Docker':           'コンテナ技術を使いアプリの実行環境をパッケージ化するプラットフォーム。`Dockerfile` に環境を定義し `docker build` でイメージ作成・`docker run` で起動。「自分のPCでは動く」問題を解消する。',
+      'Prisma':           'TypeScript向けのORM（Object Relational Mapper）。スキーマファイル（`schema.prisma`）からDBテーブルとTypeScript型を自動生成する。PostgreSQL・MySQL・SQLiteなど複数DBに対応。',
+      'ESLint':           'JavaScriptのコード品質を静的解析するリンター。コーディングルールに違反した箇所を指摘・自動修正する。Biomeに代替されることも増えてきた。設定ファイルは `eslint.config.js`。',
+      'Prettier':         'JavaScriptやHTML・CSSなど多言語対応のコードフォーマッター。インデント・クォート・セミコロンなどを自動整形する。Biomeに代替されることも増えてきた。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1366,6 +1380,127 @@
         difficulty: 2,
         hint: '`document.getElementById("btn")` などのコードがDOMを使った操作です。JSでページを動かすために必須の概念。',
       },
+      // ── 技術スタック ──
+      {
+        category: '技術スタック',
+        text: '[[TypeScript]] と [[JavaScript]] の関係として正しいものはどれ？',
+        choices: ['TypeScriptはJavaScriptと全く別の言語','TypeScriptはJavaScriptに静的型付けを追加したスーパーセットで、最終的にJSにコンパイルされる','TypeScriptはPythonのJSバインディング','TypeScriptはサーバー専用でブラウザでは動かない'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'スーパーセット＝上位互換。`.ts` ファイルに書いたコードはコンパイルで `.js` になり、型エラーを実行前に発見できます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[TypeScript]] で変数に型を明示する書き方として正しいものはどれ？',
+        choices: ['`const name<string> = "太郎"`','`const name: string = "太郎"`','`string const name = "太郎"`','`const name = "太郎" as String`'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'コロン（`:`）の後に型名を書きます。`number`, `boolean`, `string[]`（文字列配列）なども同じ書き方です。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] の説明として正しいものはどれ？',
+        choices: ['AngularをベースにしたモバイルアプリフレームワークでNativeAppを作れる','VueをベースにしたSSRライブラリでNuxt.jsの別名','ReactをベースにしたWebフレームワーク。SSR・SSG・APIルートを標準サポートする','Pythonで書かれたHTTPサーバー'],
+        answer: 2,
+        difficulty: 1,
+        hint: 'Vercel社が開発・メンテナンス。GitHubにプッシュするだけでVercelへのデプロイが自動化されます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] の App Router でページを作るとき、URLに対応するファイル名として正しいものはどれ？',
+        choices: ['`index.html`','`route.ts`','`page.tsx`','`app.tsx`'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`app/about/page.tsx` を作ると `/about` に対応するページになります。フォルダ名がURLパスになる仕組みです。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Supabase]] のデータベースエンジンとして正しいものはどれ？',
+        choices: ['MongoDB（NoSQL）','MySQL','PostgreSQL','Firebase Firestore'],
+        answer: 2,
+        difficulty: 1,
+        hint: 'SupabaseはPostgreSQLのラッパー。FirestoreがNoSQLなのに対し、SupabaseはSQLで操作できるのが特徴です。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Supabase]] の説明として正しいものはどれ？',
+        choices: ['Microsoftが提供する有料のPaaSサービス','PostgreSQLベースのオープンソースBaaS。認証・DB・ストレージをFirebaseのように手軽に使える','Googleが開発したKubernetesクラスター管理ツール','AWSのサーバーレス関数サービス'],
+        answer: 1,
+        difficulty: 1,
+        hint: '"FirebaseのPostgreSQL版"と呼ばれることも。オープンソースなのでセルフホストも可能です。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[pnpm]] がnpmやyarnよりも高速でディスク効率が良い主な理由はどれ？',
+        choices: ['キャッシュをクラウドに保存するから','パッケージをグローバルストアに一元管理し、プロジェクトからハードリンクで参照するため重複ダウンロードが起きない','JavaScriptではなくRustで書かれているから','インターネット通信を並列化しているから'],
+        answer: 1,
+        difficulty: 2,
+        hint: '同じパッケージをA・Bプロジェクトで使っても、実体はグローバルストアに1つだけ。各プロジェクトはハードリンクで参照します。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[pnpm]] でパッケージをインストールするコマンドはどれ？',
+        choices: ['`pnpm get`','`pnpm install`','`pnpm fetch`','`pnpm add-package`'],
+        answer: 1,
+        difficulty: 1,
+        hint: '基本的なコマンド体系はnpmと似ています。`pnpm install`（全部）・`pnpm add <pkg>`（個別追加）・`pnpm run dev`（スクリプト実行）。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Biome]] の説明として正しいものはどれ？',
+        choices: ['JavaScriptのテストフレームワーク','Pythonの仮想環境管理ツール','RustベースのJS/TS向けリンター＋フォーマッター。ESLint+Prettierを1つで代替できる','Dockerコンテナのオーケストレーションツール'],
+        answer: 2,
+        difficulty: 1,
+        hint: 'Rust製なのでESLint+Prettierよりも大幅に高速。設定ファイルは `biome.json` 一つで管理できます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Biome]] が [[ESLint]] + [[Prettier]] の組み合わせと比べて優れている点として最も正確なものはどれ？',
+        choices: ['コミュニティのプラグインが圧倒的に多い','Rust製で高速、かつリント＋フォーマットを1ツールで行えるため設定・依存が少ない','JavaScriptの実行速度が上がる','TypeScriptの型チェックまで担ってくれる'],
+        answer: 1,
+        difficulty: 2,
+        hint: '型チェックはあくまでTypeScript（tsc）の仕事。Biomeはリント・フォーマットのみ担当します。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[React]] の説明として正しいものはどれ？',
+        choices: ['GoogleがCSSアニメーション用に開発したライブラリ','Meta（旧Facebook）製のUIコンポーネントライブラリ。仮想DOMで差分のみ更新する','MicrosoftのC#向けUIフレームワーク','Next.jsの内部エンジンで単独では使えない'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'ReactはUIを作るための「ライブラリ」。ルーティングやSSRが必要ならNext.jsなどのフレームワークと組み合わせます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Tailwind CSS]] の特徴として正しいものはどれ？',
+        choices: ['コンポーネントファイルに `.css` を書く従来スタイル','`flex`, `p-4`, `text-blue-500` などのクラスをHTMLに直接付与するユーティリティファーストCSS','jQueryのUI拡張ライブラリ','CSSをJavaScriptオブジェクトで書くCSS-in-JSライブラリ'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'ユーティリティファースト＝小さなクラスを組み合わせてデザインする考え方。別途CSSファイルを書く量が激減します。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Vercel]] の説明として正しいものはどれ？',
+        choices: ['コンテナ管理サービスでDockerfileが必要','Next.jsの開発元が提供するデプロイプラットフォーム。Gitへのプッシュでビルドとデプロイが自動実行される','Firebase Hostingの別名','AWSのEC2インスタンス管理ツール'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'GitHub連携後は `git push` するだけで本番環境に反映。プレビューURLが自動生成されてチームレビューにも便利です。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Docker]] を使う最大の目的として正しいものはどれ？',
+        choices: ['コードの実行速度を向上させるJITコンパイラ','アプリの実行環境をコンテナとしてパッケージ化し「自分のPCでは動く」問題を解消する','GitHubのコードレビューを自動化するBot','TypeScriptの型チェックを高速化するツール'],
+        answer: 1,
+        difficulty: 1,
+        hint: '`Dockerfile` に環境を定義すると、どのマシンでも同じ環境で動かせます。チーム開発や本番デプロイに欠かせない技術。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Prisma]] の説明として正しいものはどれ？',
+        choices: ['CSS-in-JSのスタイリングライブラリ','TypeScript向けのORM。スキーマ定義からDBテーブルとTS型を自動生成する','JavaScriptのテストランナー','Dockerコンテナ間の通信を管理するツール'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'ORM＝Object Relational Mapper。`schema.prisma` にモデルを書くと、TypeScriptの型付きクエリが使えるようになります。',
+      },
       // ── リライト ──
       {
         category: 'Git',
@@ -1409,6 +1544,9 @@
       'PWA':2,'manifest.json':2,'Service Worker':3,
       // JS基礎
       'JS':1,'関数':1,'変数':1,'const':1,'let':1,'DOM':2,
+      // 技術スタック
+      'TypeScript':1,'Next.js':1,'React':1,'Supabase':1,'pnpm':1,'Biome':2,
+      'Tailwind CSS':1,'Vercel':1,'Docker':2,'Prisma':2,'ESLint':2,'Prettier':2,
     };
 
     const WORD_LIST_GROUPS = [
@@ -1420,6 +1558,7 @@
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve'] },
       { cat: 'PWA',       color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
       { cat: 'JS基礎',   color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
@@ -1456,6 +1595,7 @@
       { key: 'データ管理', label: 'データ管理' },
       { key: 'PWA',        label: 'PWA' },
       { key: 'JS基礎',    label: 'JS 基礎' },
+      { key: '技術スタック', label: '技術スタック' },
     ];
 
     function initFilterGrid() {
