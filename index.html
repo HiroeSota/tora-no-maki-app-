@@ -149,6 +149,19 @@
     .filter-btn[data-cat="npm"].active        { background: #f85149; border-color: #f85149; }
     .filter-btn[data-cat="データ管理"].active { background: #00b4d8; border-color: #00b4d8; }
     .filter-btn[data-cat="PWA"].active        { background: #f0883e; border-color: #f0883e; }
+    .filter-btn[data-cat="JS基礎"].active     { background: #f1e05a; border-color: #f1e05a; }
+    .filter-btn[data-cat="技術スタック"].active { background: #ff7b72; border-color: #ff7b72; }
+    .filter-btn[data-cat="IT基礎"].active     { background: #d2a8ff; border-color: #d2a8ff; }
+
+    .filter-section-label {
+      width: 100%;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8b949e;
+      padding: 6px 2px 2px;
+    }
 
     .start-btn {
       width: 100%;
@@ -576,6 +589,17 @@
       color: #484f58;
       font-size: 0.85rem;
       display: none;
+    }
+
+    .wl-section-label {
+      padding: 10px 16px 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #8b949e;
+      background: #0d1117;
+      border-bottom: 1px solid #21262d;
     }
 
     .wl-cat-header {
@@ -1658,16 +1682,18 @@
     };
 
     const WORD_LIST_GROUPS = [
-      { cat: 'コマンド', color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
-      { cat: 'Git',      color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト'] },
+      { isLabel: true, label: '🔰 入門' },
+      { cat: 'IT基礎',     color: '#d2a8ff', terms: ['ターミナル','コマンドライン','ディレクトリ','コマンド','パス','コンパイル','インストール','パッケージ','ライブラリ','フレームワーク','API','サーバー','クライアント','デプロイ','ホスティング','バグ','コンポーネント','プロトコル','レンダリング','マークアップ言語'] },
+      { cat: 'コマンド',   color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
+      { cat: 'JS基礎',     color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM'] },
+      { isLabel: true, label: '📚 発展' },
+      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
-      { cat: 'Web基礎',  color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
+      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve'] },
-      { cat: 'PWA',       color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: 'JS基礎',   color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM'] },
+      { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
       { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier'] },
-      { cat: 'IT基礎', color: '#d2a8ff', terms: ['ターミナル','コマンドライン','ディレクトリ','コマンド','パス','コンパイル','インストール','パッケージ','ライブラリ','フレームワーク','API','サーバー','クライアント','デプロイ','ホスティング','バグ','コンポーネント','プロトコル','レンダリング','マークアップ言語'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
@@ -1695,22 +1721,31 @@
 
     // ── Filter Grid ───────────────────────────────────────────────
     const CATS = [
-      { key: 'all',        label: 'すべて' },
-      { key: 'コマンド',   label: 'コマンド' },
-      { key: 'Git',        label: 'Git' },
-      { key: '言語の違い', label: '言語の違い' },
-      { key: 'Web基礎',    label: 'Web 基礎' },
-      { key: 'npm',        label: 'npm' },
-      { key: 'データ管理', label: 'データ管理' },
-      { key: 'PWA',        label: 'PWA' },
-      { key: 'JS基礎',    label: 'JS 基礎' },
+      { key: 'all',          label: 'すべて' },
+      { key: '__label__',    label: '🔰 入門' },
+      { key: 'IT基礎',       label: 'IT 基礎用語' },
+      { key: 'コマンド',     label: 'コマンド' },
+      { key: 'JS基礎',       label: 'JS 基礎' },
+      { key: '__label__',    label: '📚 発展' },
+      { key: 'Git',          label: 'Git' },
+      { key: '言語の違い',   label: '言語の違い' },
+      { key: 'Web基礎',      label: 'Web 基礎' },
+      { key: 'npm',          label: 'npm' },
+      { key: 'データ管理',   label: 'データ管理' },
+      { key: 'PWA',          label: 'PWA' },
       { key: '技術スタック', label: '技術スタック' },
-      { key: 'IT基礎',      label: 'IT 基礎用語' },
     ];
 
     function initFilterGrid() {
       const grid = document.getElementById('filterGrid');
       CATS.forEach(({ key, label }) => {
+        if (key === '__label__') {
+          const div = document.createElement('div');
+          div.className = 'filter-section-label';
+          div.textContent = label;
+          grid.appendChild(div);
+          return;
+        }
         const count = key === 'all' ? ALL_QUESTIONS.length : ALL_QUESTIONS.filter(q => q.category === key).length;
         const btn = document.createElement('button');
         btn.className = 'filter-btn' + (key === selectedCategory ? ' active' : '');
@@ -1827,7 +1862,15 @@
       noResult.textContent = '見つかりませんでした。用語集への追加を検討しましょう！';
       section.appendChild(noResult);
 
-      WORD_LIST_GROUPS.forEach(({ cat, color, terms }) => {
+      WORD_LIST_GROUPS.forEach(group => {
+        if (group.isLabel) {
+          const lbl = document.createElement('div');
+          lbl.className = 'wl-section-label';
+          lbl.textContent = group.label;
+          section.appendChild(lbl);
+          return;
+        }
+        const { cat, color, terms } = group;
         const header = document.createElement('div');
         header.className = 'wl-cat-header';
         header.dataset.cat = cat;
@@ -1839,7 +1882,8 @@
           const def = GLOSSARY[term];
           if (!def) return;
           const row = document.createElement('div');
-          row.className = 'wl-item';
+          const autoOpen = cat === 'IT基礎';
+          row.className = 'wl-item' + (autoOpen ? ' open' : '');
           row.dataset.term = term.toLowerCase();
           row.dataset.def = def.toLowerCase();
           row.dataset.cat = cat;
@@ -1850,7 +1894,7 @@
               <span class="wl-term">${escapeHtml(term)}</span>
               <div class="wl-front-right">
                 <span class="difficulty-stars d${lv}">${stars}</span>
-                <span class="wl-hint">タップで確認 ▾</span>
+                <span class="wl-hint">${autoOpen ? '閉じる ▴' : 'タップで確認 ▾'}</span>
               </div>
             </div>
             <div class="wl-back">${escapeHtml(def)}</div>`;
@@ -1878,6 +1922,17 @@
         const cat = header.dataset.cat;
         const hasVisible = [...items].some(i => i.dataset.cat === cat && i.style.display !== 'none');
         header.style.display = hasVisible ? '' : 'none';
+      });
+
+      // セクションラベル（入門/発展）は配下のヘッダーが1つでも見えていれば表示
+      document.querySelectorAll('.wl-section-label').forEach(lbl => {
+        let next = lbl.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.classList.contains('wl-section-label')) {
+          if (next.classList.contains('wl-cat-header') && next.style.display !== 'none') hasVisible = true;
+          next = next.nextElementSibling;
+        }
+        lbl.style.display = hasVisible ? '' : 'none';
       });
 
       // 1件もなければ「見つかりません」を表示
