@@ -920,6 +920,10 @@
       'Prisma':           'TypeScript向けのORM（Object Relational Mapper）。スキーマファイル（`schema.prisma`）にテーブル設計を書くと、DBテーブルの作成とTypeScript型が自動生成される。SQLを直接書く代わりに `db.user.findMany()` のような直感的なコードでDBを操作できる。PostgreSQL・MySQL・SQLiteなど複数DBに対応。',
       'ESLint':           'JavaScriptのコードの問題点を自動チェックするリンター（静的解析ツール）。未使用変数や危険な書き方などルール違反を指摘・自動修正する。Biomeに代替されることも増えてきた。設定ファイルは `eslint.config.js`。',
       'Prettier':         'コードの見た目を自動で統一するフォーマッター。インデント・クォート・セミコロンの有無などをルールに従って自動整形し、チーム内のコードスタイルのばらつきをなくす。JavaScript・HTML・CSSなど多言語対応。Biomeに代替されることも増えてきた。',
+      'route.ts':         'Next.js App Routerでサーバーサイドのエンドポイントを定義するファイル。`GET`・`POST` などHTTPメソッド名の関数をexportしてリクエストを処理する。Pages Routerの `pages/api/` に相当。',
+      'NEXT_PUBLIC_':     '環境変数をブラウザ（クライアントサイド）にも公開するNext.jsのプレフィックス。`NEXT_PUBLIC_SUPABASE_URL` のように付けるとJSから参照可能。付けない変数はサーバー側でのみ使え、APIシークレットなど秘密の値には付けてはいけない。',
+      'Suspense':         'Reactの組み込みコンポーネント。非同期処理が完了するまで `fallback` に指定したUI（スケルトンなど）を表示し、完了後に本来のコンテンツへ切り替える。Next.js App RouterのServer Componentsと組み合わせてよく使われる。',
+      'signInWithOAuth':  'Supabase AuthでGoogleなど外部プロバイダーによるOAuthログインを開始するメソッド。`provider` にプロバイダー名、`redirectTo` に認証後のコールバックURLを指定する。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1899,6 +1903,87 @@
         difficulty: 2,
         hint: 'リライトは技術的負債の解消や言語・フレームワーク移行で行われます。既存動作を壊すリスクがあるため、慎重に計画する必要があります。',
       },
+      // ── Next.js App Router / Supabase Auth ──
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] App Router の [[route.ts]]（Route Handler）の説明として正しいものはどれ？',
+        choices: ['ページのURL構造を設定するルーティング設定ファイル','サーバーサイドのAPIエンドポイントを定義するファイル。`GET`・`POST` などHTTPメソッド名の関数をexportしてリクエストを処理する','データベースのスキーマとテーブル構造を定義するファイル','テスト用のモックAPIを自動生成するためのファイル'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'worklog では `app/auth/callback/route.ts` に `export async function GET(request: Request)` を書いてOAuthコールバックを処理しています。Pages Routerの `pages/api/` に相当します。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] の `/auth/callback` ルートで `supabase.auth.exchangeCodeForSession(code)` を呼ぶ目的はどれ？',
+        choices: ['ユーザーのパスワードを認証コードに変換する','OAuthプロバイダーから受け取った認可コード（`code`）をSupabaseのセッション（JWTトークン）に交換する','セッションを無効化してログアウトさせる','コードをSupabaseのDBに保存して後から検証できるようにする'],
+        answer: 1,
+        difficulty: 3,
+        hint: 'Google認証後、ブラウザは `/auth/callback?code=xxxx` にリダイレクトされます。この一時的な `code` をSupabaseに渡すことで、長期間有効なJWTセッション（Cookieに保存）へ交換されます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] で `[[NEXT_PUBLIC_]]SUPABASE_URL` のように環境変数に `NEXT_PUBLIC_` を付ける理由はどれ？',
+        choices: ['ステージング環境専用の変数として区別するため','ブラウザ（クライアントサイド）のJavaScriptからもその変数を参照できるようにするため','環境変数を暗号化してセキュリティを強化するため','TypeScriptの型チェック対象から除外するため'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`NEXT_PUBLIC_` がない変数はサーバー側でのみ使えます。クライアントコンポーネントで `createBrowserClient()` を呼ぶには URLと KEY をブラウザに渡す必要があるため、この2つは `NEXT_PUBLIC_` を付けます。',
+      },
+      {
+        category: '技術スタック',
+        text: '`lib/data.ts` で `import { cache } from "react"` を使い `getAllLogs` を `cache()` でラップしている目的はどれ？',
+        choices: ['ブラウザのlocalStorageにデータを永続保存するため','1回のサーバーレンダリング中に `getAllLogs` が複数箇所から呼ばれても、実際のDBクエリは1回だけ実行され結果が再利用される','データを暗号化してクライアントに送らないようにするため','60秒間データをキャッシュしてSupabaseのAPI制限を回避するため'],
+        answer: 1,
+        difficulty: 3,
+        hint: 'Reactの `cache()` は「同一レンダリング内のメモ化」です。`StatsSection` と `LogsSection` がそれぞれ `getAllLogs()` を呼んでも、DBへのリクエストは1回で済みます。Next.jsの `fetch()` キャッシュとは別物です。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] App Router で `<[[Suspense]] fallback={<StatsSkeleton />}>` を使う目的として正しいものはどれ？',
+        choices: ['コンポーネントをサーバーからクライアントコンポーネントに切り替えるための宣言','エラー発生時にフォールバックUIを表示するためのエラーバウンダリ','非同期のServer Componentがデータ取得中はスケルトンなどのfallback UIを表示し、完了後に本コンテンツへ切り替える','条件に応じてコンポーネントの表示・非表示を切り替えるラッパー'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`dashboard/page.tsx` では `<Suspense fallback={<StatsSkeleton />}>` で囲むことで、`StatsSection` がDBからデータ取得中はグレーのプレースホルダーを表示します。ページ全体が固まる白画面を防げます。',
+      },
+      {
+        category: '技術スタック',
+        text: '`WorkLogForm.tsx` でSupabaseへのデータ保存後に `router.refresh()` を呼ぶ理由として正しいものはどれ？',
+        choices: ['ブラウザキャッシュを強制削除して古いアセットを更新するため','Next.jsにサーバー側のデータを再取得・再レンダリングするよう伝え、ダッシュボードに最新ログ一覧を反映させるため','ルーターを初期化してURLの履歴を消去するため','Supabaseのリアルタイムサブスクリプションを再接続するため'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'クライアントコンポーネントからDBを更新してもServer Componentsのキャッシュは自動で更新されません。`router.refresh()` を呼ぶことでNext.jsがサーバーデータを再フェッチし、一覧が最新状態になります。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] App Router の Server Component で `import { redirect } from "next/navigation"` を使う場面として正しいものはどれ？',
+        choices: ['クライアントコンポーネントでボタンクリック時にページ遷移させるとき','`<a>` タグの代わりにHTMLリンクを生成するとき','サーバーサイドで認証チェックなどの条件を満たさない場合に別ページへ強制リダイレクトするとき','`next.config.ts` でリダイレクトルールを定義するとき'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`dashboard/page.tsx` では `if (!user) redirect("/login")` と書いて未ログイン時にログインページへ飛ばしています。クライアントコンポーネントでの遷移には `useRouter().push()` を使います。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] をサーバーサイドで使う際、`getSession()` ではなく `auth.getUser()` が推奨される理由はどれ？',
+        choices: ['`getUser()` はクライアントコンポーネントでのみ動作するから','`getUser()` はSupabaseサーバーでJWTを検証するため改ざんを検知できる。`getSession()` はCookieを読むだけで検証しないためサーバーサイドでは信頼できない','`getSession()` は廃止予定のAPIだから','`getUser()` のほうが2倍速いから'],
+        answer: 1,
+        difficulty: 3,
+        hint: '`getSession()` はCookieに入ったJWTをそのまま返すだけで、サーバー側での検証がありません。悪意あるユーザーがCookieを改ざんした場合も通過してしまいます。`getUser()` はSupabaseサーバーにJWTを送って正当性を確認するため安全です。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] の `auth.[[signInWithOAuth]]({ provider: "google", options: { redirectTo: "..." } })` の説明として正しいものはどれ？',
+        choices: ['GoogleのAPIを呼び出してユーザーのGoogleドライブにアクセスするメソッド','Googleなど外部プロバイダーへのOAuthログインフローを開始し、認証完了後に `redirectTo` で指定したURLへコールバックさせる','ユーザー名とパスワードでログインするメソッドでproviderはデザイン指定','SupabaseアカウントをGoogleアカウントにマイグレーションするAPI'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'worklog の `login/page.tsx` では `redirectTo: \`${window.location.origin}/auth/callback\`` と指定。Google認証後に `/auth/callback?code=xxxx` に戻ってきてセッションが確立されます。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Supabase]] の `@supabase/ssr` で `createBrowserClient` と `createServerClient` を使い分ける基準として正しいものはどれ？',
+        choices: ['読み取りなら `createBrowserClient`、書き込みがあるなら `createServerClient` を使う','どちらも同じ機能でファイル名の慣習で使い分けるだけ','クライアントコンポーネント（ブラウザ実行）では `createBrowserClient`、Server Component・Route Handler・ミドルウェア（サーバー実行）では `createServerClient` を使い、後者はCookieからセッションを読み書きする','`createBrowserClient` は無料プランのみで使え、`createServerClient` は有料プランが必要'],
+        answer: 2,
+        difficulty: 3,
+        hint: 'ブラウザでは `document.cookie` でCookieが読めますが、サーバーでは `next/headers` の `cookies()` を使います。`createServerClient` にCookieの `getAll`/`setAll` 関数を渡すことで、サーバー側でもセッションを正しく読み書きできます。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -1935,6 +2020,7 @@
       'TypeScript':1,'Next.js':1,'React':1,'Supabase':1,'pnpm':1,'Biome':2,
       'Tailwind CSS':1,'Vercel':1,'Docker':2,'Prisma':2,'ESLint':2,'Prettier':2,
       'layout.tsx':2,'Server Components':2,'middleware.ts':2,
+      'route.ts':2,'NEXT_PUBLIC_':2,'Suspense':2,'signInWithOAuth':3,
     };
 
     const WORD_LIST_GROUPS = [
@@ -1949,7 +2035,7 @@
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
