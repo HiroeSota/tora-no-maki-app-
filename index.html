@@ -2022,11 +2022,12 @@
     // 1=基本(緑) 2=中級(黄) 3=応用(赤)
     const GLOSSARY_LEVEL = {
       // コマンド
-      'cd':1,'mkdir':1,'pwd':1,'ls':1,'rm':1,'touch':1,'cat':1,'cp':1,'mv':1,
+      'cd':1,'mkdir':1,'pwd':1,'ls':1,'rm':1,'touch':1,'cat':1,'cp':1,'mv':1,'chmod':2,
       // Git
       'git':1,'git init':1,'git add':1,'git commit':1,'git push':1,'git pull':1,
       'git status':1,'git log':1,'git clone':1,'リポジトリ':1,
       'ステージングエリア':2,'ブランチ':2,'git remote':2,'リライト':2,
+      'git restore':2,'git restore --staged':2,'pre-commitフック':2,
       // 言語の違い
       'JavaScript':1,'Java':1,'Node.js':2,'フロントエンド':1,'バックエンド':1,'LLM':1,
       // Web基礎
@@ -2058,10 +2059,10 @@
     const WORD_LIST_GROUPS = [
       { isLabel: true, label: '🔰 入門' },
       { cat: 'IT基礎',     color: '#d2a8ff', terms: ['ターミナル','コマンドライン','ディレクトリ','コマンド','パス','コンパイル','インストール','パッケージ','ライブラリ','フレームワーク','API','サーバー','クライアント','デプロイ','ホスティング','バグ','コンポーネント','プロトコル','レンダリング','マークアップ言語'] },
-      { cat: 'コマンド',   color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv'] },
+      { cat: 'コマンド',   color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv','chmod'] },
       { cat: 'JS基礎',     color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM','配列','オブジェクト','if文'] },
       { isLabel: true, label: '📚 発展' },
-      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト'] },
+      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
       { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
