@@ -1098,6 +1098,38 @@
         difficulty: 1,
         hint: '`git push` でリモートリポジトリが更新され、数分以内に GitHub Pages にも反映されます。デプロイ作業は不要！',
       },
+      {
+        category: 'Git',
+        text: '`git restore index.html`（`--staged` なし）を実行したとき、何が起きる？',
+        choices: ['ステージングエリアから取り消し、`git add` 前の状態に戻す','ワーキングツリーの変更を破棄し、直前のコミット（またはステージング）の状態に戻す','index.html のコミット履歴を全て削除する','リモートの最新コードで index.html を上書きする'],
+        answer: 1,
+        difficulty: 1,
+        hint: '変更をやめたいときに使う。ワーキングツリーだけ元に戻り、元に戻せないため注意が必要。ステージングを取り消したい場合は `git restore --staged` を使う。',
+      },
+      {
+        category: 'Git',
+        text: '`git restore --staged index.html` を実行したとき、何が起きる？',
+        choices: ['ワーキングツリーの変更を破棄し、直前のコミット状態に戻す','ファイルをリポジトリから完全に削除する','ステージングエリアから取り消し（`git add` を取り消す）、ワーキングツリーの変更は保持する','直前のコミットを丸ごと取り消す'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`--staged` を付けると「ステージングだけ取り消す」コマンドになる。ファイルの内容（ワーキングツリー）はそのまま残るのがポイント。',
+      },
+      {
+        category: 'Git',
+        text: '`git diff --cached --name-only` で表示されるのはどれ？',
+        choices: ['ワーキングツリーの全変更ファイル一覧（ステージ済み・未ステージ含む）','リモートとローカルの差分ファイル一覧','ステージングエリアに追加済みのファイル名一覧','直前のコミットで変更されたファイル一覧'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`--cached`（= `--staged`）はインデックスと HEAD の差分を表示。`--name-only` でファイル名のみ出力。pre-commit フック内で「何がコミットされるか」を確認するのに使える。',
+      },
+      {
+        category: 'Git',
+        text: 'git の pre-commit フックとして Node.js スクリプトを動かすために必要な設定はどれ？',
+        choices: ['ファイル名を `pre-commit.sh` にして `.git/` 直下に置く','`package.json` の `scripts` に `"pre-commit"` キーを追加する','`.git/hooks/pre-commit` に拡張子なしで配置し、`chmod +x` で実行権限を付与する','`git config hooks.precommit true` を実行する'],
+        answer: 2,
+        difficulty: 2,
+        hint: 'git フックは `.git/hooks/` に拡張子なしのファイル名で置き、実行権限が必要。先頭行に `#!/bin/sh` を書いてシェルから Node.js を呼び出す形が基本。',
+      },
       // 言語の違い
       {
         category: '言語の違い',
@@ -2721,3 +2753,4 @@
   </script>
 </body>
 </html>
+ 
