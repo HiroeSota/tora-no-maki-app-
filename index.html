@@ -928,6 +928,9 @@
       'NEXT_PUBLIC_':     '環境変数をブラウザ（クライアントサイド）にも公開するNext.jsのプレフィックス。`NEXT_PUBLIC_SUPABASE_URL` のように付けるとJSから参照可能。付けない変数はサーバー側でのみ使え、APIシークレットなど秘密の値には付けてはいけない。',
       'Suspense':         'Reactの組み込みコンポーネント。非同期処理が完了するまで `fallback` に指定したUI（スケルトンなど）を表示し、完了後に本来のコンテンツへ切り替える。Next.js App RouterのServer Componentsと組み合わせてよく使われる。',
       'signInWithOAuth':  'Supabase AuthでGoogleなど外部プロバイダーによるOAuthログインを開始するメソッド。`provider` にプロバイダー名、`redirectTo` に認証後のコールバックURLを指定する。',
+      'CLAUDE.md':        'Claude Code がプロジェクト内で自動的に読み込む指示ファイル。ファクトチェック要件・禁止事項・コーディングルールなどプロジェクト固有の振る舞いを定義でき、毎回指示しなくても全会話に常時適用される。',
+      'Stopフック':       'Claude Code の設定機能。Claude が応答を完了するたびに外部スクリプトを自動実行できる仕組み。CLAUDE.md と組み合わせて「チェックが甘ければ即修正して再実行」のような自律的な品質保証フローを構築できる。',
+      'process.exit()':   'Node.js でプロセスを終了させる関数。引数が 0 なら成功、1 以上なら失敗として扱われる。pre-commit フックで `process.exit(1)` を呼ぶとコミットが中止される。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1133,6 +1136,30 @@
         answer: 2,
         difficulty: 2,
         hint: 'git フックは `.git/hooks/` に拡張子なしのファイル名で置き、実行権限が必要。先頭行に `#!/bin/sh` を書いてシェルから Node.js を呼び出す形が基本。',
+      },
+      {
+        category: 'Git',
+        text: 'pre-commit フックのスクリプトが `process.exit(1)` で終了したとき、何が起きる？',
+        choices: ['コミットは実行されるが警告ログが出力される','コミットが中止され、ステージングエリアの変更はそのまま保持される','ステージングエリアの変更がすべて取り消される','リモートへの push が禁止状態になる'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'git フックは終了コード 0 なら成功・続行、1 以上なら失敗・中止。コミットは止まるが `git add` 済みのファイルはステージングに残るため、修正してそのまま再コミットできる。',
+      },
+      {
+        category: 'Git',
+        text: 'pre-commit フックの中で `git status --porcelain` より `git diff --cached --name-only` を使う理由として正しいものはどれ？',
+        choices: ['`git status` はフックの中では実行できないから','処理速度が速いから','ステージ済みファイルだけを返すため「実際にコミットされるファイル」だけを正確にチェックできるから','ファイルの内容も同時に取得できるから'],
+        answer: 2,
+        difficulty: 2,
+        hint: '`git status --porcelain` はステージ済み＋未ステージの全変更を返す。フックでは「これからコミットするファイル」だけ検証したいため、ステージ済みのみ返す `git diff --cached` が適切。',
+      },
+      {
+        category: 'Git',
+        text: '今回作成した `verify-html-quiz.js` が自動でチェックする内容に**含まれない**ものはどれ？',
+        choices: ['choices が 4 つあるか','answer が 0〜3 の整数か','問題文・hint に誤字脱字や事実の誤りがないか','ファイル内に特定の禁止ワードが含まれていないか'],
+        answer: 2,
+        difficulty: 3,
+        hint: 'スクリプトは構造（フィールドの有無・数値範囲・禁止ワード）を機械的に検証する。内容の正確さ（ファクトチェック）は自動化できないため、CLAUDE.md のルールで Claude 自身が担う。',
       },
       // 言語の違い
       {
@@ -2020,6 +2047,30 @@
         difficulty: 3,
         hint: 'ブラウザでは `document.cookie` でCookieが読めますが、サーバーでは `next/headers` の `cookies()` を使います。`createServerClient` にCookieの `getAll`/`setAll` 関数を渡すことで、サーバー側でもセッションを正しく読み書きできます。',
       },
+      {
+        category: '技術スタック',
+        text: 'Claude Code において `CLAUDE.md` をプロジェクトに置く目的として正しいものはどれ？',
+        choices: ['プロジェクトの README として GitHub 上に表示させる','プロジェクト固有のルール・禁止事項・指示を記述し、Claude Code がそのプロジェクトの会話で自動的に読み込んで従う設定ファイルにする','npm スクリプトのコマンドを定義する','git の追跡除外ファイルを記述する'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'README.md はドキュメント、package.json は npm 設定、.gitignore は除外設定。CLAUDE.md は Claude Code 専用の「このプロジェクトでの振る舞いルール」を伝えるファイル。',
+      },
+      {
+        category: '技術スタック',
+        text: '`CLAUDE.md` に書いたルールが Claude Code に適用されるタイミングはどれ？',
+        choices: ['「CLAUDE.md を読んで」と明示的に指示したときだけ','そのプロジェクトで Claude Code を使う会話のたびに自動で読み込まれ、常に適用される','git commit 時に自動で読み込まれる','npm run build 時に適用される'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'CLAUDE.md はプロジェクトレベルの「常時有効な指示書」。毎回「読んで」と頼まなくても、そのプロジェクト内の全会話で自動的にルールとして機能する。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Claude Code の `Stopフック` と `CLAUDE.md` を組み合わせた自律チェックの説明として正しいものはどれ？',
+        choices: ['Claude が途中で作業を止めることを禁止する設定','`Stopフック` は Claude が応答を完了するたびに外部スクリプトを実行する仕組みで、CLAUDE.md にはそのタイミングでの自己修正ルールを記述できる','git の pre-commit フックと同じ仕組み','npm の postinstall スクリプトの別名'],
+        answer: 1,
+        difficulty: 3,
+        hint: '`Stopフック` は Claude Code の設定機能で「Claude が止まるたびに実行されるスクリプト」を定義できる。CLAUDE.md でその後の動作（チェックが甘ければ即修正して再実行）を Claude 自身に指示できる。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -2058,6 +2109,7 @@
       'Tailwind CSS':1,'Vercel':1,'Docker':2,'Prisma':2,'ESLint':2,'Prettier':2,
       'layout.tsx':2,'Server Components':2,'middleware.ts':2,
       'route.ts':2,'NEXT_PUBLIC_':2,'Suspense':2,'signInWithOAuth':3,
+      'CLAUDE.md':2,'Stopフック':3,'process.exit()':2,
     };
 
     const WORD_LIST_GROUPS = [
@@ -2072,7 +2124,7 @@
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
