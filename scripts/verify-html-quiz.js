@@ -75,6 +75,14 @@ try {
       }
     });
 
+    // 重複問題チェック
+    const texts = questions.map(q => q.text);
+    const duplicates = [...new Set(texts.filter((t, i) => texts.indexOf(t) !== i))];
+    duplicates.forEach(t => {
+      console.error(`  ❌ 重複問題を検出: 「${t.slice(0, 30)}…」`);
+      hasError = true;
+    });
+
     if (!hasError) {
       console.log(`  ✅ 全チェック通過（${questions.length}問）`);
     }

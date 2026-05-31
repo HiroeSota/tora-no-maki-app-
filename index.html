@@ -865,6 +865,9 @@
       '静的サイト':        '表示する内容がHTMLなどのファイルに最初から書いてあるWebサイト。サーバー処理やデータベースが不要。',
       '動的サイト':        'ユーザーの操作やデータに応じてサーバーが内容を生成するWebサイト。データベースとサーバー処理が必要。',
       'git remote':       'ローカルリポジトリと接続するリモートリポジトリの設定。`git remote add origin <URL>` でGitHubと紐付ける。',
+      '.gitignore':       'git が追跡しないファイル・フォルダを指定するファイル。`node_modules/`・`.env`・`.DS_Store` などを書くことで誤コミットを防ぐ。プロジェクトルートに置き、git 管理下に入れる。',
+      'git stash':        '作業中の変更を一時退避させ、ワーキングツリーをクリーンな状態に戻すコマンド。`git stash pop` で復元、`git stash list` で退避履歴を確認できる。',
+      'シェバン行':       'スクリプトファイル1行目に書く `#!/インタープリタのパス` の行。OSにどの実行環境でスクリプトを動かすかを伝える。`#!/bin/sh`（シェル）や `#!/usr/bin/env node`（Node.js）が代表例。',
       'git restore':      'ワーキングツリーのファイルを直前のコミット（またはステージング）の状態に戻すコマンド。元に戻せないので注意。`git restore --staged` でステージングだけ取り消すこともできる。',
       'git restore --staged': '`git add` を取り消してファイルをステージングエリアから除外するコマンド。ワーキングツリー（ファイルの内容）はそのまま保持される。',
       'pre-commitフック': 'git commit の直前に自動実行されるスクリプト。`.git/hooks/pre-commit` に配置し `chmod +x` で実行権限を付与する。スクリプトが 0 以外の終了コードを返すとコミットが中止される。',
@@ -1160,6 +1163,30 @@
         answer: 2,
         difficulty: 3,
         hint: 'スクリプトは構造（フィールドの有無・数値範囲・禁止ワード）を機械的に検証する。内容の正確さ（ファクトチェック）は自動化できないため、CLAUDE.md のルールで Claude 自身が担う。',
+      },
+      {
+        category: 'Git',
+        text: '`.gitignore` ファイルの役割として正しいものはどれ？',
+        choices: ['コミット履歴を削除するファイルを指定する','git が追跡・管理しないファイルやフォルダを指定するファイル','GitHub へのアクセスを制限するファイル','`git add` で自動追加するファイルを指定するファイル'],
+        answer: 1,
+        difficulty: 1,
+        hint: '`node_modules/` や `.env`（秘密情報）などを `.gitignore` に書くことで、git に追跡させず誤ってコミット・公開するリスクを防げる。',
+      },
+      {
+        category: 'Git',
+        text: '`git stash` の説明として正しいものはどれ？',
+        choices: ['作業中の変更を一時的に退避させ、ワーキングツリーをクリーンな状態に戻すコマンド','直前のコミットを取り消すコマンド','ステージングエリアの変更をクリアするコマンド','リモートの変更をローカルに保存するコマンド'],
+        answer: 0,
+        difficulty: 2,
+        hint: '別ブランチに急ぎで切り替えたいときなどに便利。`git stash pop` で退避した変更を復元できる。`git stash list` で退避履歴の一覧も確認できる。',
+      },
+      {
+        category: 'Git',
+        text: 'シェルスクリプトの1行目に書く `#!/bin/sh` の役割として正しいものはどれ？',
+        choices: ['ファイルがスクリプトであることを示す単なるコメント行','このスクリプトをどのインタープリタ（実行環境）で動かすかをOSに伝えるシェバン行','`/bin/sh` フォルダにスクリプトをインストールする命令','`chmod +x` と同じ効果でスクリプトに実行権限を付与する命令'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`#!`（シェバン）の後に実行環境のパスを書く。`#!/bin/sh` ならシステムのシェル、`#!/usr/bin/env node` なら Node.js で実行される。pre-commit フックでよく使われる書き方。',
       },
       // 言語の違い
       {
@@ -2083,6 +2110,7 @@
       'git status':1,'git log':1,'git clone':1,'リポジトリ':1,
       'ステージングエリア':2,'ブランチ':2,'git remote':2,'リライト':2,
       'git restore':2,'git restore --staged':2,'pre-commitフック':2,
+      '.gitignore':1,'git stash':2,'シェバン行':2,
       // 言語の違い
       'JavaScript':1,'Java':1,'Node.js':2,'フロントエンド':1,'バックエンド':1,'LLM':1,
       // Web基礎
@@ -2118,7 +2146,7 @@
       { cat: 'コマンド',   color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv','chmod'] },
       { cat: 'JS基礎',     color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM','配列','オブジェクト','if文'] },
       { isLabel: true, label: '📚 発展' },
-      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック'] },
+      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック','.gitignore','git stash','シェバン行'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
       { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
