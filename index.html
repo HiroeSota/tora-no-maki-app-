@@ -934,6 +934,13 @@
       'CLAUDE.md':        'Claude Code がプロジェクト内で自動的に読み込む指示ファイル。ファクトチェック要件・禁止事項・コーディングルールなどプロジェクト固有の振る舞いを定義でき、毎回指示しなくても全会話に常時適用される。',
       'Stopフック':       'Claude Code の設定機能。Claude が応答を完了するたびに外部スクリプトを自動実行できる仕組み。CLAUDE.md と組み合わせて「チェックが甘ければ即修正して再実行」のような自律的な品質保証フローを構築できる。',
       'process.exit()':   'Node.js でプロセスを終了させる関数。引数が 0 なら成功、1 以上なら失敗として扱われる。pre-commit フックで `process.exit(1)` を呼ぶとコミットが中止される。',
+      '.env.local':       'Next.jsプロジェクトでAPIキーなどの秘密情報を格納するローカル専用の環境変数ファイル。`create-next-app` の `.gitignore` に自動で含まれるためGitHubに漏れない。`NEXT_PUBLIC_` プレフィックスなしの変数はサーバー側のみ参照できる。',
+      'supabase.rpc()':   'SupabaseのクライアントメソッドでPostgreSQLに定義したカスタム関数（ストアドプロシージャ）をサーバー側で実行する。`supabase.rpc("関数名", { 引数 })` の形で呼ぶ。クライアント側で「取得→加算→更新」と分けると競合が起きる処理を、サーバー側でアトミックに実行できる利点がある。',
+      'useTransition':    'Reactのフック。`const [isPending, startTransition] = useTransition()` で使う。`startTransition` 内で非同期処理をラップすると `isPending` がtrueになり、UIにローディング状態を表示できる。ボタンの `disabled` 属性や「処理中...」テキストの切り替えに使う。',
+      'useOptimistic':    'React 19のフック。サーバーの応答を待たずにUIを即座に更新する「楽観的更新」を実現する。`const [optimisticState, addOptimistic] = useOptimistic(state, updateFn)` と定義し、`addOptimistic(value)` を呼ぶと仮の状態が即座に反映される。Server Actionが完了したら実際のデータで上書きされる。',
+      'Server Actions':   'Next.jsの機能。ファイルまたは関数の先頭に `"use server"` と書くことで定義するサーバー専用の非同期関数。Client Componentからフォームの `action` 属性やイベントハンドラで直接呼び出せる。APIルートを別途作成せずにサーバー側の処理（DB操作・認証など）を実行できる。',
+      'revalidatePath':   '`next/cache` からインポートするNext.jsの関数。Server Actionでデータを更新した後に呼び出すと、指定パスのキャッシュが無効化され、次回アクセス時にServer Componentsが再実行されてデータが最新化される。',
+      'maybeSingle()':    'Supabaseのクエリメソッド。結果が0件のとき `{ data: null, error: null }` を返す（エラーにならない）。1件あれば `{ data: row, error: null }`。データが存在しないことが正常なケースに使う。対して `.single()` は0件ならエラーになる。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -2098,6 +2105,78 @@
         difficulty: 3,
         hint: '`Stopフック` は Claude Code の設定機能で「Claude が止まるたびに実行されるスクリプト」を定義できる。CLAUDE.md でその後の動作（チェックが甘ければ即修正して再実行）を Claude 自身に指示できる。',
       },
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] でテーブルを作成した直後にRLSを無効のまま動作確認し、その後RLSを有効化してポリシーを設定するという手順を踏む主な理由はどれ？',
+        choices: ['RLSを有効にするとインサート速度が大幅に低下するから', 'まずRLSなしでデータの読み書きが正しく動くかを確認し、動作を確かめてからアクセス制御を追加する安全な開発手順だから', 'SupabaseのTableエディタはRLS有効状態では操作できないから', 'ポリシーを先に設定するとテーブルのデータが初期化されるから'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'RLSを有効化した直後はポリシーが1つもない状態なので全行がアクセス不可になり、アプリが動かなくなる。「RLS無効 → CRUD動作確認 → RLS有効化 → ポリシー追加 → 再確認」という段階的な手順を踏むことで、アクセス制御の問題とロジックの問題を切り分けやすくなる。',
+      },
+      {
+        category: 'データ管理',
+        text: '貯金額を加算するとき、クライアント側で「現在値を取得 → 加算 → 更新」と2段階で行う代わりに [[Supabase]] の `supabase.rpc()` でサーバー側関数を呼ぶ主な利点はどれ？',
+        choices: ['RPC関数はRLSを自動でバイパスするから', 'クライアント側で現在値を取得してから更新すると複数リクエストが同時に来たとき数値がズレる可能性があるが、サーバー側でアトミックに処理すれば競合が起きない', 'supabase.rpc() の方がコード量が少なくなるから', 'Supabaseクライアントではupdateとselectを同じリクエストで実行できないから'],
+        answer: 1,
+        difficulty: 3,
+        hint: '「取得してから更新」はリクエストAとBが同時に同じ値（例：100円）を読み込み、両方が「100+50=150円」と書き込む競合が起きうる。サーバー側の関数で `current_amount + 追加額` を1命令で処理すれば処理が順番待ちになりズレない（アトミック性）。DBの集計や複雑な更新にはRPCが有効。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Next.js プロジェクトで APIキーや接続URLなどの秘密情報を `.env.local` に書く主な理由として正しいものはどれ？',
+        choices: ['Next.js が `.env.local` の内容を自動で暗号化してくれるから', '`.env.local` は `.gitignore` に自動的に含まれるため、GitHubへのプッシュ時に秘密情報が公開されるリスクを防げるから', '`.env.local` に書いた変数は本番環境に自動でデプロイされるから', 'TypeScriptが `.env.local` から型定義を自動生成するから'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`create-next-app` の `.gitignore` には `.env.local` が最初から含まれている。APIキーやDB接続URLはここに書き、値を空にした `.env.example` だけをGit管理するのがベストプラクティス。誤って秘密情報をpushすると外部から悪用されるリスクがある。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Claude Code の Stop フックと git の `pre-commit` フックはどちらも「自動でスクリプトを実行する」仕組みだが、実行タイミングの違いとして正しいものはどれ？',
+        choices: ['両方とも `git commit` を実行した直前に動く', 'Stop フックは Claude が応答を完了したとき、pre-commit フックは `git commit` コマンドの直前に実行される', 'Stop フックは手動で実行するもので、pre-commit フックは自動実行される', '両方とも Claude Code を起動したときに1度だけ実行される'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'Stop フック（Claude Code のイベント）と pre-commit フック（git のイベント）はトリガーが全く異なる。Stop フックに `git add -A && git commit -m "auto" && git push` を設定すれば、Claude が作業を完了するたびに自動でコミット・プッシュでき、手作業の操作を省略できる。',
+      },
+      {
+        category: '技術スタック',
+        text: 'React の `useTransition` を呼び出したとき、返ってくる値の組み合わせとして正しいものはどれ？',
+        choices: ['[isLoading, runTransition]', '[isPending, startTransition]', '[isError, setError]', '[state, setState]'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`const [isPending, startTransition] = useTransition()` が正しい形。`isPending` は処理中に `true` になるフラグで、`startTransition` は非同期処理をラップする関数。ボタンの `disabled` 属性や「処理中...」表示に `isPending` を使うのが典型的な使い方。',
+      },
+      {
+        category: '技術スタック',
+        text: 'React の `useOptimistic` フックを使う目的として正しいものはどれ？',
+        choices: ['サーバーのレスポンスを受け取るまでUIをフリーズさせ、不整合を防ぐ', 'サーバーの応答を待たずに期待される最終状態をUIに即座に反映し、体感速度を上げる楽観的更新を実現する', 'データをキャッシュして次回アクセスを高速化する', 'エラーが発生したとき自動でリトライする仕組みを提供する'],
+        answer: 1,
+        difficulty: 3,
+        hint: '楽観的更新とは「サーバーが成功するはず」と仮定して先にUIを更新する手法。`addOptimistic(value)` を呼ぶと即座に仮の状態が反映され、Server Actionが完了したら実際のデータで上書きされる。ボタン連打や通信遅延でもUIがもたつかない。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Next.js でファイルの先頭に `"use server"` と書いたとき、そのファイルはどう扱われる？',
+        choices: ['そのファイルのコードがSSRで1回だけ実行され、その結果がキャッシュされる', 'exportされた非同期関数がすべてServer Actionsとして扱われ、クライアントから直接呼び出せるサーバー専用処理になる', 'そのファイルのコードはビルド時にのみ実行され、ランタイムには含まれない', '`"use client"` と同じ意味でクライアントコンポーネント化される'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'Server Actionsは `"use server"` で定義するサーバー専用の非同期関数。フォームの `action` 属性やイベントハンドラから直接呼び出せ、APIルートを別途作る必要がない。データベース操作・認証チェックなどサーバーでしかできない処理を担う。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Next.js の Server Action でデータを更新した直後に `revalidatePath("/")` を呼ぶ目的はどれ？',
+        choices: ['`/` へのページリダイレクトを実行する', '`/` パスのNext.jsキャッシュを無効化し、次回アクセス時にServer Componentsが再実行されてデータが最新になる', 'ブラウザのキャッシュをクリアして強制リロードさせる', 'データベースのトランザクションをコミットする'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`revalidatePath` は `next/cache` からインポートする関数で、指定パスのキャッシュを無効化する。Server Actionでデータを書き込んだ後に呼ばないと、ページが古いデータを表示し続ける。リダイレクトには `redirect()` を、DBのコミットはSupabaseのAPIが担う。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Supabase クエリに `.maybeSingle()` を付けたとき、条件に一致する行が0件だった場合の戻り値はどれ？',
+        choices: ['エラーオブジェクトが返り処理が中断する', '`{ data: null, error: null }` が返り、エラーなしでnullとして扱える', '空の配列 `[]` が返る', '空のオブジェクト `{}` が返る'],
+        answer: 1,
+        difficulty: 3,
+        hint: '`.single()` は0件のときエラーになるが、`.maybeSingle()` は `data: null, error: null` を返す。「ユーザー初回アクセスで推しがまだ登録されていない」など、データがないことが正常なケースに適している。2件以上ある場合はどちらもエラーになる。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -2138,6 +2217,8 @@
       'layout.tsx':2,'Server Components':2,'middleware.ts':2,
       'route.ts':2,'NEXT_PUBLIC_':2,'Suspense':2,'signInWithOAuth':3,
       'CLAUDE.md':2,'Stopフック':3,'process.exit()':2,
+      '.env.local':2,'supabase.rpc()':3,
+      'useTransition':2,'useOptimistic':3,'Server Actions':2,'revalidatePath':2,'maybeSingle()':3,
     };
 
     const WORD_LIST_GROUPS = [
@@ -2150,9 +2231,9 @@
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
       { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
-      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
