@@ -152,6 +152,9 @@
     .filter-btn[data-cat="JS基礎"].active     { background: #f1e05a; border-color: #f1e05a; }
     .filter-btn[data-cat="技術スタック"].active { background: #ff7b72; border-color: #ff7b72; }
     .filter-btn[data-cat="IT基礎"].active     { background: #d2a8ff; border-color: #d2a8ff; }
+    .filter-btn[data-cat="新着"].active       { background: linear-gradient(135deg,#ffd700,#ff9f43); border-color: transparent; color: #0d1117; }
+    .filter-btn[data-cat="新着"]              { border-color: rgba(255,215,0,0.4); color: #ffd700; }
+    .filter-btn[data-cat="新着"]:hover        { border-color: #ffd700; }
 
     .filter-section-label {
       width: 100%;
@@ -1954,7 +1957,7 @@
         text: 'SQLで `SELECT * FROM users` を実行したとき、何が取得される？',
         choices: ['usersテーブルの最初の1行だけ','usersテーブルの全行・全カラムのデータ','usersテーブルのカラム名の一覧だけ','usersという名前のデータベースの一覧'],
         answer: 1,
-        difficulty: 1,
+        difficulty: 1, isNew: true,
         hint: '`*` は「すべてのカラム」を意味するワイルドカード。`FROM users` でテーブルを指定しているため、全行・全カラムが返されます。特定カラムだけ取りたいときは `SELECT id, name FROM users` のように列名を指定します。',
       },
       {
@@ -1962,7 +1965,7 @@
         text: 'SQLの[[PRIMARY KEY]]（主キー）の説明として正しいものはどれ？',
         choices: ['テーブル内で最も大きい数値を持つ列','各行を一意に識別するための列。NULL禁止・重複禁止で、1テーブルに1つだけ設定できる','同じ値を持つ行をまとめてグループ化する機能','他のテーブルを参照する外部キー列の別名'],
         answer: 1,
-        difficulty: 1,
+        difficulty: 1, isNew: true,
         hint: 'PRIMARY KEY は「この行は誰か？」を示す識別子。UUIDや連番がよく使われます。NULL を含む行も、重複する行も登録できません。UNIQUE制約と似ていますが、PRIMARY KEY は1テーブルに1つで NULLを絶対に許しません。',
       },
       {
@@ -1970,7 +1973,7 @@
         text: 'SQLの[[INSERT INTO]]の正しい書き方はどれ？',
         choices: ['`CREATE users SET name = "太郎"`','`INSERT INTO users (name, age) VALUES ("太郎", 25)`','`ADD TO users VALUES ("太郎", 25)`','`PUT users (name, age) = ("太郎", 25)`'],
         answer: 1,
-        difficulty: 1,
+        difficulty: 1, isNew: true,
         hint: '`INSERT INTO テーブル名 (列名リスト) VALUES (値リスト)` の形で書きます。CREATE はテーブル作成、UPDATE は既存行の更新、DELETE は削除に使うコマンドです。',
       },
       {
@@ -1978,7 +1981,7 @@
         text: 'SQLの[[INNER JOIN]]と[[LEFT JOIN]]の違いとして正しいものはどれ？',
         choices: ['INNER JOINは全行取得、LEFT JOINは最初の行のみ','INNER JOINは両テーブルで一致する行のみ返す。LEFT JOINは左テーブルの全行を返し、右テーブルに一致しない場合はNULLを入れる','LEFT JOINはテーブルを左から右へ並び替えるだけ','どちらも全く同じ結果を返す'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: 'INNER JOIN は交差（両方に存在する行だけ）。LEFT JOIN は左テーブル全部 + 右の一致行（なければNULL）。「投稿がないユーザーも含めて一覧表示したい」場合は LEFT JOIN を使います。',
       },
       {
@@ -1986,7 +1989,7 @@
         text: 'SQLで `WHERE` と `HAVING` の使い方の違いとして正しいものはどれ？',
         choices: ['WHEREとHAVINGはまったく同じ条件指定で使える','WHEREは[[GROUP BY]]前の行を絞り込み、HAVINGはGROUP BY後のグループを絞り込む','WHEREはSELECT文専用、HAVINGはDELETE文専用','HAVINGは文字列検索のみ、WHEREは数値比較のみに使う'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: '`GROUP BY` で集計する前に絞りたいなら `WHERE`、集計後の結果で絞りたいなら `HAVING`。例：`GROUP BY user_id HAVING COUNT(*) > 5` で「5件以上の記録があるユーザーだけ」に絞れます。',
       },
       {
@@ -1994,7 +1997,7 @@
         text: 'SQLでNULLが入っている行を取り出したいとき、正しい書き方はどれ？',
         choices: ['`WHERE email = NULL`','`WHERE email [[IS NULL]]`','`WHERE email == NULL`','`WHERE email = "NULL"`'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: 'SQLのNULLは「値が存在しない・不明」を意味し、通常の比較演算子 `=` では比較できません。`IS NULL` または `IS NOT NULL` を使います。`WHERE email = NULL` は常に結果が返らないため注意が必要です。',
       },
       // ── 技術スタック（Next.js深堀り・TypeScript型） ──
@@ -2246,7 +2249,7 @@
         text: '`[[Promise.all]]([query1, query2, query3])` を使って複数の [[Supabase]] クエリを実行する利点として正しいものはどれ？',
         choices: ['1つずつ順番に実行するためエラーが起きても次の処理に進める','全クエリを並列で実行し、すべて完了したタイミングで結果をまとめて受け取れるため合計待ち時間が短くなる','クエリ結果を自動でキャッシュして2回目以降は通信しなくなる','複数クエリを1つのSQLにまとめてDBに一括送信する'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: '`Promise.all()` は全てのPromiseを**並列**で実行し、全て完了したら結果の配列を返します。1つでも失敗（reject）すると全体がrejectになります。逐次 `await` と比べて合計待ち時間を大幅に短縮できます。',
       },
       {
@@ -2254,7 +2257,7 @@
         text: '[[Supabase]] の [[Service Role Key]] を使った Admin Client の説明として正しいものはどれ？',
         choices: ['管理者用のUIコンポーネントセットを提供するパッケージ','RLS（行レベルセキュリティ）をバイパスして全データにアクセスできるクライアント。サーバー側でのみ使用し、ブラウザに公開してはいけない','Anon Keyより少し強い権限を持つ通常のクライアント','Next.jsの `/admin` ページでのみ動作する専用クライアント'],
         answer: 1,
-        difficulty: 3,
+        difficulty: 3, isNew: true,
         hint: 'Service Role Keyは RLS を完全にバイパスします。画像アップロードなどサーバー側の特権操作に使いますが、`NEXT_PUBLIC_` を付けてブラウザに露出すると全データを外部から操作されてしまい非常に危険です。',
       },
       {
@@ -2262,7 +2265,7 @@
         text: '[[Supabase Storage]] でファイルをアップロードして公開URLを取得する正しい手順はどれ？',
         choices: ['`supabase.from("files").insert({ file: blob })` で保存する','`supabase.storage.from("バケット名").upload(パス, ファイル)` でアップロードし、`getPublicUrl(パス)` で公開URLを取得する','`supabase.storage.upload(ファイル)` だけで自動的に公開URLも返ってくる','Storageは認証なしでは一切使えないため、まずRLSを無効化する必要がある'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: '`storage.from("バケット名")` でバケットを指定し、`.upload(パス, ファイル)` でアップロード。その後 `.getPublicUrl(パス)` で公開URLを取得できます。パブリックバケットに設定しておくと誰でもURLでアクセス可能になります。',
       },
       {
@@ -2270,7 +2273,7 @@
         text: 'ブラウザで `[[URL.createObjectURL]](file)` を呼ぶ目的として正しいものはどれ？',
         choices: ['ファイルをサーバーにアップロードしてURLを発行する','選択されたファイル（File/Blob）に対してブラウザ内の一時URLを生成し、`img` の `src` などに直接使える','ファイルの内容をBase64文字列に変換する','URLを解析してファイル名や拡張子を取り出す'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: 'ブラウザのメモリ内にオブジェクトURLを作成します。画像プレビュー（`img.src = URL.createObjectURL(file)`）に使えます。使い終わったら `URL.revokeObjectURL(url)` でメモリを解放しないとメモリリークの原因になります。',
       },
       {
@@ -2278,7 +2281,7 @@
         text: '[[Next.js]] 15以降、動的ルートの `params` を参照するときに必要な変更はどれ？',
         choices: ['`params.id` を `params.get("id")` に書き換える','`params` がPromiseになったため `const { id } = await params;` のようにawaitが必要になった','全ページで `useParams()` フックへの切り替えが必須になった','変更不要。Next.js 15でもparamsの扱いは変わらない'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: 'Next.js 15の破壊的変更の一つ。`page.tsx` の `params` が `Promise<{ id: string }>` 型になり、await せずに使うとオブジェクトが返りません。型定義も `params: Promise<{ id: string }>` と書く必要があります。',
       },
       {
@@ -2286,7 +2289,7 @@
         text: '[[Recharts]] でグラフを親コンテナの幅に自動追従（レスポンシブ対応）させるために使うコンポーネントはどれ？',
         choices: ['`<AutoWidth>`','`<ResponsiveContainer>`','`<FlexChart>`','`<WidthWrapper>`'],
         answer: 1,
-        difficulty: 2,
+        difficulty: 2, isNew: true,
         hint: '`<ResponsiveContainer width="100%" height={300}>` で `<BarChart>` などを囲むと親要素の幅に自動追従します。これがないとグラフが固定ピクセルサイズになり、画面幅が変わったときにはみ出したり縮んだりします。',
       },
     ];
@@ -2378,6 +2381,7 @@
     // ── Filter Grid ───────────────────────────────────────────────
     const CATS = [
       { key: 'all',          label: 'すべて' },
+      { key: '新着',         label: '🆕 新着問題' },
       { key: '__label__',    label: '🔰 入門' },
       { key: 'IT基礎',       label: 'IT 基礎用語' },
       { key: 'コマンド',     label: 'コマンド' },
@@ -2402,7 +2406,9 @@
           grid.appendChild(div);
           return;
         }
-        const count = key === 'all' ? ALL_QUESTIONS.length : ALL_QUESTIONS.filter(q => q.category === key).length;
+        const count = key === 'all' ? ALL_QUESTIONS.length
+          : key === '新着' ? countUnseen()
+          : ALL_QUESTIONS.filter(q => q.category === key).length;
         const btn = document.createElement('button');
         btn.className = 'filter-btn' + (key === selectedCategory ? ' active' : '');
         btn.dataset.cat = key;
@@ -2661,10 +2667,20 @@
     function startQuiz() {
       isDaily = false;
       isDailyReview = false;
-      const pool = selectedCategory === 'all'
-        ? ALL_QUESTIONS
-        : ALL_QUESTIONS.filter(q => q.category === selectedCategory);
-      questions = shuffle(pool).slice(0, Math.min(10, pool.length));
+      let pool;
+      if (selectedCategory === 'all') {
+        pool = ALL_QUESTIONS;
+      } else if (selectedCategory === '新着') {
+        pool = getNewPool();
+        if (pool.length === 0) {
+          alert('新着問題はすべて復習済みです！🎉');
+          return;
+        }
+      } else {
+        pool = ALL_QUESTIONS.filter(q => q.category === selectedCategory);
+      }
+      const limit = selectedCategory === '新着' ? pool.length : 10;
+      questions = shuffle(pool).slice(0, Math.min(limit, pool.length));
       currentIndex = 0;
       score = 0;
       catStats = {};
@@ -2848,9 +2864,19 @@
       }
 
       // 通常クイズ
-      document.getElementById('resultButtons').innerHTML = `
-        <button class="change-cat-btn" onclick="isDaily=false;showScreen('start')">カテゴリ変更</button>
-        <button class="restart-btn" onclick="startQuiz()">もう一度 🔄</button>`;
+      if (selectedCategory === '新着') {
+        markAllNewSeen();
+        document.getElementById('resultEmoji').textContent = '🆕';
+        document.getElementById('resultTitle').textContent = '新着問題クリア！';
+        document.getElementById('resultScore').innerHTML = '新着問題をすべて復習しました！<br>次回から通常モードで出題されます。';
+        document.getElementById('catBreakdown').innerHTML = '';
+        document.getElementById('resultButtons').innerHTML =
+          `<button class="restart-btn" onclick="isDaily=false;showScreen('start')">トップへ 🏠</button>`;
+      } else {
+        document.getElementById('resultButtons').innerHTML = `
+          <button class="change-cat-btn" onclick="isDaily=false;showScreen('start')">カテゴリ変更</button>
+          <button class="restart-btn" onclick="startQuiz()">もう一度 🔄</button>`;
+      }
       showScreen('result');
     }
 
@@ -2934,6 +2960,19 @@
     const WEAK_KEY  = 'tora_weak';
     function loadWeak() { return new Set(JSON.parse(localStorage.getItem(WEAK_KEY) || '[]')); }
     function saveWeak(s) { localStorage.setItem(WEAK_KEY, JSON.stringify([...s])); }
+
+    // ── 新着問題管理 ──────────────────────────────────────────────
+    const NEW_SEEN_KEY = 'tora_seen_new';
+    function loadSeenNew() { return new Set(JSON.parse(localStorage.getItem(NEW_SEEN_KEY) || '[]')); }
+    function markAllNewSeen() {
+      const texts = ALL_QUESTIONS.filter(q => q.isNew).map(q => q.text);
+      localStorage.setItem(NEW_SEEN_KEY, JSON.stringify(texts));
+    }
+    function getNewPool() {
+      const seen = loadSeenNew();
+      return ALL_QUESTIONS.filter(q => q.isNew && !seen.has(q.text));
+    }
+    function countUnseen() { return getNewPool().length; }
 
     // ── 累計成績 ──────────────────────────────────────────────────
     const STATS_KEY = 'tora_stats_v1';
