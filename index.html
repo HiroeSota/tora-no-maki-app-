@@ -941,6 +941,14 @@
       'Server Actions':   'Next.jsの機能。ファイルまたは関数の先頭に `"use server"` と書くことで定義するサーバー専用の非同期関数。Client Componentからフォームの `action` 属性やイベントハンドラで直接呼び出せる。APIルートを別途作成せずにサーバー側の処理（DB操作・認証など）を実行できる。',
       'revalidatePath':   '`next/cache` からインポートするNext.jsの関数。Server Actionでデータを更新した後に呼び出すと、指定パスのキャッシュが無効化され、次回アクセス時にServer Componentsが再実行されてデータが最新化される。',
       'maybeSingle()':    'Supabaseのクエリメソッド。結果が0件のとき `{ data: null, error: null }` を返す（エラーにならない）。1件あれば `{ data: row, error: null }`。データが存在しないことが正常なケースに使う。対して `.single()` は0件ならエラーになる。',
+      // SQL基礎
+      'SQL':              'Structured Query Language（構造化照会言語）。リレーショナルデータベースのデータを操作するための言語。`SELECT`（読み取り）・`INSERT INTO`（追加）・`UPDATE`（更新）・`DELETE`（削除）などの命令を持つ。PostgreSQL（Supabase）・MySQL・SQLiteなどのRDBで使われる。FirestoreなどのNoSQLデータベースでは使わない。',
+      'PRIMARY KEY':      '主キー。テーブル内で各行を一意に識別するための列（カラム）。NULL禁止・重複禁止で、1テーブルに1つだけ設定できる。UUIDや連番IDによく使われる。',
+      'INSERT INTO':      'テーブルに新しいレコードを追加するSQLコマンド。`INSERT INTO テーブル名 (列名リスト) VALUES (値リスト)` の形で書く。SELECTは読み取り、UPDATEは更新、DELETEは削除。',
+      'INNER JOIN':       '2つのテーブルを結合するSQL構文。両テーブルで結合条件が一致する行のみ返す（内部結合）。片方にしかない行は結果に含まれない。',
+      'LEFT JOIN':        '左テーブルの全行と、右テーブルで条件が一致する行を結合するSQL構文（左外部結合）。右テーブルに一致がない場合はNULLが入る。',
+      'GROUP BY':         '指定した列の値が同じ行をグループにまとめるSQL句。`COUNT()`・`SUM()`・`AVG()` などの集計関数と組み合わせて使う。集計後のグループへの絞り込みは `HAVING` を使う。',
+      'IS NULL':          'SQLでNULL（値が存在しない）かどうかを確認する演算子。`WHERE 列名 IS NULL` または `IS NOT NULL` の形で使う。`= NULL` は常に結果が返らないため使えない。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -1934,6 +1942,55 @@
         difficulty: 2,
         hint: '`NUMERIC(精度, スケール)` の書式で、精度＝有効桁数の合計、スケール＝小数点以下の桁数。稼働時間を `8.5` 時間のように記録したいときに便利な型です。',
       },
+      // ── SQL基礎 ──
+      {
+        category: 'データ管理',
+        text: 'SQLで `SELECT * FROM users` を実行したとき、何が取得される？',
+        choices: ['usersテーブルの最初の1行だけ','usersテーブルの全行・全カラムのデータ','usersテーブルのカラム名の一覧だけ','usersという名前のデータベースの一覧'],
+        answer: 1,
+        difficulty: 1,
+        hint: '`*` は「すべてのカラム」を意味するワイルドカード。`FROM users` でテーブルを指定しているため、全行・全カラムが返されます。特定カラムだけ取りたいときは `SELECT id, name FROM users` のように列名を指定します。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLの[[PRIMARY KEY]]（主キー）の説明として正しいものはどれ？',
+        choices: ['テーブル内で最も大きい数値を持つ列','各行を一意に識別するための列。NULL禁止・重複禁止で、1テーブルに1つだけ設定できる','同じ値を持つ行をまとめてグループ化する機能','他のテーブルを参照する外部キー列の別名'],
+        answer: 1,
+        difficulty: 1,
+        hint: 'PRIMARY KEY は「この行は誰か？」を示す識別子。UUIDや連番がよく使われます。NULL を含む行も、重複する行も登録できません。UNIQUE制約と似ていますが、PRIMARY KEY は1テーブルに1つで NULLを絶対に許しません。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLの[[INSERT INTO]]の正しい書き方はどれ？',
+        choices: ['`CREATE users SET name = "太郎"`','`INSERT INTO users (name, age) VALUES ("太郎", 25)`','`ADD TO users VALUES ("太郎", 25)`','`PUT users (name, age) = ("太郎", 25)`'],
+        answer: 1,
+        difficulty: 1,
+        hint: '`INSERT INTO テーブル名 (列名リスト) VALUES (値リスト)` の形で書きます。CREATE はテーブル作成、UPDATE は既存行の更新、DELETE は削除に使うコマンドです。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLの[[INNER JOIN]]と[[LEFT JOIN]]の違いとして正しいものはどれ？',
+        choices: ['INNER JOINは全行取得、LEFT JOINは最初の行のみ','INNER JOINは両テーブルで一致する行のみ返す。LEFT JOINは左テーブルの全行を返し、右テーブルに一致しない場合はNULLを入れる','LEFT JOINはテーブルを左から右へ並び替えるだけ','どちらも全く同じ結果を返す'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'INNER JOIN は交差（両方に存在する行だけ）。LEFT JOIN は左テーブル全部 + 右の一致行（なければNULL）。「投稿がないユーザーも含めて一覧表示したい」場合は LEFT JOIN を使います。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLで `WHERE` と `HAVING` の使い方の違いとして正しいものはどれ？',
+        choices: ['WHEREとHAVINGはまったく同じ条件指定で使える','WHEREは[[GROUP BY]]前の行を絞り込み、HAVINGはGROUP BY後のグループを絞り込む','WHEREはSELECT文専用、HAVINGはDELETE文専用','HAVINGは文字列検索のみ、WHEREは数値比較のみに使う'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`GROUP BY` で集計する前に絞りたいなら `WHERE`、集計後の結果で絞りたいなら `HAVING`。例：`GROUP BY user_id HAVING COUNT(*) > 5` で「5件以上の記録があるユーザーだけ」に絞れます。',
+      },
+      {
+        category: 'データ管理',
+        text: 'SQLでNULLが入っている行を取り出したいとき、正しい書き方はどれ？',
+        choices: ['`WHERE email = NULL`','`WHERE email [[IS NULL]]`','`WHERE email == NULL`','`WHERE email = "NULL"`'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'SQLのNULLは「値が存在しない・不明」を意味し、通常の比較演算子 `=` では比較できません。`IS NULL` または `IS NOT NULL` を使います。`WHERE email = NULL` は常に結果が返らないため注意が必要です。',
+      },
       // ── 技術スタック（Next.js深堀り・TypeScript型） ──
       {
         category: '技術スタック',
@@ -2219,6 +2276,8 @@
       'CLAUDE.md':2,'Stopフック':3,'process.exit()':2,
       '.env.local':2,'supabase.rpc()':3,
       'useTransition':2,'useOptimistic':3,'Server Actions':2,'revalidatePath':2,'maybeSingle()':3,
+      // SQL基礎
+      'SQL':1,'PRIMARY KEY':1,'INSERT INTO':1,'INNER JOIN':2,'LEFT JOIN':2,'GROUP BY':2,'IS NULL':2,
     };
 
     const WORD_LIST_GROUPS = [
@@ -2231,7 +2290,7 @@
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
       { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
-      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
       { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local'] },
     ];
