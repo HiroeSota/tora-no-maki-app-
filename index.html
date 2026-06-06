@@ -941,6 +941,12 @@
       'Server Actions':   'Next.jsの機能。ファイルまたは関数の先頭に `"use server"` と書くことで定義するサーバー専用の非同期関数。Client Componentからフォームの `action` 属性やイベントハンドラで直接呼び出せる。APIルートを別途作成せずにサーバー側の処理（DB操作・認証など）を実行できる。',
       'revalidatePath':   '`next/cache` からインポートするNext.jsの関数。Server Actionでデータを更新した後に呼び出すと、指定パスのキャッシュが無効化され、次回アクセス時にServer Componentsが再実行されてデータが最新化される。',
       'maybeSingle()':    'Supabaseのクエリメソッド。結果が0件のとき `{ data: null, error: null }` を返す（エラーにならない）。1件あれば `{ data: row, error: null }`。データが存在しないことが正常なケースに使う。対して `.single()` は0件ならエラーになる。',
+      // oshi-tyoki
+      'Promise.all':      '複数のPromiseを**並列**で実行し、全て完了したタイミングで結果を配列にまとめて返すJavaScriptのメソッド。`Promise.all([q1, q2, q3])` のように使う。1つでもrejectされると全体がrejectになる。逐次awaitと比べて合計待ち時間を大幅に短縮できる。',
+      'Service Role Key': 'SupabaseのAdmin用シークレットキー。RLS（行レベルセキュリティ）を完全にバイパスして全データにアクセスできる。サーバー側（Server Actions・APIルート）でのみ使用し、`NEXT_PUBLIC_` を付けてブラウザに公開してはいけない。',
+      'Supabase Storage': 'Supabaseが提供するファイルストレージ機能。`supabase.storage.from("バケット名").upload(パス, ファイル)` でアップロードし、`.getPublicUrl(パス)` で公開URLを取得できる。画像・動画・ドキュメントなどの保存に使う。',
+      'URL.createObjectURL': 'ブラウザのWeb API。File・BlobオブジェクトからブラウザメモリURL（`blob:...`）を生成する。`img.src` などに使うと通信なしで画像プレビューが可能。使い終わったら `URL.revokeObjectURL()` でメモリを解放する必要がある。',
+      'Recharts':         'React向けのグラフ・チャートライブラリ。`<BarChart>`・`<LineChart>`・`<PieChart>` などのコンポーネントで構成される。`<ResponsiveContainer>` で囲むと親要素の幅に自動追従するレスポンシブなグラフになる。',
       // SQL基礎
       'SQL':              'Structured Query Language（構造化照会言語）。リレーショナルデータベースのデータを操作するための言語。`SELECT`（読み取り）・`INSERT INTO`（追加）・`UPDATE`（更新）・`DELETE`（削除）などの命令を持つ。PostgreSQL（Supabase）・MySQL・SQLiteなどのRDBで使われる。FirestoreなどのNoSQLデータベースでは使わない。',
       'PRIMARY KEY':      '主キー。テーブル内で各行を一意に識別するための列（カラム）。NULL禁止・重複禁止で、1テーブルに1つだけ設定できる。UUIDや連番IDによく使われる。',
@@ -2234,6 +2240,55 @@
         difficulty: 3,
         hint: '`.single()` は0件のときエラーになるが、`.maybeSingle()` は `data: null, error: null` を返す。「ユーザー初回アクセスで推しがまだ登録されていない」など、データがないことが正常なケースに適している。2件以上ある場合はどちらもエラーになる。',
       },
+      // ── oshi-tyoki（並列クエリ・Storage・Admin・URL API・Next.js 15・Recharts） ──
+      {
+        category: '技術スタック',
+        text: '`[[Promise.all]]([query1, query2, query3])` を使って複数の [[Supabase]] クエリを実行する利点として正しいものはどれ？',
+        choices: ['1つずつ順番に実行するためエラーが起きても次の処理に進める','全クエリを並列で実行し、すべて完了したタイミングで結果をまとめて受け取れるため合計待ち時間が短くなる','クエリ結果を自動でキャッシュして2回目以降は通信しなくなる','複数クエリを1つのSQLにまとめてDBに一括送信する'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`Promise.all()` は全てのPromiseを**並列**で実行し、全て完了したら結果の配列を返します。1つでも失敗（reject）すると全体がrejectになります。逐次 `await` と比べて合計待ち時間を大幅に短縮できます。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Supabase]] の [[Service Role Key]] を使った Admin Client の説明として正しいものはどれ？',
+        choices: ['管理者用のUIコンポーネントセットを提供するパッケージ','RLS（行レベルセキュリティ）をバイパスして全データにアクセスできるクライアント。サーバー側でのみ使用し、ブラウザに公開してはいけない','Anon Keyより少し強い権限を持つ通常のクライアント','Next.jsの `/admin` ページでのみ動作する専用クライアント'],
+        answer: 1,
+        difficulty: 3,
+        hint: 'Service Role Keyは RLS を完全にバイパスします。画像アップロードなどサーバー側の特権操作に使いますが、`NEXT_PUBLIC_` を付けてブラウザに露出すると全データを外部から操作されてしまい非常に危険です。',
+      },
+      {
+        category: 'データ管理',
+        text: '[[Supabase Storage]] でファイルをアップロードして公開URLを取得する正しい手順はどれ？',
+        choices: ['`supabase.from("files").insert({ file: blob })` で保存する','`supabase.storage.from("バケット名").upload(パス, ファイル)` でアップロードし、`getPublicUrl(パス)` で公開URLを取得する','`supabase.storage.upload(ファイル)` だけで自動的に公開URLも返ってくる','Storageは認証なしでは一切使えないため、まずRLSを無効化する必要がある'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`storage.from("バケット名")` でバケットを指定し、`.upload(パス, ファイル)` でアップロード。その後 `.getPublicUrl(パス)` で公開URLを取得できます。パブリックバケットに設定しておくと誰でもURLでアクセス可能になります。',
+      },
+      {
+        category: 'Web基礎',
+        text: 'ブラウザで `[[URL.createObjectURL]](file)` を呼ぶ目的として正しいものはどれ？',
+        choices: ['ファイルをサーバーにアップロードしてURLを発行する','選択されたファイル（File/Blob）に対してブラウザ内の一時URLを生成し、`img` の `src` などに直接使える','ファイルの内容をBase64文字列に変換する','URLを解析してファイル名や拡張子を取り出す'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'ブラウザのメモリ内にオブジェクトURLを作成します。画像プレビュー（`img.src = URL.createObjectURL(file)`）に使えます。使い終わったら `URL.revokeObjectURL(url)` でメモリを解放しないとメモリリークの原因になります。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Next.js]] 15以降、動的ルートの `params` を参照するときに必要な変更はどれ？',
+        choices: ['`params.id` を `params.get("id")` に書き換える','`params` がPromiseになったため `const { id } = await params;` のようにawaitが必要になった','全ページで `useParams()` フックへの切り替えが必須になった','変更不要。Next.js 15でもparamsの扱いは変わらない'],
+        answer: 1,
+        difficulty: 2,
+        hint: 'Next.js 15の破壊的変更の一つ。`page.tsx` の `params` が `Promise<{ id: string }>` 型になり、await せずに使うとオブジェクトが返りません。型定義も `params: Promise<{ id: string }>` と書く必要があります。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Recharts]] でグラフを親コンテナの幅に自動追従（レスポンシブ対応）させるために使うコンポーネントはどれ？',
+        choices: ['`<AutoWidth>`','`<ResponsiveContainer>`','`<FlexChart>`','`<WidthWrapper>`'],
+        answer: 1,
+        difficulty: 2,
+        hint: '`<ResponsiveContainer width="100%" height={300}>` で `<BarChart>` などを囲むと親要素の幅に自動追従します。これがないとグラフが固定ピクセルサイズになり、画面幅が変わったときにはみ出したり縮んだりします。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -2276,6 +2331,8 @@
       'CLAUDE.md':2,'Stopフック':3,'process.exit()':2,
       '.env.local':2,'supabase.rpc()':3,
       'useTransition':2,'useOptimistic':3,'Server Actions':2,'revalidatePath':2,'maybeSingle()':3,
+      // oshi-tyoki
+      'Promise.all':2,'Service Role Key':3,'Supabase Storage':2,'URL.createObjectURL':2,'Recharts':2,
       // SQL基礎
       'SQL':1,'PRIMARY KEY':1,'INSERT INTO':1,'INNER JOIN':2,'LEFT JOIN':2,'GROUP BY':2,'IS NULL':2,
     };
@@ -2288,11 +2345,11 @@
       { isLabel: true, label: '📚 発展' },
       { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック','.gitignore','git stash','シェバン行'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
-      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア'] },
+      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア','URL.createObjectURL'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
-      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL','Service Role Key','Supabase Storage'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
