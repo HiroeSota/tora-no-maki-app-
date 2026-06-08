@@ -863,6 +863,41 @@
     .practice-summary-step-lbl { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8b949e; }
     .practice-summary-choice  { font-size: 0.92rem; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
     .practice-summary-reason  { font-size: 0.78rem; color: #8b949e; line-height: 1.5; }
+
+    .practice-fb-best {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .practice-fb-best-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #00ffb4;
+      margin-bottom: 8px;
+    }
+    .practice-fb-best-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .practice-fb-best-item .practice-fb-badge {
+      width: 24px;
+      height: 24px;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .practice-fb-best-content { flex: 1; }
+    .practice-fb-best-name {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #e6edf3;
+      margin-bottom: 2px;
+    }
+    .practice-fb-best-reason { font-size: 0.8rem; color: #8b949e; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -965,6 +1000,7 @@
             <span class="practice-fb-label" id="practiceFbLabel"></span>
           </div>
           <div class="practice-fb-text" id="practiceFbText"></div>
+          <div class="practice-fb-best" id="practiceFbBest" style="display:none"></div>
         </div>
         <button class="next-btn" id="practiceNextBtn" onclick="nextPracticeStep()" style="display:none;margin-top:16px;"></button>
       </div>
@@ -3247,45 +3283,45 @@
     const PRACTICE_CHOICES = [
       // Step 1: フロントエンド
       [
-        { icon: '⚡', name: 'Next.js',             desc: 'Reactベース。SSR・SSG・APIルート・Server Actionsが使える' },
-        { icon: '⚛️', name: 'React（Vite）',       desc: 'UIライブラリ。バックエンドAPIは別途用意が必要' },
-        { icon: '💚', name: 'Vue / Nuxt',           desc: 'Vueベースのフレームワーク。直感的な構文が特徴' },
-        { icon: '📄', name: '静的 HTML + CSS のみ', desc: 'フレームワークなし。シンプルな静的ページ向け' },
+        { icon: '⚡', name: 'Next.js',             desc: 'Reactをベースにした人気フレームワーク。ログイン・DB処理もまとめて作れて、今のWeb開発で一番よく選ばれる' },
+        { icon: '⚛️', name: 'React（Vite）',       desc: '画面を「部品」に分けて作るためのライブラリ。データ保存の仕組みは別途準備が必要になる' },
+        { icon: '💚', name: 'Vue / Nuxt',           desc: 'Next.jsと似た役割を持つ別会社のフレームワーク。書き方がシンプルと言われ、日本語情報も多い' },
+        { icon: '📄', name: '静的 HTML + CSS のみ', desc: 'フレームワークを使わないシンプルな構成。動的な機能（ログイン・データ保存）には向かない' },
       ],
       // Step 2: データ管理
       [
-        { icon: '🟢', name: 'Supabase',            desc: 'PostgreSQL + RLS + Auth。Next.jsとの相性が良いBaaS' },
-        { icon: '🔥', name: 'Firebase Firestore',  desc: 'NoSQL + リアルタイム同期。Google製BaaS' },
-        { icon: '💾', name: 'localStorage',         desc: 'ブラウザ内に保存。サーバー不要だが端末をまたいで使えない' },
-        { icon: '🗄️', name: 'MySQL + Prisma',      desc: '自前のリレーショナルDB。型安全なORMで操作できる' },
+        { icon: '🟢', name: 'Supabase',            desc: 'DB・ログイン・セキュリティがセットのサービス。Next.jsとの相性が良く、個人〜中規模アプリで人気' },
+        { icon: '🔥', name: 'Firebase Firestore',  desc: 'Googleが作ったデータ保存サービス。複数の端末でデータをリアルタイムに同期できる点が強み' },
+        { icon: '💾', name: 'localStorage',         desc: 'ブラウザの中にデータを保存する機能。アプリを閉じても残るが、そのブラウザ・端末の中だけ' },
+        { icon: '🗄️', name: 'MySQL + Prisma',      desc: '自分でサーバーを用意して使う本格的なDB。大規模向けだが設定・維持に手間がかかる' },
       ],
-      // Step 3: テーブル設計（NEW）
+      // Step 3: テーブル設計
       [
-        { icon: '🏗️', name: '正規化設計',                 desc: 'users・posts など機能ごとに複数テーブルに分けてJOINで使う' },
-        { icon: '📦', name: 'シンプル設計（1テーブル）',  desc: 'メインのデータを1テーブルにまとめる。小規模アプリ向け' },
-        { icon: '🔮', name: 'ドキュメント型（コレクション）', desc: 'NoSQL的にネストしたJSONを1ドキュメントにまとめる' },
-        { icon: '💡', name: 'コードに直書き（DBなし）',   desc: 'データをJSファイルやJSONにハードコードする。更新不要な静的コンテンツ向け' },
+        { icon: '🏗️', name: '正規化設計',               desc: '「ユーザー」「投稿」など役割ごとに別々の表に分けて、必要なときに結合して使う本格的な設計' },
+        { icon: '📦', name: 'シンプル設計（1テーブル）', desc: 'データを1つの表にまとめてしまうシンプルな設計。小さなアプリなら十分に機能する' },
+        { icon: '🔮', name: 'ドキュメント型（コレクション）', desc: 'Firebaseのデータの持ち方。「フォルダの中にファイル」のイメージで、JSONをそのまま保存できる' },
+        { icon: '💡', name: 'コードに直書き（DBなし）',  desc: 'データをプログラムの中に直接書き込む方法。内容を変えるにはコードの修正が必要になる' },
       ],
       // Step 4: 認証
       [
-        { icon: '🟢', name: 'Supabase Auth', desc: 'Supabase付属の認証。Google・メールログイン対応' },
-        { icon: '🔥', name: 'Firebase Auth', desc: 'Firebase付属の認証。多数のOAuthプロバイダーに対応' },
-        { icon: '🔑', name: 'NextAuth.js',   desc: 'Next.js専用の認証ライブラリ。さまざまなDBと組み合わせ可' },
-        { icon: '🚫', name: '認証なし',      desc: 'ログイン不要。誰でもアクセスできる公開アプリ' },
+        { icon: '🟢', name: 'Supabase Auth', desc: 'Supabaseに付属するログイン機能。GoogleアカウントやメールでのログインをすぐONにできる' },
+        { icon: '🔥', name: 'Firebase Auth', desc: 'Firebaseに付属するログイン機能。Google・LINEなど多くのSNSアカウントでのログインを簡単に実装できる' },
+        { icon: '🔑', name: 'NextAuth.js',   desc: 'Next.js専用のログイン用ライブラリ。DBは別途用意するが、GoogleログインなどをNext.jsに追加できる' },
+        { icon: '🚫', name: '認証なし',      desc: 'ログイン画面を作らない。誰でもすぐ使えるが、ユーザーごとのデータ管理はできなくなる' },
       ],
-      // Step 5: データアクセス（NEW）
+      // Step 5: データアクセス
       [
-        { icon: '🖥️', name: 'Server Components + Server Actions', desc: 'サーバー上で直接DBを読み書き。Next.jsの現代的なベストプラクティス' },
-        { icon: '🔌', name: 'APIルート（route.ts）',              desc: 'サーバーAPIエンドポイント経由でデータ取得・送信' },
-        { icon: '📡', name: 'クライアント直接呼び出し',            desc: 'ブラウザからSupabase/Firebaseクライアントを直接操作' },
-        { icon: '🔄', name: '外部バックエンドAPI',                 desc: '別途Node.js等のAPIサーバーを立てて通信する' },
+        { icon: '🖥️', name: 'Server Components + Server Actions', desc: '画面表示も操作もサーバー側で処理する方法。Next.jsの現代的なやり方で安全・高速' },
+        { icon: '🔌', name: 'APIルート（route.ts）',              desc: 'アプリ内にURLを作り、そこを通じてデータをやり取りする方法。少し昔ながらのアプローチ' },
+        { icon: '📡', name: 'クライアント直接呼び出し',            desc: 'ブラウザから直接DBにアクセスする方法。リアルタイム更新が必要なアプリに向いている' },
+        { icon: '🔄', name: '外部バックエンドAPI',                 desc: '別途サーバーを自分で立ててAPI通信する方法。大規模なシステム向けで設定が複雑になる' },
       ],
       // Step 6: デプロイ
       [
-        { icon: '▲',  name: 'Vercel',           desc: 'Next.jsの開発元。GitHubプッシュで自動デプロイ。Next.jsと相性◎' },
-        { icon: '🔥', name: 'Firebase Hosting', desc: 'Google製。Firebase系サービスとまとめて管理できる' },
-        { icon: '🐙', name: 'GitHub Pages',      desc: '静的サイト専用。HTMLファイルをそのまま公開できる' },
-        { icon: '☁️', name: 'AWS',               desc: 'エンタープライズ向け。高い拡張性があるが設定が複雑' },
+        { icon: '▲',  name: 'Vercel',           desc: 'Next.jsを作った会社のサービス。GitHubに保存するだけで自動でアプリが公開される。Next.jsと相性◎' },
+        { icon: '🔥', name: 'Firebase Hosting', desc: 'Googleのサービス。FirebaseのDB・ログインと一緒にまとめて管理できる' },
+        { icon: '🐙', name: 'GitHub Pages',      desc: 'GitHubが無料で提供するWebページ公開機能。変化しない静的ページのみ対応' },
+        { icon: '☁️', name: 'AWS',               desc: 'Amazonの大規模クラウドサービス。大企業でも使える本格環境だが設定が複雑で学習コストが高い' },
       ],
     ];
 
@@ -3665,7 +3701,8 @@
     }
 
     function confirmPracticeChoice(choiceIdx) {
-      const rating = PRACTICE_SCENARIOS[practiceScenarioIdx].ratings[practiceStep][choiceIdx];
+      const stepRatings = PRACTICE_SCENARIOS[practiceScenarioIdx].ratings[practiceStep];
+      const rating = stepRatings[choiceIdx];
       const choice = PRACTICE_CHOICES[practiceStep][choiceIdx];
       practiceSelections.push({ choiceIdx, ...rating, choiceName: choice.name });
 
@@ -3674,9 +3711,9 @@
         if (i === choiceIdx) btn.classList.add('selected');
       });
 
-      const ratingLabel  = { 3: '◎ 最適！', 2: '○ 良い選択', 1: '△ 惜しい', 0: '× 不向き' };
-      const badgeClass   = { 3: 'r3',       2: 'r2',          1: 'r1',      0: 'r0' };
-      const feedbackClass = { 3: 'fb-3',     2: 'fb-2',        1: 'fb-1',    0: 'fb-0' };
+      const ratingLabel   = { 3: '◎ 最適！', 2: '○ 良い選択', 1: '△ 惜しい', 0: '× 不向き' };
+      const badgeClass    = { 3: 'r3', 2: 'r2', 1: 'r1', 0: 'r0' };
+      const feedbackClass = { 3: 'fb-3', 2: 'fb-2', 1: 'fb-1', 0: 'fb-0' };
 
       document.getElementById('practiceFbBadge').textContent = rating.mark;
       document.getElementById('practiceFbBadge').className   = `practice-fb-badge ${badgeClass[rating.pts]}`;
@@ -3684,11 +3721,37 @@
       document.getElementById('practiceFbText').textContent  = rating.reason;
       document.getElementById('practiceFeedback').className  = `practice-feedback ${feedbackClass[rating.pts]} show`;
 
+      // 最適選択肢の表示（◎以外を選んだとき）
+      const bestEl = document.getElementById('practiceFbBest');
+      if (rating.pts < 3) {
+        const bestChoices = stepRatings
+          .map((r, i) => ({ ...r, idx: i }))
+          .filter(r => r.pts === 3);
+        if (bestChoices.length > 0) {
+          bestEl.style.display = '';
+          bestEl.innerHTML = `<div class="practice-fb-best-label">💡 最適な選択肢</div>` +
+            bestChoices.map(b => {
+              const c = PRACTICE_CHOICES[practiceStep][b.idx];
+              return `<div class="practice-fb-best-item">
+                <span class="practice-fb-badge r3">${escapeHtml(c.icon)}</span>
+                <div class="practice-fb-best-content">
+                  <div class="practice-fb-best-name">${escapeHtml(c.name)}</div>
+                  <div class="practice-fb-best-reason">${escapeHtml(b.reason)}</div>
+                </div>
+              </div>`;
+            }).join('');
+        } else {
+          bestEl.style.display = 'none';
+        }
+      } else {
+        bestEl.style.display = 'none';
+      }
+
       const isLast = practiceStep === PRACTICE_STEPS_META.length - 1;
       const nb = document.getElementById('practiceNextBtn');
-      nb.textContent    = isLast ? '総評を見る 🎉' : '次のステップへ →';
-      nb.style.display  = 'block';
-      nb.className      = 'next-btn show';
+      nb.textContent   = isLast ? '総評を見る 🎉' : '次のステップへ →';
+      nb.style.display = 'block';
+      nb.className     = 'next-btn show';
     }
 
     function nextPracticeStep() {
