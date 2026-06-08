@@ -3073,12 +3073,9 @@
       // 通常クイズ
       if (selectedCategory === '新着') {
         markAllNewSeen();
-        document.getElementById('resultEmoji').textContent = '🆕';
-        document.getElementById('resultTitle').textContent = '新着問題クリア！';
-        document.getElementById('resultScore').innerHTML = '新着問題をすべて復習しました！<br>次回から通常モードで出題されます。';
-        document.getElementById('catBreakdown').innerHTML = '';
         document.getElementById('resultButtons').innerHTML =
-          `<button class="restart-btn" onclick="isDaily=false;showScreen('start')">トップへ 🏠</button>`;
+          `<button class="change-cat-btn" onclick="isDaily=false;showScreen('start')">カテゴリ変更</button>
+           <button class="restart-btn" onclick="startQuiz()">もう一度 🔄</button>`;
       } else {
         document.getElementById('resultButtons').innerHTML = `
           <button class="change-cat-btn" onclick="isDaily=false;showScreen('start')">カテゴリ変更</button>
