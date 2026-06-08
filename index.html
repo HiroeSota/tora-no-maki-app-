@@ -3236,40 +3236,56 @@
 
     // ── Practice Mode ─────────────────────────────────────────────
     const PRACTICE_STEPS_META = [
-      { label: 'Step 1 ／ フロントエンド', title: '画面（UI）はどれで作る？',       question: 'フロントエンドのフレームワークを選ぼう' },
-      { label: 'Step 2 ／ データ管理',     title: 'データをどこに保存する？',        question: 'データベース・ストレージを選ぼう' },
-      { label: 'Step 3 ／ 認証',           title: 'ログイン機能はどう実装する？',   question: '認証サービスを選ぼう' },
-      { label: 'Step 4 ／ デプロイ',       title: 'アプリをどこで公開する？',        question: 'ホスティング・デプロイ先を選ぼう' },
+      { label: 'Step 1 ／ フロントエンド',   title: '画面（UI）はどれで作る？',         question: 'フロントエンドのフレームワークを選ぼう' },
+      { label: 'Step 2 ／ データ管理',       title: 'データをどこに保存する？',          question: 'データベース・ストレージを選ぼう' },
+      { label: 'Step 3 ／ テーブル設計',     title: 'データ構造をどう設計する？',        question: 'テーブル（またはデータの持ち方）を選ぼう' },
+      { label: 'Step 4 ／ 認証',             title: 'ログイン機能はどう実装する？',      question: '認証サービスを選ぼう' },
+      { label: 'Step 5 ／ データアクセス',   title: 'サーバーとDBをどうつなぐ？',       question: 'データの取得・書き込み方法を選ぼう' },
+      { label: 'Step 6 ／ デプロイ',         title: 'アプリをどこで公開する？',          question: 'ホスティング・デプロイ先を選ぼう' },
     ];
 
     const PRACTICE_CHOICES = [
       // Step 1: フロントエンド
       [
-        { icon: '⚡', name: 'Next.js',            desc: 'Reactベース。SSR・APIルート・Server Actionsが使える' },
-        { icon: '⚛️', name: 'React（Vite）',      desc: 'UIライブラリ。バックエンドAPIは別途用意が必要' },
-        { icon: '💚', name: 'Vue / Nuxt',          desc: 'Vueベースのフレームワーク。直感的な構文が特徴' },
+        { icon: '⚡', name: 'Next.js',             desc: 'Reactベース。SSR・SSG・APIルート・Server Actionsが使える' },
+        { icon: '⚛️', name: 'React（Vite）',       desc: 'UIライブラリ。バックエンドAPIは別途用意が必要' },
+        { icon: '💚', name: 'Vue / Nuxt',           desc: 'Vueベースのフレームワーク。直感的な構文が特徴' },
         { icon: '📄', name: '静的 HTML + CSS のみ', desc: 'フレームワークなし。シンプルな静的ページ向け' },
       ],
       // Step 2: データ管理
       [
-        { icon: '🟢', name: 'Supabase',         desc: 'PostgreSQL + RLS + Auth。Next.jsとの相性が良いBaaS' },
-        { icon: '🔥', name: 'Firebase Firestore', desc: 'NoSQL + リアルタイム同期。Google製BaaS' },
-        { icon: '💾', name: 'localStorage',      desc: 'ブラウザ内に保存。サーバー不要だが端末をまたいで使えない' },
-        { icon: '🗄️', name: 'MySQL + Prisma',    desc: '自前のリレーショナルDB。型安全なORMで操作できる' },
+        { icon: '🟢', name: 'Supabase',            desc: 'PostgreSQL + RLS + Auth。Next.jsとの相性が良いBaaS' },
+        { icon: '🔥', name: 'Firebase Firestore',  desc: 'NoSQL + リアルタイム同期。Google製BaaS' },
+        { icon: '💾', name: 'localStorage',         desc: 'ブラウザ内に保存。サーバー不要だが端末をまたいで使えない' },
+        { icon: '🗄️', name: 'MySQL + Prisma',      desc: '自前のリレーショナルDB。型安全なORMで操作できる' },
       ],
-      // Step 3: 認証
+      // Step 3: テーブル設計（NEW）
       [
-        { icon: '🟢', name: 'Supabase Auth',  desc: 'Supabase付属の認証。Google・メールログイン対応' },
-        { icon: '🔥', name: 'Firebase Auth',  desc: 'Firebase付属の認証。多数のOAuthプロバイダーに対応' },
-        { icon: '🔑', name: 'NextAuth.js',    desc: 'Next.js専用の認証ライブラリ。さまざまなDBと組み合わせ可' },
-        { icon: '🚫', name: '認証なし',       desc: 'ログイン不要。誰でもアクセスできる公開アプリ' },
+        { icon: '🏗️', name: '正規化設計',                 desc: 'users・posts など機能ごとに複数テーブルに分けてJOINで使う' },
+        { icon: '📦', name: 'シンプル設計（1テーブル）',  desc: 'メインのデータを1テーブルにまとめる。小規模アプリ向け' },
+        { icon: '🔮', name: 'ドキュメント型（コレクション）', desc: 'NoSQL的にネストしたJSONを1ドキュメントにまとめる' },
+        { icon: '💡', name: 'コードに直書き（DBなし）',   desc: 'データをJSファイルやJSONにハードコードする。更新不要な静的コンテンツ向け' },
       ],
-      // Step 4: デプロイ
+      // Step 4: 認証
       [
-        { icon: '▲',  name: 'Vercel',            desc: 'Next.jsの開発元。GitHubプッシュで自動デプロイ。Next.jsと相性◎' },
-        { icon: '🔥', name: 'Firebase Hosting',  desc: 'Google製。Firebase系サービスとまとめて管理できる' },
-        { icon: '🐙', name: 'GitHub Pages',       desc: '静的サイト専用。HTMLファイルをそのまま公開できる' },
-        { icon: '☁️', name: 'AWS',                desc: 'エンタープライズ向け。高い拡張性があるが設定が複雑' },
+        { icon: '🟢', name: 'Supabase Auth', desc: 'Supabase付属の認証。Google・メールログイン対応' },
+        { icon: '🔥', name: 'Firebase Auth', desc: 'Firebase付属の認証。多数のOAuthプロバイダーに対応' },
+        { icon: '🔑', name: 'NextAuth.js',   desc: 'Next.js専用の認証ライブラリ。さまざまなDBと組み合わせ可' },
+        { icon: '🚫', name: '認証なし',      desc: 'ログイン不要。誰でもアクセスできる公開アプリ' },
+      ],
+      // Step 5: データアクセス（NEW）
+      [
+        { icon: '🖥️', name: 'Server Components + Server Actions', desc: 'サーバー上で直接DBを読み書き。Next.jsの現代的なベストプラクティス' },
+        { icon: '🔌', name: 'APIルート（route.ts）',              desc: 'サーバーAPIエンドポイント経由でデータ取得・送信' },
+        { icon: '📡', name: 'クライアント直接呼び出し',            desc: 'ブラウザからSupabase/Firebaseクライアントを直接操作' },
+        { icon: '🔄', name: '外部バックエンドAPI',                 desc: '別途Node.js等のAPIサーバーを立てて通信する' },
+      ],
+      // Step 6: デプロイ
+      [
+        { icon: '▲',  name: 'Vercel',           desc: 'Next.jsの開発元。GitHubプッシュで自動デプロイ。Next.jsと相性◎' },
+        { icon: '🔥', name: 'Firebase Hosting', desc: 'Google製。Firebase系サービスとまとめて管理できる' },
+        { icon: '🐙', name: 'GitHub Pages',      desc: '静的サイト専用。HTMLファイルをそのまま公開できる' },
+        { icon: '☁️', name: 'AWS',               desc: 'エンタープライズ向け。高い拡張性があるが設定が複雑' },
       ],
     ];
 
@@ -3280,25 +3296,37 @@
         title: 'ログイン付きメモアプリ',
         description: 'ユーザーごとにメモを保存・管理。スマホからも使えるようにしたい。',
         ratings: [
-          [ // frontend
-            { pts: 3, mark: '◎', reason: 'App Routerでサーバーサイド処理もまとめて書けます。Server Actionsで認証・DB操作が実装でき、このアプリに最適です。' },
+          [ // Step1 frontend
+            { pts: 3, mark: '◎', reason: 'App Routerでサーバー処理もまとめて書けます。Server Actionsで認証・DB操作が実装でき、このアプリに最適です。' },
             { pts: 2, mark: '○', reason: '動作しますが、バックエンドAPIを別途用意する必要がありNext.jsより構成が複雑になります。' },
             { pts: 1, mark: '△', reason: '動作はしますが、Supabase連携の事例がNext.jsより少なく難易度が上がります。' },
             { pts: 0, mark: '×', reason: 'HTMLだけではログイン機能を実装できません。JavaScriptフレームワークが必要です。' },
           ],
-          [ // db
-            { pts: 3, mark: '◎', reason: 'RLSでユーザーごとのデータ分離が自動で実現できます。Next.jsとの相性が最高で、このアプリには一番のおすすめです。' },
+          [ // Step2 db
+            { pts: 3, mark: '◎', reason: 'RLSでユーザーごとのデータ分離が自動で実現できます。Next.jsとの相性が最高で、このアプリに一番おすすめです。' },
             { pts: 2, mark: '○', reason: '認証+Firestoreでユーザーデータ管理が完結します。NoSQLなのでデータ設計が柔軟です。' },
             { pts: 0, mark: '×', reason: 'localStorageはブラウザ内にしかデータが残りません。別端末では見られず「ログイン付き」の要件を満たせません。' },
             { pts: 1, mark: '△', reason: '技術的には可能ですが、サーバー準備が必要でBaaSより工数が大幅に増えます。個人アプリには過剰です。' },
           ],
-          [ // auth
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: '`users` と `memos` を分けて、user_id で紐付ける設計が最適です。RLSの `auth.uid() = user_id` 条件と組み合わせて安全に分離できます。' },
+            { pts: 2, mark: '○', reason: 'メモ数が少なければ1テーブルでも動きます。user_idカラムを持たせてWHERE句で絞り込む構成になります。' },
+            { pts: 2, mark: '○', reason: 'FirebaseのFirestoreを選んだ場合は `users/{uid}/memos/{memoId}` のようなコレクション設計が自然です。' },
+            { pts: 0, mark: '×', reason: 'コードに直書きではメモを追加・保存できません。ユーザーが作ったデータはDBに保存する必要があります。' },
+          ],
+          [ // Step4 auth
             { pts: 3, mark: '◎', reason: 'SupabaseのDBと同じサービスで認証が完結します。RLSとuser_idでユーザーデータの分離が1行で書けます。' },
             { pts: 2, mark: '○', reason: 'FirebaseのDBと組み合わせれば統一できます。Google・メール認証が簡単に実装できます。' },
             { pts: 1, mark: '△', reason: 'Next.js専用ですがSupabase/Firebaseとの組み合わせでは認証管理が二重になりがちです。' },
             { pts: 0, mark: '×', reason: '「ログイン付き」アプリなので認証は必須。なしでは誰でも全員のデータを見られてしまいます。' },
           ],
-          [ // deploy
+          [ // Step5 データアクセス
+            { pts: 3, mark: '◎', reason: 'Server Componentsで一覧取得、Server Actionsで追加・削除が実装できます。APIキーがブラウザに露出せず安全です。' },
+            { pts: 2, mark: '○', reason: 'APIルートで同じことができます。ただしServer Actionsより記述量が増えます。' },
+            { pts: 1, mark: '△', reason: 'RLSがあれば動きますが、処理がブラウザ側に集中するため、セキュリティ設計に注意が必要です。' },
+            { pts: 0, mark: '×', reason: '個人アプリに外部バックエンドは過剰です。Next.jsのServer ActionsでDB操作が完結します。' },
+          ],
+          [ // Step6 deploy
             { pts: 3, mark: '◎', reason: 'Next.jsの開発元が作ったプラットフォーム。GitHubにプッシュするだけで自動デプロイ完了。無料枠で十分動きます。' },
             { pts: 2, mark: '○', reason: 'Firebaseを使う場合に統一できます。ただしNext.jsとの親和性はVercelほどではありません。' },
             { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用です。Server ActionsやAPIルートのサーバー処理が動きません。' },
@@ -3311,25 +3339,37 @@
         title: '家族で使う育児記録アプリ',
         description: 'パパとママが共同でデータを入力・閲覧できる記録アプリ。',
         ratings: [
-          [ // frontend
+          [ // Step1 frontend
             { pts: 3, mark: '◎', reason: 'Supabase/Firebaseと組み合わせて家族間の共有機能を実装しやすいです。Server Actionsでデータ処理も簡潔に書けます。' },
             { pts: 2, mark: '○', reason: '動作しますが、バックエンドAPIを別途用意する必要があります。Next.jsより構成が少し複雑になります。' },
             { pts: 2, mark: '○', reason: 'Nuxtを使えばNext.js同様のSSR構成が可能です。Vueに慣れているなら良い選択です。' },
             { pts: 0, mark: '×', reason: 'HTMLだけでは認証や複数端末での共有を実装できません。フレームワークが必要です。' },
           ],
-          [ // db
+          [ // Step2 db
             { pts: 3, mark: '◎', reason: 'RLSで「家族グループのみアクセス可」という権限制御が得意。PostgreSQLなのでデータ設計もしっかりできます。' },
             { pts: 3, mark: '◎', reason: 'リアルタイム同期が標準機能！パパが入力した記録がすぐにママの画面に反映されます。家族アプリに最適です。' },
             { pts: 0, mark: '×', reason: 'localStorageはブラウザ内だけ。家族間で端末を共有できないため、この要件には使えません。' },
             { pts: 1, mark: '△', reason: '動作しますが、サーバーの準備が必要で家族向け個人アプリには少し大げさです。' },
           ],
-          [ // auth
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: '`users`・`families`・`records` の3テーブル構成が理想的。family_id で家族を束ねて、RLSで「同じ家族IDのユーザーのみ」に絞れます。' },
+            { pts: 1, mark: '△', reason: '1テーブルでは複数の家族グループを管理するのが難しくなります。後から設計変更が大変です。' },
+            { pts: 3, mark: '◎', reason: 'Firestoreならユーザーのサブコレクションとしてrecordsを持たせる構成が自然です。家族共有もドキュメントのパスで制御できます。' },
+            { pts: 0, mark: '×', reason: 'コードに直書きでは家族が記録を追加できません。ユーザー入力データはDBへの保存が必要です。' },
+          ],
+          [ // Step4 auth
             { pts: 3, mark: '◎', reason: 'SupabaseのRLSと組み合わせて「同じ家族グループのユーザーだけデータを見られる」という制御が実装しやすいです。' },
             { pts: 3, mark: '◎', reason: 'FirebaseのセキュリティルールとFirebase Authを組み合わせると、家族間のアクセス制御がスムーズに実装できます。' },
             { pts: 1, mark: '△', reason: '動作しますがSupabase/Firebaseとの組み合わせでは認証管理が二重になりがちです。' },
             { pts: 0, mark: '×', reason: '家族専用データなので認証は必須。誰でもアクセスできる状態では子どもの記録が漏れてしまいます。' },
           ],
-          [ // deploy
+          [ // Step5 データアクセス
+            { pts: 3, mark: '◎', reason: 'Server Componentsで記録一覧を取得し、Server Actionsで追加・削除を処理する構成が最もシンプルで安全です。' },
+            { pts: 2, mark: '○', reason: 'APIルートでも同じことができます。Server Actionsより若干コードが増えますが問題なく動きます。' },
+            { pts: 2, mark: '○', reason: 'Firebaseを使う場合、クライアントから直接Firestoreをsubscribeするとリアルタイム更新（パパの入力がすぐ画面に反映）ができます。' },
+            { pts: 0, mark: '×', reason: '家族向け個人アプリに外部バックエンドは過剰です。BaaSで十分対応できます。' },
+          ],
+          [ // Step6 deploy
             { pts: 3, mark: '◎', reason: '無料枠で十分動き、Next.jsとの相性が最高。GitHubと連携して自動デプロイも簡単です。' },
             { pts: 3, mark: '◎', reason: 'Firebase Auth・Firestore・Firebase Hostingで全部まとまります。Firebaseで統一するなら最適な選択です。' },
             { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用。認証機能やサーバー処理が動きません。' },
@@ -3342,29 +3382,213 @@
         title: '管理者のみ投稿できるブログ',
         description: '管理者がログインして記事を投稿。読者は誰でも閲覧できる。SEOも重視。',
         ratings: [
-          [ // frontend
+          [ // Step1 frontend
             { pts: 3, mark: '◎', reason: 'SSR・SSGでSEOに強いページが作れます。管理者ページはServer Actionsで保護でき、ブログに最適なフレームワークです。' },
             { pts: 1, mark: '△', reason: 'CSRがメインでSEOが弱いです。検索エンジンに記事が載りにくくなります。' },
             { pts: 1, mark: '△', reason: 'NuxtはSSRに対応していますが、Next.jsより情報量が少なく難易度が上がります。' },
             { pts: 0, mark: '×', reason: 'HTMLだけでは管理者認証や記事の動的表示を実装できません。' },
           ],
-          [ // db
+          [ // Step2 db
             { pts: 3, mark: '◎', reason: 'RLSで「管理者だけが書き込み可・全員が読み取り可」という権限設定が1行で書けます。Next.jsとの相性も最高。' },
-            { pts: 2, mark: '○', reason: 'セキュリティルールで管理者だけが投稿できる制御が実装できます。NoSQLなので記事データの構造を柔軟に設計できます。' },
+            { pts: 2, mark: '○', reason: 'セキュリティルールで管理者だけが投稿できる制御が実装できます。記事データの構造を柔軟に設計できます。' },
             { pts: 0, mark: '×', reason: 'localStorageはブラウザ内だけ。複数のユーザーが閲覧するブログには使えません。' },
             { pts: 2, mark: '○', reason: 'データ設計がしっかりできますが、サーバーの準備が必要です。個人ブログならBaaSで十分です。' },
           ],
-          [ // auth
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: '`users`・`posts`・`categories` の3テーブル構成が理想。RLSで「管理者（is_admin=true）だけINSERT可」「全員SELECT可」の制御ができます。' },
+            { pts: 1, mark: '△', reason: '1テーブルではカテゴリ管理やタグ付けが難しくなります。記事数が増えると後悔しやすい設計です。' },
+            { pts: 2, mark: '○', reason: 'Firestoreならpostsコレクションにarticleドキュメントを持たせる構成が自然です。SEOのためのSSGはgetDocs()で取得します。' },
+            { pts: 2, mark: '○', reason: '記事をMDXファイルやJSONファイルとしてプロジェクトに置く方法もあります。更新がコードのみで良い場合はシンプルです。' },
+          ],
+          [ // Step4 auth
             { pts: 3, mark: '◎', reason: 'RLSと組み合わせて「管理者（auth.uid()が一致する）だけ書き込み可」という制御が1行で書けます。' },
             { pts: 2, mark: '○', reason: 'Firestoreのセキュリティルールと組み合わせて管理者認証が実装できます。Firebaseを選んだ場合はこれが自然な選択です。' },
             { pts: 2, mark: '○', reason: 'Next.js専用で管理者ページの保護が実装しやすいです。DBは別途設定が必要ですが選択肢の一つです。' },
             { pts: 0, mark: '×', reason: '管理者だけが投稿できる仕組みには認証が必須。なしでは誰でも記事を書き換えられてしまいます。' },
           ],
-          [ // deploy
+          [ // Step5 データアクセス
+            { pts: 3, mark: '◎', reason: '記事一覧をServer Components（SSG）で取得してSEO対応。投稿・編集はServer Actionsで処理するのがNext.jsのベストプラクティスです。' },
+            { pts: 2, mark: '○', reason: 'APIルート経由でも同じことができます。少し古いパターンですが問題なく動作します。' },
+            { pts: 1, mark: '△', reason: '記事の読み取りはRLSで「全員OK」にすれば動きますが、管理者操作をクライアントで行うとセキュリティ設計が複雑になります。' },
+            { pts: 1, mark: '△', reason: '個人ブログに外部バックエンドは過剰ですが、将来的にマイクロサービス化を見据えるなら選択肢になります。' },
+          ],
+          [ // Step6 deploy
             { pts: 3, mark: '◎', reason: 'Next.jsとの相性が最高で、SSGページのCDN配信も得意。GitHubプッシュで自動デプロイも完結します。' },
             { pts: 2, mark: '○', reason: 'Firebaseを使う場合は統一できます。ただしNext.jsのServer Actionsとの相性はVercelほどではありません。' },
             { pts: 1, mark: '△', reason: '完全静的なブログなら使えますが、管理者認証のサーバー処理が動かないため今回は不向きです。' },
             { pts: 1, mark: '△', reason: '技術的には可能ですが、個人ブログには設定コストが高すぎます。Vercelで十分です。' },
+          ],
+        ],
+      },
+      {
+        icon: '💬',
+        title: 'リアルタイムチャットアプリ',
+        description: '複数ユーザーがメッセージをリアルタイムで送り合えるチャット。',
+        ratings: [
+          [ // Step1 frontend
+            { pts: 2, mark: '○', reason: 'App Routerが使えますが、チャットはクライアント側のリアルタイム更新が多いため "use client" コンポーネントが中心になります。' },
+            { pts: 3, mark: '◎', reason: 'チャットはリアルタイムUIの更新が命。useState・useEffectで受信イベントをリッスンする実装がReact（Vite）と相性が良いです。' },
+            { pts: 2, mark: '○', reason: 'VueのリアクティブシステムとリアルタイムDBの組み合わせは相性が良いです。選択肢の一つです。' },
+            { pts: 0, mark: '×', reason: 'HTMLだけではWebSocket/リアルタイム通信の実装が難しいです。フレームワークが必要です。' },
+          ],
+          [ // Step2 db
+            { pts: 2, mark: '○', reason: 'SupabaseのRealtimeチャンネル機能を使えばリアルタイム同期ができます。ただしFirebaseより設定が複雑です。' },
+            { pts: 3, mark: '◎', reason: 'FirestoreはonSnapshot()でリアルタイムリスナーを設定でき、チャットアプリに最適。メッセージの追加が即座に全員の画面に反映されます。' },
+            { pts: 0, mark: '×', reason: 'localStorageは自分のブラウザ内にしか保存できません。他のユーザーとメッセージを共有できません。' },
+            { pts: 0, mark: '×', reason: 'MySQLにはリアルタイム同期機能がありません。ポーリング（定期的なリクエスト）で代替できますが、チャットには不向きです。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: '`users`・`rooms`・`messages` の3テーブル構成が理想。messages に room_id と sender_id を持たせてJOINで取得します。' },
+            { pts: 1, mark: '△', reason: '1テーブルでは複数チャットルームの管理が難しくなります。メッセージが増えるほど設計の限界が見えてきます。' },
+            { pts: 3, mark: '◎', reason: 'Firestoreなら `rooms/{roomId}/messages/{msgId}` のサブコレクション設計が最適。onSnapshot()でリアルタイムに新着メッセージを受信できます。' },
+            { pts: 0, mark: '×', reason: 'チャットのメッセージはユーザーが送るたびに増えるデータです。コードに直書きでは対応できません。' },
+          ],
+          [ // Step4 auth
+            { pts: 2, mark: '○', reason: 'SupabaseのRealtimeと組み合わせて使えます。ログインユーザーのみチャットできる制御ができます。' },
+            { pts: 3, mark: '◎', reason: 'FirestoreのリアルタイムリスナーとFirebase Authのcurrentユーザーを組み合わせると、誰が送ったか判定するロジックがシンプルに書けます。' },
+            { pts: 1, mark: '△', reason: 'FirebaseのリアルタイムDBとNextAuth.jsを組み合わせると認証管理が二重になります。Firebase Authに統一する方がシンプルです。' },
+            { pts: 0, mark: '×', reason: '認証なしでは誰でもメッセージを送れてしまいます。チャットアプリには必ず認証が必要です。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 1, mark: '△', reason: 'Server Componentsは静的な読み取り向けです。チャットのリアルタイム受信はサーバーサイドだけでは実現できず、クライアント側のリスナーが必須です。' },
+            { pts: 1, mark: '△', reason: 'APIルートでのポーリングも可能ですが、1秒ごとにリクエストを送るのは非効率で体験が悪いです。' },
+            { pts: 3, mark: '◎', reason: 'リアルタイムチャットはクライアントから直接DBをsubscribeするのがベストです。Firebaseの `onSnapshot()`、Supabaseの `.subscribe()` がそれにあたります。' },
+            { pts: 0, mark: '×', reason: '外部バックエンドを別途立てる必要があり、BaaSの強みを活かせません。' },
+          ],
+          [ // Step6 deploy
+            { pts: 3, mark: '◎', reason: 'React/Next.jsとの相性が最高。WebSocket的なリアルタイム通信もVercelのインフラで問題なく動きます。' },
+            { pts: 3, mark: '◎', reason: 'FirebaseはHostingもセットで使えます。Firestore・Auth・Hostingを全部Firebase内で統一できます。' },
+            { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用。認証やリアルタイム通信が動きません。' },
+            { pts: 1, mark: '△', reason: '設定は複雑ですが技術的には可能です。個人アプリにはBaaSが現実的です。' },
+          ],
+        ],
+      },
+      {
+        icon: '🛒',
+        title: 'ECサイト（商品一覧・カート）',
+        description: '商品を一覧表示してカートに追加、購入できるECサイト。SEOも重要。',
+        ratings: [
+          [ // Step1 frontend
+            { pts: 3, mark: '◎', reason: 'ECサイトはSEOが売上に直結します。商品ページをSSG/SSRで生成できるNext.jsが最適。Vercelとの組み合わせでCDN配信も完璧です。' },
+            { pts: 1, mark: '△', reason: 'CSRがメインでSEOが弱いです。商品ページが検索エンジンにインデックスされにくくなります。' },
+            { pts: 1, mark: '△', reason: 'NuxtはSSRに対応していますが、日本語情報や事例がNext.jsより少ないです。' },
+            { pts: 0, mark: '×', reason: 'HTMLだけではカート管理や決済フローを実装できません。' },
+          ],
+          [ // Step2 db
+            { pts: 3, mark: '◎', reason: 'PostgreSQLで商品・在庫・注文・ユーザーをリレーションで管理できます。JOINで「どのユーザーが何を注文したか」が正確に取れます。' },
+            { pts: 1, mark: '△', reason: 'NoSQLはJOINが苦手です。商品・注文・ユーザーをまたぐ複雑なクエリがFirestoreでは難しくなります。' },
+            { pts: 1, mark: '△', reason: 'カートのみlocalStorageで持つ方法はあります（ゲストカート）が、注文履歴などはDBが必要です。' },
+            { pts: 2, mark: '○', reason: 'PostgreSQL系なのでSupabaseと同様に設計できます。ただしサーバー準備が必要でBaaSより工数がかかります。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: '`users`・`products`・`orders`・`order_items` の正規化設計が必須です。order_itemsで「1注文に複数商品」の関係を表現します。' },
+            { pts: 0, mark: '×', reason: '1テーブルでは「1注文に複数商品」という多対多の関係を表現できません。設計の根本から見直しが必要になります。' },
+            { pts: 1, mark: '△', reason: 'NoSQLでは注文と商品の結合が難しく、在庫の整合性を保つのが困難です。ECには不向きです。' },
+            { pts: 0, mark: '×', reason: '商品や注文はユーザーが動的に作るデータです。コードに直書きでは対応できません。' },
+          ],
+          [ // Step4 auth
+            { pts: 3, mark: '◎', reason: 'SupabaseのRLSで「自分の注文だけ見られる」制御が簡単に実装できます。DBと同じサービスで統一できます。' },
+            { pts: 2, mark: '○', reason: 'Firebase Authでも認証できますが、DBにSupabaseを選んだ場合は管理が二重になります。' },
+            { pts: 2, mark: '○', reason: 'Next.jsとの相性が良く、認証済みユーザーのみカートページに入れる制御が実装しやすいです。' },
+            { pts: 1, mark: '△', reason: 'ゲスト購入（認証なし）を実装することも可能ですが、注文履歴確認には認証が必要になります。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 3, mark: '◎', reason: '商品一覧はServer Components（SSG）でSEO対応、カート操作・注文確定はServer Actionsで処理する構成が最適です。' },
+            { pts: 2, mark: '○', reason: 'APIルートでも同じことができます。特に決済処理（Stripe等）との連携はAPIルートで実装することが多いです。' },
+            { pts: 1, mark: '△', reason: 'RLSで保護すれば動きますが、注文確定や在庫更新はサーバー側で処理しないとデータ不整合が起きやすいです。' },
+            { pts: 1, mark: '△', reason: '決済APIとの連携や在庫管理に外部バックエンドが使えますが、Server Actionsで代替できる場合が多いです。' },
+          ],
+          [ // Step6 deploy
+            { pts: 3, mark: '◎', reason: 'Next.jsとの相性が最高。SSGの商品ページはVercelのCDNから高速配信されます。無料枠でも中規模ECなら対応できます。' },
+            { pts: 1, mark: '△', reason: 'FirebaseはNext.jsのSSG/SSRとの相性がVercelより劣ります。ECサイトのパフォーマンス要件を満たすか確認が必要です。' },
+            { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用。カートや注文処理のサーバー機能が動きません。' },
+            { pts: 2, mark: '○', reason: '大規模なトラフィックに対応できます。EC事業が大きくなったときに移行を検討する選択肢です。' },
+          ],
+        ],
+      },
+      {
+        icon: '📊',
+        title: 'チーム向け売上ダッシュボード',
+        description: 'チームメンバーが売上・KPIをグラフで確認できる社内向けダッシュボード。',
+        ratings: [
+          [ // Step1 frontend
+            { pts: 3, mark: '◎', reason: 'RechartsなどのグラフライブラリとServer Componentsの組み合わせでKPI集計をサーバーで処理し、高速な表示が実現できます。' },
+            { pts: 2, mark: '○', reason: 'Reactのグラフライブラリは豊富です。社内ツールなのでSEOが不要なためReactでも問題ありません。' },
+            { pts: 2, mark: '○', reason: 'Vue向けのグラフライブラリ（Chart.js等）も充実しています。Vueに慣れているなら良い選択です。' },
+            { pts: 0, mark: '×', reason: 'HTMLだけではインタラクティブなグラフや認証が実装できません。' },
+          ],
+          [ // Step2 db
+            { pts: 3, mark: '◎', reason: 'PostgreSQLの集計クエリ（GROUP BY・SUM・AVG）が強力です。月別売上や担当者別KPIなど複雑な集計もSQLで書けます。' },
+            { pts: 1, mark: '△', reason: 'NoSQLは集計クエリが弱いです。売上の合計・平均などをFirestoreで取るには全件取得して手動集計が必要になります。' },
+            { pts: 0, mark: '×', reason: 'localStorageは端末内のみ。チームで同じデータを見ることができません。' },
+            { pts: 2, mark: '○', reason: '集計クエリはMySQLでも書けます。ただしサーバー準備が必要でBaaSより工数がかかります。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: '`users`・`teams`・`sales`・`products` の正規化設計で「担当者別・商品別・月別」の複雑な集計クエリが書けます。GROUP BYと相性抜群です。' },
+            { pts: 1, mark: '△', reason: '1テーブルでは集計の粒度が固定されてしまいます。新しい切り口のKPIを追加するたびに設計変更が必要になります。' },
+            { pts: 1, mark: '△', reason: 'ドキュメント型では売上の集計クエリが難しくなります。NoSQLはリアルタイム表示が得意ですが集計は苦手です。' },
+            { pts: 0, mark: '×', reason: '売上データはチームが毎日追加するデータです。コードに直書きでは対応できません。' },
+          ],
+          [ // Step4 auth
+            { pts: 3, mark: '◎', reason: 'SupabaseのRLSで「同じteam_idのユーザーだけデータを見られる」という権限制御が実装しやすいです。' },
+            { pts: 1, mark: '△', reason: 'Firebase AuthはSupabaseのDB設計との相性が良くないため、認証管理が複雑になります。' },
+            { pts: 2, mark: '○', reason: 'NextAuth.jsで社内のGoogleアカウント認証（Google Workspace）に絞ることができます。社内ツールには向いています。' },
+            { pts: 0, mark: '×', reason: 'チームの売上データなので認証は必須。誰でも見られる状態では情報漏えいのリスクがあります。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 3, mark: '◎', reason: '売上集計などの重いクエリはServer Componentsで実行してクライアントに結果だけ返す構成が最適。データ更新はServer Actionsで処理します。' },
+            { pts: 2, mark: '○', reason: 'APIルートで集計クエリを実行する方法も有効です。フィルター変更時に動的なAPIリクエストを送る構成で実装できます。' },
+            { pts: 0, mark: '×', reason: 'PostgreSQLの集計クエリをクライアントから直接実行するのはセキュリティリスクが高いです。必ずサーバーで処理しましょう。' },
+            { pts: 1, mark: '△', reason: 'マイクロサービス化を見据えるなら選択肢ですが、社内ツールにはServer Actionsで十分です。' },
+          ],
+          [ // Step6 deploy
+            { pts: 3, mark: '◎', reason: 'Next.jsとの相性が最高。社内ツールなので無料枠でも十分対応できます。Supabaseとの組み合わせも相性良し。' },
+            { pts: 1, mark: '△', reason: 'FirebaseはNext.jsのServer ActionsやSSRとの相性がVercelほど良くありません。' },
+            { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用。認証やDB集計のサーバー処理が動きません。' },
+            { pts: 2, mark: '○', reason: '企業の社内ツールでセキュリティポリシー上AWSが必要な場合に選択します。個人開発ならVercelで十分です。' },
+          ],
+        ],
+      },
+      {
+        icon: '🎯',
+        title: '個人メモ帳（ログイン不要）',
+        description: 'ログインなしで使える。自分のブラウザだけで完結するシンプルなメモアプリ。',
+        ratings: [
+          [ // Step1 frontend
+            { pts: 1, mark: '△', reason: 'Next.jsはサーバー機能が充実していますが、このアプリにサーバーは不要です。オーバースペックになります。' },
+            { pts: 2, mark: '○', reason: 'useState・useEffectでlocalStorageと連携するメモアプリが実装できます。シンプルな選択です。' },
+            { pts: 2, mark: '○', reason: 'VueのリアクティブシステムとlocalStorageの相性が良く、シンプルに実装できます。' },
+            { pts: 3, mark: '◎', reason: '最もシンプルな選択。JSだけでlocalStorageにデータを保存する実装ができます。フレームワーク不要で軽量です。' },
+          ],
+          [ // Step2 db
+            { pts: 0, mark: '×', reason: 'ログイン不要・端末内完結のアプリにサーバーDBは不要です。設定・費用の無駄になります。' },
+            { pts: 0, mark: '×', reason: 'ログイン不要・端末内完結のアプリにサーバーDBは不要です。設定・費用の無駄になります。' },
+            { pts: 3, mark: '◎', reason: 'localStorageはまさにこのユースケース向け！サーバー不要でブラウザ内にデータが残ります。シンプルなアプリには最適な選択です。' },
+            { pts: 0, mark: '×', reason: 'サーバーを自前で用意するコストが不要です。このアプリにはlocalStorageで十分です。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 0, mark: '×', reason: 'localStorageを使う場合、テーブル設計は不要です。適切なデータ構造を選ぶことが大切です。' },
+            { pts: 3, mark: '◎', reason: '`[{id, text, date}]` のようなシンプルなJSON配列をlocalStorageに保存するのが最適。追加・削除がし やすい構造です。' },
+            { pts: 2, mark: '○', reason: 'カテゴリ別に分けるなら `{work: [...], personal: [...]}` のようなオブジェクト形式も有効です。' },
+            { pts: 0, mark: '×', reason: 'コードに直書きでは新しいメモを追加できません。localStorageへの保存が必要です。' },
+          ],
+          [ // Step4 auth
+            { pts: 0, mark: '×', reason: 'localStorageはそのブラウザにしか保存されないため、Supabase Authを使っても他端末でデータは見えません。不要です。' },
+            { pts: 0, mark: '×', reason: '同上。Firebase Authを使っても、localStorageのデータが他端末で見えるようにはなりません。' },
+            { pts: 0, mark: '×', reason: 'ログイン機能を入れるならlocalStorageではなくDBへの保存が必要になります。設計が変わってしまいます。' },
+            { pts: 3, mark: '◎', reason: '「ログイン不要」がこのアプリの最大の魅力。認証なしで誰でもすぐ使えるシンプルさが価値です。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 0, mark: '×', reason: 'サーバーがないのでServer Componentsは使えません。全ての処理をブラウザ内で完結させます。' },
+            { pts: 0, mark: '×', reason: 'APIルートはサーバーが必要です。このアプリにサーバーは不要です。' },
+            { pts: 3, mark: '◎', reason: '`localStorage.getItem()` と `localStorage.setItem()` でデータの読み書きができます。まさにクライアント直接操作です。' },
+            { pts: 0, mark: '×', reason: '外部バックエンドはサーバーが必要です。このアプリの「ログイン不要・端末内完結」というコンセプトと矛盾します。' },
+          ],
+          [ // Step6 deploy
+            { pts: 1, mark: '△', reason: '使えますが静的HTMLをデプロイするだけなのに、Vercelの機能を全く活かせません。' },
+            { pts: 1, mark: '△', reason: '使えますが静的サイトのためにFirebaseの設定をするのは少し大げさです。' },
+            { pts: 3, mark: '◎', reason: '静的HTMLをそのまま公開できるGitHub Pagesが最適！無料で、設定もシンプルです。このアプリに一番合っています。' },
+            { pts: 0, mark: '×', reason: 'AWSは個人の静的HTMLアプリには明らかに過剰です。' },
           ],
         ],
       },
