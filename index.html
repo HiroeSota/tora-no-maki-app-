@@ -1186,6 +1186,13 @@
       'Supabase Storage': 'Supabaseが提供するファイルストレージ機能。`supabase.storage.from("バケット名").upload(パス, ファイル)` でアップロードし、`.getPublicUrl(パス)` で公開URLを取得できる。画像・動画・ドキュメントなどの保存に使う。',
       'URL.createObjectURL': 'ブラウザのWeb API。File・BlobオブジェクトからブラウザメモリURL（`blob:...`）を生成する。`img.src` などに使うと通信なしで画像プレビューが可能。使い終わったら `URL.revokeObjectURL()` でメモリを解放する必要がある。',
       'Recharts':         'React向けのグラフ・チャートライブラリ。`<BarChart>`・`<LineChart>`・`<PieChart>` などのコンポーネントで構成される。`<ResponsiveContainer>` で囲むと親要素の幅に自動追従するレスポンシブなグラフになる。',
+      'Web Audio API':    'ブラウザ標準搭載の音声処理 API。外部ファイルもライブラリも不要で `new AudioContext()` → `createOscillator()` → `connect()` → `start()` の流れで音を生成できる。効果音・ビジュアライザー・音楽アプリなどに使われる。',
+      'Howler.js':        'ブラウザでの音声再生を扱うライブラリ。自動再生ブロック（Autoplay Policy）問題を自動でハンドリングしてくれる。音声ファイル（.mp3/.wav など）は自分で用意し、Howler.js はその操作 API（再生・一時停止・ループなど）を提供する「操作パネル」。',
+      'animation-fill-mode': 'CSS アニメーションが開始前・終了後にどのスタイルを適用するかを決めるプロパティ。`forwards` は終了後に最後のキーフレームのスタイルを保持。`backwards` は開始前に最初のキーフレームを適用。`both` は両方に適用。',
+      'カスタムフック':   'React のフック（`useState` など）を使ってロジックをコンポーネントの外に切り出した再利用可能な関数。命名は必ず `use` で始める（例：`useSound`・`useWindowSize`）。複雑なロジックや複数箇所で使うロジックを切り出す際に使う。',
+      'JSON':             'JavaScript Object Notation。`{"key": "value"}` のようにキーと値のセットでデータを記述する共通フォーマット。データの「書き方のルール」であり、変換・処理は行わない。API のレスポンスの多くがこの形式。`JSON.parse()` で JS オブジェクトに、`JSON.stringify()` で JSON 文字列に相互変換できる。',
+      'git push --force': 'リモートブランチをローカルの状態で強制上書きするコマンド。リモート独自のコミットは失われるため、共有ブランチへの使用は要注意。誤ったコミットを取り消す際は「`git reset --hard` → `git push --force`」の順で行う。',
+      'git reset --hard': '作業ツリー・ステージング・コミット履歴を指定のコミットまで強制的に戻すコマンド。コミットされていない変更は完全に失われるため取り消し不可。`git push --force` と組み合わせてリモートの履歴も書き換えられる。',
       // SQL基礎
       'SQL':              'Structured Query Language（構造化照会言語）。リレーショナルデータベースのデータを操作するための言語。`SELECT`（読み取り）・`INSERT INTO`（追加）・`UPDATE`（更新）・`DELETE`（削除）などの命令を持つ。PostgreSQL（Supabase）・MySQL・SQLiteなどのRDBで使われる。FirestoreなどのNoSQLデータベースでは使わない。',
       'PRIMARY KEY':      '主キー。テーブル内で各行を一意に識別するための列（カラム）。NULL禁止・重複禁止で、1テーブルに1つだけ設定できる。UUIDや連番IDによく使われる。',
@@ -2592,6 +2599,79 @@
         difficulty: 2, isNew: true,
         hint: '`<ResponsiveContainer width="100%" height={300}>` で `<BarChart>` などを囲むと親要素の幅に自動追従します。これがないとグラフが固定ピクセルサイズになり、画面幅が変わったときにはみ出したり縮んだりします。',
       },
+      // ── 他アプリ開発で学んだ知識 ──
+      {
+        category: 'Web基礎',
+        text: '[[Web Audio API]] の説明として正しいものはどれ？',
+        choices: ['Googleが提供する有料の音楽ストリーミングAPI','ブラウザに標準で組み込まれており、音声ファイルもライブラリも不要で音を生成できるAPI','音声ファイルをサーバーにアップロードするためのAPI','Web上で音楽を検索・再生するためのAPIで、Chrome 専用'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'ブラウザ標準搭載のため外部ライブラリ不要。`new AudioContext()` → `createOscillator()` の流れだけで音を鳴らせます。効果音生成やビジュアライザーなど幅広い用途に使えます。',
+      },
+      {
+        category: 'Web基礎',
+        text: '[[Howler.js]] を使って音声を再生するとき、「音声ファイル」と「ライブラリ」の役割分担として正しいものはどれ？',
+        choices: ['Howler.js が音声データを内包しているため、ファイルを用意する必要はない','音声ファイルは自分で用意し、Howler.js はそのファイルを操作する「操作パネル」として機能する','音声ファイルは Howler.js の CDN から自動ダウンロードされる','Howler.js は音声ファイルを生成するツールで、録音した音声を自動変換してくれる'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '音声ファイル（.mp3/.wav など）は自分のプロジェクトに置くか URL を用意します。Howler.js はブラウザの自動再生ブロック問題のハンドリングや再生・一時停止・ループなどの制御 API を提供する「操作パネル」です。',
+      },
+      {
+        category: 'IT基礎',
+        text: '[[サーバー]]と[[クライアント]]の役割分担として正しいものはどれ？',
+        choices: ['クライアントが DB を直接操作し、サーバーは UI 表示を担当する','サーバーは DB アクセスや判定・計算を担い、クライアント（ブラウザ）はアニメーションや UI 操作を担う','サーバーとクライアントは同一マシン上で動くため、役割の区別はない','認証処理はすべてクライアントで完結する'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'サーバーは DB に直接アクセスできますが、画面を直接操作できません。クライアントは画面を動かせますが、DB には直接触れません。サーバーが結果を返してクライアントに伝える「橋渡し」が基本設計です。',
+      },
+      {
+        category: 'IT基礎',
+        text: '[[JSON]] の説明として正しいものはどれ？',
+        choices: ['JavaScript のコードを別の言語に自動翻訳してくれる変換エンジン','キー：値 のセットでデータを記述する共通フォーマット。書き方のルールを統一するもので、データの変換・処理は行わない','データベースのテーブルを XML 形式で保存するファイル形式','JavaScript の配列専用のシリアライズ形式'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'JSON（JavaScript Object Notation）は `{"name": "太郎", "age": 20}` のようにキーと値をセットで書きます。API のレスポンスの多くがこの形式です。`JSON.parse()` で JS オブジェクトに、`JSON.stringify()` で JSON 文字列に変換できます。',
+      },
+      {
+        category: 'Git',
+        text: '`[[git push --force]]` を実行すると何が起きる？',
+        choices: ['ローカルとリモートの差分だけを差し込み形式で送信する','リモートブランチの履歴がローカルの状態で強制上書きされる（リモート独自のコミットは失われる）','ステージングしていない変更もすべてプッシュされる','プッシュ先のブランチが新規作成される'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '通常の `git push` は履歴を積み重ねますが、`--force` はリモートをローカルの状態で上書きします。誤ったコミットをなかったことにする際は「ローカルで `[[git reset --hard]]` → `git push --force`」の順に行います。共有ブランチへの使用は他者のコミットを消すリスクがあり要注意です。',
+      },
+      {
+        category: 'Web基礎',
+        text: '`opacity: 0` で終わる CSS アニメーションに `[[animation-fill-mode]]: forwards` を付けると何が起きる？',
+        choices: ['アニメーションが無限ループする','アニメーション終了後も `opacity: 0` が維持され、要素が消えたまま残る','アニメーションがゆっくり逆再生される','最初のキーフレームが繰り返し適用される'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '`animation-fill-mode: forwards` はアニメーション終了後に「最後のキーフレームのスタイルを保持」します。フェードアウト後に要素を隠したいなら便利ですが、意図せず付けるとアニメーション後に要素が消えたまま操作できなくなるバグの原因になります。',
+      },
+      {
+        category: 'Web基礎',
+        text: '`position: fixed` の要素が「親要素の `transform` アニメーションの影響を受けて位置がずれる」原因はどれ？',
+        choices: ['`fixed` は CSS アニメーションに対応していないため常に誤動作する','`transform`（`none` 以外）を持つ祖先要素が新しい包含ブロックになり、`fixed` がビューポートではなくその要素基準に変わるから','`transform` を使うと z-index がリセットされ固定配置が外れるから','`fixed` 要素に `overflow: hidden` が自動で適用されるから'],
+        answer: 1,
+        difficulty: 3, isNew: true,
+        hint: 'CSS の仕様で、`transform` が `none` 以外の要素は新しい包含ブロックを生成します。その子孫の `position: fixed` はビューポートではなくその要素を基準に配置されます。`perspective`・`filter`・`will-change: transform` でも同様に起きます。用途ごとに専用のアニメーションを作るのが安全策です。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[カスタムフック]]（Custom Hook）の説明として正しいものはどれ？',
+        choices: ['React が提供する公式フック（`useState` など）のうち高度な機能を持つものの総称','`useState` などの React フックを使ってロジックをコンポーネントの外に切り出し、どこからでも再利用できるようにした関数','クラスコンポーネントでのみ使える特別なメソッドのこと','CSS-in-JS でスタイルを動的に切り替えるための仕組み'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'カスタムフックの名前は必ず `use` で始めます（例：`useSound`・`useWindowSize`）。「複雑 OR 2〜3箇所以上で使う」どちらかに当てはまるロジックが切り出しの目安。デメリットはファイルが増えて追いにくくなる点と、早すぎる抽象化のリスクです。',
+      },
+      {
+        category: '技術スタック',
+        text: '[[Tailwind CSS]] v4 で `-translate-x-1/2` などの translate ユーティリティと、CSS アニメーションの `transform: translateX(-50%)` を同時に使うとずれが生じる。原因として正しいものはどれ？',
+        choices: ['Tailwind v4 はアニメーションをサポートしていないため競合が起きる','v4 の translate ユーティリティは CSS 独立プロパティの `translate` を使うため、`transform` とは別プロパティになり二重に適用されるから','v4 では `translate-x-*` クラスが削除されたため、スタイルが当たらなくなるから','`transform` と Tailwind のユーティリティは同じプロパティを書き換えるため後勝ちで上書きされるから'],
+        answer: 1,
+        difficulty: 3, isNew: true,
+        hint: 'CSS Transforms Level 2 で `translate`・`rotate`・`scale` の独立プロパティが追加され、Tailwind v4 はこれを使います。一方 `@keyframes` での `transform: translateX(-50%)` は別プロパティなので両方が適用され二重にずれます。解決策は `inset-x-0 mx-auto w-fit` などで transform を使わない中央寄せに変更することです。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -2638,21 +2718,26 @@
       'Promise.all':2,'Service Role Key':3,'Supabase Storage':2,'URL.createObjectURL':2,'Recharts':2,
       // SQL基礎
       'SQL':1,'PRIMARY KEY':1,'INSERT INTO':1,'INNER JOIN':2,'LEFT JOIN':2,'GROUP BY':2,'IS NULL':2,
+      // 他アプリ開発で学んだ知識
+      'Web Audio API':2,'Howler.js':2,'animation-fill-mode':2,
+      'カスタムフック':2,
+      'git push --force':2,'git reset --hard':2,
+      'JSON':1,
     };
 
     const WORD_LIST_GROUPS = [
       { isLabel: true, label: '🔰 入門' },
-      { cat: 'IT基礎',     color: '#d2a8ff', terms: ['ターミナル','コマンドライン','ディレクトリ','コマンド','パス','コンパイル','インストール','パッケージ','ライブラリ','フレームワーク','API','サーバー','クライアント','デプロイ','ホスティング','バグ','コンポーネント','プロトコル','レンダリング','マークアップ言語'] },
+      { cat: 'IT基礎',     color: '#d2a8ff', terms: ['ターミナル','コマンドライン','ディレクトリ','コマンド','パス','コンパイル','インストール','パッケージ','ライブラリ','フレームワーク','API','サーバー','クライアント','デプロイ','ホスティング','バグ','コンポーネント','プロトコル','レンダリング','マークアップ言語','JSON'] },
       { cat: 'コマンド',   color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv','chmod'] },
       { cat: 'JS基礎',     color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM','配列','オブジェクト','if文'] },
       { isLabel: true, label: '📚 発展' },
-      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック','.gitignore','git stash','シェバン行'] },
+      { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック','.gitignore','git stash','シェバン行','git push --force','git reset --hard'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
-      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア','URL.createObjectURL'] },
+      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア','URL.createObjectURL','Web Audio API','Howler.js','animation-fill-mode'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules','package-lock.json','devDependencies','npx','npm ci'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL','Service Role Key','Supabase Storage'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts','カスタムフック'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
