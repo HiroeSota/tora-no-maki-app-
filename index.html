@@ -222,6 +222,30 @@
     .difficulty-stars.d2 { color: #e3b341; }
     .difficulty-stars.d3 { color: #f85149; }
 
+    .diff-filter-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    .diff-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      border: 2px solid #30363d;
+      background: #21262d;
+      color: #8b949e;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+    .diff-btn:hover { border-color: #58a6ff; color: #c9d1d9; }
+    .diff-btn.active-all  { border-color: #58a6ff; background: rgba(88,166,255,0.12); color: #58a6ff; }
+    .diff-btn.active-d1   { border-color: #3fb950; background: rgba(63,185,80,0.12);  color: #3fb950; }
+    .diff-btn.active-d2   { border-color: #e3b341; background: rgba(227,179,65,0.12); color: #e3b341; }
+    .diff-btn.active-d3   { border-color: #f85149; background: rgba(248,81,73,0.12);  color: #f85149; }
+
     .question-text {
       font-size: 1.25rem;
       font-weight: 600;
@@ -923,6 +947,8 @@
       <div class="start-sub">問題中の用語を <code>タップ / ホバー</code> すると意味が表示されます 💡</div>
       <div class="filter-label">カテゴリを選択</div>
       <div class="filter-grid" id="filterGrid"></div>
+      <div class="filter-label" style="margin-top:4px;">難易度を絞り込む</div>
+      <div class="diff-filter-row" id="diffFilterRow"></div>
       <div id="dailyArea"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
       <button class="weak-btn" id="weakBtn" onclick="startWeakQuiz()" style="display:none">🎯 苦手モードで挑戦 <span id="weakCount"></span></button>
@@ -1056,6 +1082,10 @@
       'HTTPS':            'HTTP に SSL/TLS 暗号化を追加した安全な通信規格。ブラウザに🔒マークがつく。',
       'package.json':     'プロジェクトの情報・依存パッケージ・スクリプトなどを記述する設定ファイル。',
       'node_modules':     'npm install で取得したパッケージが格納されるフォルダ。通常 .gitignore に追加する。',
+      'package-lock.json':'npm install 実行時に自動生成される依存関係の完全なロックファイル。全パッケージの正確なバージョンを記録し、チーム間で同じ環境を再現できる。',
+      'devDependencies':  'package.json の項目のひとつ。開発時（ビルド・テスト）のみ必要なパッケージを管理する。本番環境には含まれない。',
+      'npx':              'npm に同梱されたコマンド実行ツール。パッケージをグローバルにインストールせず一時的に実行できる。例: `npx create-next-app` で Next.js プロジェクト作成。',
+      'npm ci':           '`package-lock.json` を元に依存関係を厳密にインストールするコマンド。CI環境でバージョンのブレを防ぐために使う。',
       'フロントエンド':   'ユーザーが目にする・操作するブラウザ側の領域。HTML/CSS/JS が担う。',
       'バックエンド':     'ユーザーからは見えないサーバー側の処理。データ管理・API 提供などを担う。',
       'データベース':     'アプリを閉じてもデータが消えない「倉庫」。Firebase Firestoreなど。端末間でのデータ共有に必須。',
@@ -1573,6 +1603,38 @@
         difficulty: 2,
         hint: '`package.json` に `"scripts": { "dev": "vite" }` と書いておくと、`npm run dev` で `vite` が起動します。長いコマンドを短い名前で呼び出せる便利な仕組みです。',
       },
+      {
+        category: 'npm',
+        text: '`npm install --save-dev eslint` を実行したとき、パッケージはどこに記録される？',
+        choices: ['[[package.json]] の `dependencies`','[[package.json]] の `[[devDependencies]]`','[[package.json]] の `scripts`','[[node_modules]] のルートフォルダに直接記録される'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '`--save-dev`（または `-D`）は開発時のみ必要なパッケージに使います。ESLint・TypeScript・テストツールなどが該当。本番デプロイ時には `--production` フラグで除外できます。',
+      },
+      {
+        category: 'npm',
+        text: '[[package-lock.json]] の主な役割は何？',
+        choices: ['スクリプトのショートカットを定義する','プロジェクトのライセンスを記録する','依存パッケージの正確なバージョンをロックし、チーム間で同じ環境を再現する','[[node_modules]] の容量を圧縮する'],
+        answer: 2,
+        difficulty: 2, isNew: true,
+        hint: '`npm install` するたびに自動更新されます。このファイルをリポジトリにコミットしておくと、別の端末でも `npm ci` で全く同じバージョンを再現できます。',
+      },
+      {
+        category: 'npm',
+        text: '`[[npx]] create-next-app@latest my-app` を実行したとき、`npx` の役割は何？',
+        choices: ['Node.js をアップデートする','`create-next-app` をグローバルインストールせずに一時的に実行する','[[package.json]] を作成する','既存のプロジェクトを削除する'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '`npx` を使うと、グローバルにインストールしなくても最新バージョンのコマンドをその場で実行できます。`create-react-app` や `create-next-app` のような「一度しか使わないセットアップツール」に便利です。',
+      },
+      {
+        category: 'npm',
+        text: 'CI環境で依存関係をインストールする際に `npm install` より `[[npm ci]]` が推奨される理由は？',
+        choices: ['`npm ci` の方がインストールが速いから','`npm ci` は `[[package-lock.json]]` を元に厳密な同一バージョンをインストールし、ロックファイルと `package.json` の差異があるとエラーにするから','`npm ci` は `[[node_modules]]` を自動で圧縮するから','`npm ci` はオフラインでも動作するから'],
+        answer: 1,
+        difficulty: 3, isNew: true,
+        hint: 'CI（継続的インテグレーション）環境では再現性が最重要。`npm ci` は既存の `node_modules` を削除してから再インストールするため、クリーンな状態を保証します。',
+      },
       // データ管理
       {
         category: 'データ管理',
@@ -1686,6 +1748,38 @@
         answer: 1,
         difficulty: 2,
         hint: 'ユーザーが「許可」を押さないと通知は送れません。一度「拒否」するとブラウザ設定から変更が必要です。',
+      },
+      {
+        category: 'PWA',
+        text: '[[manifest.json]] の `display` を `standalone` に設定するとどうなる？',
+        choices: ['アプリが全画面（ステータスバーも非表示）で起動する','ブラウザのアドレスバーやナビゲーションボタンが非表示になり、ネイティブアプリ風の見た目になる','アプリのアイコンだけが表示される','オフラインモードが自動的に有効になる'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '`standalone` はアドレスバーを隠しつつ OS のステータスバーは残します。`fullscreen` にするとステータスバーも消えます。ホーム画面から起動したときだけこのUIが適用されます。',
+      },
+      {
+        category: 'PWA',
+        text: '[[Service Worker]] をブラウザに登録するには、どのコードを使う？',
+        choices: ['`new ServiceWorker("sw.js")`','`navigator.serviceWorker.register("/sw.js")`','`window.addServiceWorker("/sw.js")`','`importScripts("/sw.js")`'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: '`navigator.serviceWorker.register()` はブラウザがService Workerをサポートしているか確認してから呼びます。`if ("serviceWorker" in navigator)` で分岐するのが定石です。',
+      },
+      {
+        category: 'PWA',
+        text: '[[Service Worker]] でオフライン対応する仕組みとして正しいものはどれ？',
+        choices: ['localStorageにページ全体を保存する','Service Workerの`fetch`イベントをインターセプトし、キャッシュからレスポンスを返す','ブラウザのバックグラウンド同期が自動でコンテンツを保存する','manifest.jsonに`offline: true`と書く'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'Service Workerはネットワークリクエストの「中間地点」として機能します。`install`イベントでリソースをキャッシュし、`fetch`イベントで「ネット→なければキャッシュ」という順に返すのが基本パターンです。',
+      },
+      {
+        category: 'PWA',
+        text: '[[Service Worker]] のライフサイクルで正しい順序はどれ？',
+        choices: ['activate → install → fetch','install → fetch → activate','install → activate → fetch','fetch → install → activate'],
+        answer: 2,
+        difficulty: 3, isNew: true,
+        hint: '`install` でキャッシュを準備し、`activate` で古いキャッシュを削除、その後 `fetch` でリクエストを捕捉します。新しいService Workerは既存ページが閉じるまで `waiting` 状態になります。',
       },
       {
         category: 'データ管理',
@@ -2517,7 +2611,7 @@
       'HTML':1,'CSS':1,'HTTP':1,'HTTPS':1,'ソフトウェア':1,
       'GitHub Pages':1,'静的サイト':2,'動的サイト':2,'Canvas':3,
       // npm
-      'npm':1,'package.json':2,'node_modules':2,
+      'npm':1,'package.json':2,'node_modules':2,'package-lock.json':2,'devDependencies':2,'npx':2,'npm ci':3,
       // データ管理
       'データベース':1,'GitHub':1,'Firebase':1,
       'Firestore':2,'localStorage':2,'SessionStorage':2,'Firebase CLI':2,'firebase deploy':2,'firebase serve':2,
@@ -2555,7 +2649,7 @@
       { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック','.gitignore','git stash','シェバン行'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
       { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア','URL.createObjectURL'] },
-      { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules'] },
+      { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules','package-lock.json','devDependencies','npx','npm ci'] },
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL','Service Role Key','Supabase Storage'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
       { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts'] },
@@ -2564,6 +2658,7 @@
     // ── State ─────────────────────────────────────────────────────
     let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1, catStats = {};
     let isDaily = false, isDailyReview = false, dailyWrongFirst = [], dailyReviewWrong = [];
+    let selectedDifficulty = 0; // 0=全て, 1=初級, 2=中級, 3=上級
 
     // ── Utils ─────────────────────────────────────────────────────
     const shuffle = arr => [...arr].sort(() => Math.random() - 0.5);
@@ -2627,6 +2722,27 @@
           updateWeakBtn();
         };
         grid.appendChild(btn);
+      });
+    }
+
+    function initDiffFilter() {
+      const row = document.getElementById('diffFilterRow');
+      const DIFFS = [
+        { val: 0, label: '全て',       cls: 'active-all' },
+        { val: 1, label: '★ 初級',     cls: 'active-d1'  },
+        { val: 2, label: '★★ 中級',   cls: 'active-d2'  },
+        { val: 3, label: '★★★ 上級', cls: 'active-d3'  },
+      ];
+      DIFFS.forEach(({ val, label, cls }) => {
+        const btn = document.createElement('button');
+        btn.className = 'diff-btn' + (val === selectedDifficulty ? ' ' + cls : '');
+        btn.textContent = label;
+        btn.onclick = () => {
+          selectedDifficulty = val;
+          document.querySelectorAll('.diff-btn').forEach(b => b.className = 'diff-btn');
+          btn.className = 'diff-btn ' + cls;
+        };
+        row.appendChild(btn);
       });
     }
 
@@ -2871,6 +2987,10 @@
     }
 
     // ── Quiz Flow ─────────────────────────────────────────────────
+    function applyDiffFilter(pool) {
+      return selectedDifficulty === 0 ? pool : pool.filter(q => q.difficulty === selectedDifficulty);
+    }
+
     function startQuiz() {
       isDaily = false;
       isDailyReview = false;
@@ -2885,6 +3005,11 @@
         }
       } else {
         pool = ALL_QUESTIONS.filter(q => q.category === selectedCategory);
+      }
+      pool = applyDiffFilter(pool);
+      if (pool.length === 0) {
+        alert('選択した条件に一致する問題がありません。難易度やカテゴリを変えてみてください。');
+        return;
       }
       const limit = selectedCategory === '新着' ? pool.length : 10;
       questions = shuffle(pool).slice(0, Math.min(limit, pool.length));
@@ -3625,6 +3750,132 @@
           ],
         ],
       },
+      {
+        title: 'ポートフォリオサイト',
+        description: '自分のスキルや作品を紹介するWebサイト。問い合わせフォーム付き。',
+        ratings: [
+          [ // Step1 frontend
+            { pts: 3, mark: '◎', reason: '静的生成（SSG）でSEOに強いページが作れ、問い合わせフォームもServer Actionsで完結。Next.jsが最適です。' },
+            { pts: 2, mark: '○', reason: '動作しますが、SEO対策のためのHTML出力にひと工夫必要です。シンプルに動かすだけなら十分。' },
+            { pts: 2, mark: '○', reason: 'Nuxtなら静的生成＋フォーム処理が可能。Next.jsと同様の選択肢です。' },
+            { pts: 1, mark: '△', reason: '見せるだけなら十分ですが、問い合わせフォームのサーバー処理ができません。' },
+          ],
+          [ // Step2 db
+            { pts: 1, mark: '△', reason: '問い合わせ内容をDBに保存するなら使えますが、メール転送サービスで十分なことが多いです。' },
+            { pts: 1, mark: '△', reason: '同上。Firebaseでも保存できますが、ポートフォリオにはオーバースペック気味です。' },
+            { pts: 1, mark: '△', reason: '訪問者のUI設定など端末内の状態保存には使えますが、問い合わせデータの保存には不向きです。' },
+            { pts: 0, mark: '×', reason: 'ポートフォリオサイトに自前サーバーのDBは明らかにオーバースペックです。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 1, mark: '△', reason: '問い合わせのみなら複数テーブルの正規化は過剰です。' },
+            { pts: 2, mark: '○', reason: '問い合わせデータをシンプルな1テーブルで管理する方法は現実的です。' },
+            { pts: 1, mark: '△', reason: 'ドキュメント型でも動きますが、ポートフォリオの作品情報にDBは不要なことが多いです。' },
+            { pts: 3, mark: '◎', reason: '自己紹介・作品リストはJavaScriptファイルに直書きするのが一般的。DBなしでシンプルに管理できます。' },
+          ],
+          [ // Step4 auth
+            { pts: 0, mark: '×', reason: '訪問者がログインする必要はありません。公開サイトに認証は不要です。' },
+            { pts: 0, mark: '×', reason: '同上。Firebase Authは不要です。' },
+            { pts: 0, mark: '×', reason: '同上。NextAuth.jsも不要です。' },
+            { pts: 3, mark: '◎', reason: '見てもらうためのサイトに認証は不要。誰でも自由に閲覧できることが大切です。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 3, mark: '◎', reason: 'SSGでSEO最適化されたページを生成し、問い合わせフォームはServer Actionsで処理。Next.jsの強みを最大活用できます。' },
+            { pts: 2, mark: '○', reason: '問い合わせフォームのPOST処理をAPIルートで実装できます。シンプルで分かりやすい方法です。' },
+            { pts: 1, mark: '△', reason: 'DBを使わない構成なら、フォームはJavaScriptで直接メールサービスのAPIを叩く形になります。' },
+            { pts: 0, mark: '×', reason: '別途サーバーを立てるコストが不要です。Next.js内で完結できます。' },
+          ],
+          [ // Step6 deploy
+            { pts: 3, mark: '◎', reason: 'Next.jsとの相性が最高。独自ドメイン設定も簡単で、プレビューURLも自動生成されます。' },
+            { pts: 2, mark: '○', reason: '使えますが、Next.jsのSSGにはVercelの方が相性が良いです。' },
+            { pts: 1, mark: '△', reason: '静的HTMLなら使えますが、Next.jsのServer機能（Server Actions等）は動作しません。' },
+            { pts: 0, mark: '×', reason: 'ポートフォリオサイトにAWSは完全にオーバースペックです。' },
+          ],
+        ],
+      },
+      {
+        title: 'LINE通知botアプリ',
+        description: 'LINEにメッセージを送ると自動返信するbot。管理画面でbot設定を変更できる。',
+        ratings: [
+          [ // Step1 frontend（管理画面）
+            { pts: 3, mark: '◎', reason: 'APIルート（route.ts）でLINEのWebhookリクエストを直接受け取れます。管理画面も同じプロジェクトで作れて一石二鳥です。' },
+            { pts: 0, mark: '×', reason: 'フロントエンドのみではサーバーへのWebhookを受け取れません。バックエンドが別途必要になります。' },
+            { pts: 2, mark: '○', reason: 'NuxtのサーバーAPIでWebhookを受け取れます。Next.jsより情報は少ないですが実装可能です。' },
+            { pts: 0, mark: '×', reason: '静的HTMLはサーバー処理ができないため、LINEからのWebhookを受け取れません。' },
+          ],
+          [ // Step2 db
+            { pts: 3, mark: '◎', reason: 'メッセージ履歴・ユーザー登録をDBに保存し、管理画面のアクセス制御もRLSで設定できます。' },
+            { pts: 2, mark: '○', reason: 'リアルタイム同期の強みが活きます。メッセージ受信をリアルタイムで管理画面に表示できます。' },
+            { pts: 0, mark: '×', reason: 'localStorageはブラウザ内のみ。LINEのサーバー（Webhook）から呼ばれる処理では使えません。' },
+            { pts: 1, mark: '△', reason: 'できますが自前でサーバーを用意する必要があり、運用コストが上がります。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 3, mark: '◎', reason: 'ユーザー・メッセージ・bot設定を別テーブルに分けて管理。複数ユーザーへの応答パターンを柔軟に扱えます。' },
+            { pts: 2, mark: '○', reason: '小規模なbot（1対1の定型返信のみ）なら1テーブルで十分動きます。' },
+            { pts: 2, mark: '○', reason: 'Firebaseを使う場合はドキュメント型が自然な選択。メッセージをコレクションで管理できます。' },
+            { pts: 0, mark: '×', reason: 'ユーザーからのメッセージはリアルタイムに届くため、コードへの直書きでは対応できません。' },
+          ],
+          [ // Step4 auth
+            { pts: 2, mark: '○', reason: 'bot設定を変更できる管理画面へのログインに使えます。Supabaseと組み合わせて使いやすいです。' },
+            { pts: 2, mark: '○', reason: '同上。FirebaseのDB・Authをセットで使う場合はこちらが自然です。' },
+            { pts: 2, mark: '○', reason: '管理者だけが設定変更できる画面を作れます。Next.jsとの組み合わせで実装しやすいです。' },
+            { pts: 1, mark: '△', reason: '管理画面が認証なしだと誰でも設定変更できてしまいます。bot設定は保護すべきです。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 2, mark: '○', reason: 'Server Actionsで管理画面の操作をDBに反映できます。Webhookの受け取りはAPIルートが担当します。' },
+            { pts: 3, mark: '◎', reason: 'LINEからのWebhookはPOSTリクエスト。`route.ts` でエンドポイントを作るのが最適解です。' },
+            { pts: 0, mark: '×', reason: 'WebhookはLINEのサーバーから届くリクエスト。ブラウザ（クライアント）では受け取れません。' },
+            { pts: 1, mark: '△', reason: '同じプロジェクト内のAPIルートで済むのに、別途サーバーを立てるのは手間が増えます。' },
+          ],
+          [ // Step6 deploy
+            { pts: 3, mark: '◎', reason: 'VercelのEdge FunctionでWebhookを24時間受け取れます。Next.jsとの相性も最高です。' },
+            { pts: 2, mark: '○', reason: 'Firebase Functionsでも同様にWebhookを受け取れます。Firebaseを使う構成なら自然な選択です。' },
+            { pts: 0, mark: '×', reason: 'GitHub Pagesは静的ファイルのみ。サーバー処理（Webhook受け取り）ができません。' },
+            { pts: 1, mark: '△', reason: 'EC2やLambdaで対応できますが、設定の複雑さに対してメリットが少ないです。' },
+          ],
+        ],
+      },
+      {
+        title: 'PWAメモアプリ（スマホ対応）',
+        description: 'ホーム画面に追加でき、オフラインでも使えるスマホ対応メモアプリ。',
+        ratings: [
+          [ // Step1 frontend
+            { pts: 2, mark: '○', reason: 'Next.jsでもPWA化できますが、next-pwaプラグインの設定が必要です。サーバー機能は不要なのでやや過剰です。' },
+            { pts: 3, mark: '◎', reason: 'vite-plugin-pwaで簡単にService Workerを生成できます。軽量でPWAとの相性が抜群です。' },
+            { pts: 2, mark: '○', reason: 'Nuxt PWAモジュールがあり、設定がシンプルにまとまります。Viteと並んで良い選択です。' },
+            { pts: 2, mark: '○', reason: '最もシンプルにPWAを作れます。HTMLにmanifest.jsonとsw.jsを追加するだけで完成します。' },
+          ],
+          [ // Step2 db
+            { pts: 1, mark: '△', reason: 'クラウド同期が必要なら使えますが、オフライン専用ならサーバーDBは不要です。' },
+            { pts: 1, mark: '△', reason: '同上。Firestoreはオンライン同期向き。オフライン専用には過剰です。' },
+            { pts: 3, mark: '◎', reason: 'オフラインでも動作するlocalStorageはPWAメモアプリの最適解！端末内でデータが永続保存されます。' },
+            { pts: 0, mark: '×', reason: 'オフライン動作させるのに自前サーバーのDBは矛盾しています。' },
+          ],
+          [ // Step3 テーブル設計
+            { pts: 0, mark: '×', reason: 'localStorageにリレーショナルなテーブル設計は不要です。' },
+            { pts: 3, mark: '◎', reason: '`[{id, title, body, updatedAt}]` のJSON配列をlocalStorageに保存する設計が最適。追加・削除がしやすい構造です。' },
+            { pts: 2, mark: '○', reason: 'カテゴリ分けが必要なら `{work:[...], personal:[...]}` のオブジェクト形式も有効です。' },
+            { pts: 0, mark: '×', reason: 'コードに直書きではメモを追加・編集できません。' },
+          ],
+          [ // Step4 auth
+            { pts: 0, mark: '×', reason: 'localStorageは端末内のみのデータ。Supabase Authでログインしても他端末でデータは共有されません。不要です。' },
+            { pts: 0, mark: '×', reason: '同上。Firebase Authも不要です。' },
+            { pts: 0, mark: '×', reason: '同上。NextAuth.jsも不要です。' },
+            { pts: 3, mark: '◎', reason: '個人用のオフラインメモに認証は不要。すぐ使えるシンプルさがPWAの魅力です。' },
+          ],
+          [ // Step5 データアクセス
+            { pts: 0, mark: '×', reason: 'サーバーがないのでServer Componentsは使えません。' },
+            { pts: 0, mark: '×', reason: 'APIルートもサーバーが必要です。このアプリには不要です。' },
+            { pts: 3, mark: '◎', reason: '`localStorage.getItem()` / `localStorage.setItem()` でクライアント完結。PWAの基本パターンです。' },
+            { pts: 0, mark: '×', reason: 'オフライン対応のアプリに外部バックエンドは矛盾しています。' },
+          ],
+          [ // Step6 deploy
+            { pts: 2, mark: '○', reason: 'HTTPSに対応しておりPWAの要件を満たします。ただしサーバー機能を使わないので少し過剰です。' },
+            { pts: 2, mark: '○', reason: 'Firebase HostingもHTTPSに対応。PWAに必要な条件を満たします。' },
+            { pts: 3, mark: '◎', reason: 'GitHub Pagesは無料・HTTPS対応で静的PWAに最適。manifest.jsonとsw.jsをそのまま配信できます。' },
+            { pts: 0, mark: '×', reason: 'シンプルな静的PWAにAWSは完全にオーバースペックです。' },
+          ],
+        ],
+      },
     ];
 
     let practiceScenarioIdx = -1;
@@ -3796,6 +4047,7 @@
 
     // ── Init ──────────────────────────────────────────────────────
     initFilterGrid();
+    initDiffFilter();
     buildWordList();
     updateWeakBtn();
     updateStreak();
