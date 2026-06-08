@@ -743,6 +743,126 @@
       margin-top: 10px;
     }
     .weak-btn:hover { background: rgba(248,81,73,0.1); transform: translateY(-1px); }
+
+    /* ── Practice Mode ── */
+    .practice-mode-btn {
+      width: 100%;
+      margin-top: 10px;
+      padding: 14px;
+      background: transparent;
+      border: 1.5px solid #bc8cff;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #bc8cff;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.04em;
+    }
+    .practice-mode-btn:hover { background: rgba(188,140,255,0.1); transform: translateY(-1px); }
+
+    .scenario-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; }
+    .scenario-card {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      padding: 16px 20px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 12px;
+      color: #c9d1d9;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .scenario-card:hover { border-color: #bc8cff; background: #1c2128; }
+    .scenario-icon { font-size: 2rem; line-height: 1; flex-shrink: 0; }
+    .scenario-info { flex: 1; }
+    .scenario-title { font-size: 1rem; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+    .scenario-desc { font-size: 0.82rem; color: #8b949e; line-height: 1.5; }
+
+    .practice-step-progress { display: flex; gap: 6px; margin-bottom: 20px; }
+    .practice-step-dot { flex: 1; height: 4px; background: #21262d; border-radius: 99px; transition: background 0.3s; }
+    .practice-step-dot.done   { background: #bc8cff; }
+    .practice-step-dot.active { background: rgba(188,140,255,0.45); }
+
+    .practice-step-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: #bc8cff;
+      margin-bottom: 8px;
+    }
+    .practice-step-title { font-size: 1.15rem; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+    .practice-step-question { font-size: 0.88rem; color: #8b949e; margin-bottom: 20px; }
+
+    .practice-choices { display: flex; flex-direction: column; gap: 8px; }
+    .practice-choice-btn {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 13px 16px;
+      background: #21262d;
+      border: 1px solid #30363d;
+      border-radius: 10px;
+      color: #c9d1d9;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .practice-choice-btn:hover:not(:disabled) { border-color: #bc8cff; background: #1c2128; }
+    .practice-choice-btn.selected { border-color: #bc8cff; background: rgba(188,140,255,0.12); }
+    .practice-choice-btn:disabled { cursor: default; }
+    .practice-choice-icon { font-size: 1.4rem; flex-shrink: 0; line-height: 1.3; }
+    .practice-choice-info { flex: 1; }
+    .practice-choice-name { font-size: 0.95rem; font-weight: 700; color: #e6edf3; margin-bottom: 2px; }
+    .practice-choice-desc { font-size: 0.78rem; color: #8b949e; line-height: 1.4; }
+
+    .practice-feedback {
+      margin-top: 16px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      display: none;
+    }
+    .practice-feedback.show  { display: block; }
+    .practice-feedback.fb-3  { background: rgba(0,255,180,0.1);  border: 1px solid rgba(0,255,180,0.35); }
+    .practice-feedback.fb-2  { background: rgba(88,166,255,0.1);  border: 1px solid rgba(88,166,255,0.35); }
+    .practice-feedback.fb-1  { background: rgba(227,179,65,0.1);  border: 1px solid rgba(227,179,65,0.35); }
+    .practice-feedback.fb-0  { background: rgba(248,81,73,0.1);   border: 1px solid rgba(248,81,73,0.35); }
+
+    .practice-fb-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+    .practice-fb-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      font-size: 0.95rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .practice-fb-badge.r3 { background: rgba(0,255,180,0.15);  color: #00ffb4; border: 1.5px solid #00ffb4; }
+    .practice-fb-badge.r2 { background: rgba(88,166,255,0.15); color: #58a6ff; border: 1.5px solid #58a6ff; }
+    .practice-fb-badge.r1 { background: rgba(227,179,65,0.15); color: #e3b341; border: 1.5px solid #e3b341; }
+    .practice-fb-badge.r0 { background: rgba(248,81,73,0.15);  color: #f85149; border: 1.5px solid #f85149; }
+    .practice-fb-label { font-weight: 700; font-size: 1rem; }
+    .practice-fb-text  { font-size: 0.85rem; color: #8b949e; line-height: 1.6; }
+
+    .practice-summary-cards { margin-top: 20px; display: flex; flex-direction: column; gap: 10px; text-align: left; }
+    .practice-summary-card { padding: 12px 16px; background: #1c2128; border: 1px solid #21262d; border-radius: 10px; }
+    .practice-summary-card-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .practice-summary-step-lbl { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #8b949e; }
+    .practice-summary-choice  { font-size: 0.92rem; font-weight: 700; color: #e6edf3; margin-bottom: 4px; }
+    .practice-summary-reason  { font-size: 0.78rem; color: #8b949e; line-height: 1.5; }
   </style>
 </head>
 <body>
@@ -771,6 +891,7 @@
       <div id="dailyArea"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
       <button class="weak-btn" id="weakBtn" onclick="startWeakQuiz()" style="display:none">🎯 苦手モードで挑戦 <span id="weakCount"></span></button>
+      <button class="practice-mode-btn" onclick="startPracticeMode()">🛠️ アプリ作成実践モード</button>
       <button class="word-list-toggle" id="statsToggle" onclick="toggleStats()">📊 累計成績を見る ▾</button>
       <div class="word-list-section" id="statsSection" style="display:none"></div>
       <button class="word-list-toggle" id="wordListToggle" onclick="toggleWordList()">📚 単語リストを確認する ▾</button>
@@ -811,6 +932,55 @@
         <button class="change-cat-btn" onclick="showScreen('start')">カテゴリ変更</button>
         <button class="restart-btn"    onclick="startQuiz()">もう一度 🔄</button>
       </div>
+    </div>
+
+    <!-- Practice Mode Screen -->
+    <div id="practiceScreen" style="display:none">
+
+      <!-- シナリオ選択 -->
+      <div id="practiceScenarioSelect">
+        <div class="quiz-top-row">
+          <button class="back-btn" onclick="showScreen('start')">← トップへ</button>
+          <span class="category-badge" style="background:rgba(188,140,255,0.15);border-color:rgba(188,140,255,0.35);color:#bc8cff;">実践モード</span>
+        </div>
+        <div class="start-lead">🛠️ アプリ作成実践</div>
+        <div class="start-sub">お題のアプリを作るとしたら、どの技術スタックを選ぶ？<br>4ステップで構成を決めて、評価をもらおう！</div>
+        <div id="scenarioGrid" class="scenario-grid"></div>
+      </div>
+
+      <!-- ステップ進行 -->
+      <div id="practiceStepView" style="display:none">
+        <div class="quiz-top-row">
+          <button class="back-btn" onclick="backToScenarioSelect()">← シナリオ選択</button>
+          <span class="category-badge" id="practiceScenarioBadge" style="background:rgba(188,140,255,0.15);border-color:rgba(188,140,255,0.35);color:#bc8cff;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></span>
+        </div>
+        <div class="practice-step-progress" id="practiceStepProgress"></div>
+        <div class="practice-step-label"    id="practiceStepLabel"></div>
+        <div class="practice-step-title"    id="practiceStepTitle"></div>
+        <div class="practice-step-question" id="practiceStepQuestion"></div>
+        <div id="practiceChoices" class="practice-choices"></div>
+        <div class="practice-feedback" id="practiceFeedback">
+          <div class="practice-fb-header">
+            <span class="practice-fb-badge" id="practiceFbBadge"></span>
+            <span class="practice-fb-label" id="practiceFbLabel"></span>
+          </div>
+          <div class="practice-fb-text" id="practiceFbText"></div>
+        </div>
+        <button class="next-btn" id="practiceNextBtn" onclick="nextPracticeStep()" style="display:none;margin-top:16px;"></button>
+      </div>
+
+      <!-- 総評 -->
+      <div id="practiceSummaryView" style="display:none">
+        <div class="result-emoji" id="practiceResultEmoji"></div>
+        <div class="result-title" id="practiceResultTitle"></div>
+        <div class="result-score" id="practiceResultScore"></div>
+        <div class="practice-summary-cards" id="practiceSummaryCards"></div>
+        <div class="result-buttons" style="margin-top:24px">
+          <button class="change-cat-btn" onclick="backToScenarioSelect()">別のシナリオ</button>
+          <button class="restart-btn"    onclick="showScreen('start')">トップへ 🏠</button>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -2372,8 +2542,9 @@
 
     // ── Screen ────────────────────────────────────────────────────
     function showScreen(name) {
-      document.getElementById('startScreen').style.display  = name === 'start'  ? '' : 'none';
-      document.getElementById('quizBody').style.display     = name === 'quiz'   ? '' : 'none';
+      document.getElementById('startScreen').style.display    = name === 'start'    ? '' : 'none';
+      document.getElementById('quizBody').style.display       = name === 'quiz'     ? '' : 'none';
+      document.getElementById('practiceScreen').style.display = name === 'practice' ? '' : 'none';
       document.getElementById('resultScreen').classList.toggle('show', name === 'result');
       document.getElementById('progressWrap').style.visibility = name === 'quiz' ? 'visible' : 'hidden';
     }
@@ -3061,6 +3232,282 @@
       retriedCurrent = false;
       showScreen('quiz');
       renderQuestion();
+    }
+
+    // ── Practice Mode ─────────────────────────────────────────────
+    const PRACTICE_STEPS_META = [
+      { label: 'Step 1 ／ フロントエンド', title: '画面（UI）はどれで作る？',       question: 'フロントエンドのフレームワークを選ぼう' },
+      { label: 'Step 2 ／ データ管理',     title: 'データをどこに保存する？',        question: 'データベース・ストレージを選ぼう' },
+      { label: 'Step 3 ／ 認証',           title: 'ログイン機能はどう実装する？',   question: '認証サービスを選ぼう' },
+      { label: 'Step 4 ／ デプロイ',       title: 'アプリをどこで公開する？',        question: 'ホスティング・デプロイ先を選ぼう' },
+    ];
+
+    const PRACTICE_CHOICES = [
+      // Step 1: フロントエンド
+      [
+        { icon: '⚡', name: 'Next.js',            desc: 'Reactベース。SSR・APIルート・Server Actionsが使える' },
+        { icon: '⚛️', name: 'React（Vite）',      desc: 'UIライブラリ。バックエンドAPIは別途用意が必要' },
+        { icon: '💚', name: 'Vue / Nuxt',          desc: 'Vueベースのフレームワーク。直感的な構文が特徴' },
+        { icon: '📄', name: '静的 HTML + CSS のみ', desc: 'フレームワークなし。シンプルな静的ページ向け' },
+      ],
+      // Step 2: データ管理
+      [
+        { icon: '🟢', name: 'Supabase',         desc: 'PostgreSQL + RLS + Auth。Next.jsとの相性が良いBaaS' },
+        { icon: '🔥', name: 'Firebase Firestore', desc: 'NoSQL + リアルタイム同期。Google製BaaS' },
+        { icon: '💾', name: 'localStorage',      desc: 'ブラウザ内に保存。サーバー不要だが端末をまたいで使えない' },
+        { icon: '🗄️', name: 'MySQL + Prisma',    desc: '自前のリレーショナルDB。型安全なORMで操作できる' },
+      ],
+      // Step 3: 認証
+      [
+        { icon: '🟢', name: 'Supabase Auth',  desc: 'Supabase付属の認証。Google・メールログイン対応' },
+        { icon: '🔥', name: 'Firebase Auth',  desc: 'Firebase付属の認証。多数のOAuthプロバイダーに対応' },
+        { icon: '🔑', name: 'NextAuth.js',    desc: 'Next.js専用の認証ライブラリ。さまざまなDBと組み合わせ可' },
+        { icon: '🚫', name: '認証なし',       desc: 'ログイン不要。誰でもアクセスできる公開アプリ' },
+      ],
+      // Step 4: デプロイ
+      [
+        { icon: '▲',  name: 'Vercel',            desc: 'Next.jsの開発元。GitHubプッシュで自動デプロイ。Next.jsと相性◎' },
+        { icon: '🔥', name: 'Firebase Hosting',  desc: 'Google製。Firebase系サービスとまとめて管理できる' },
+        { icon: '🐙', name: 'GitHub Pages',       desc: '静的サイト専用。HTMLファイルをそのまま公開できる' },
+        { icon: '☁️', name: 'AWS',                desc: 'エンタープライズ向け。高い拡張性があるが設定が複雑' },
+      ],
+    ];
+
+    // pts: 3=◎ 2=○ 1=△ 0=×
+    const PRACTICE_SCENARIOS = [
+      {
+        icon: '📝',
+        title: 'ログイン付きメモアプリ',
+        description: 'ユーザーごとにメモを保存・管理。スマホからも使えるようにしたい。',
+        ratings: [
+          [ // frontend
+            { pts: 3, mark: '◎', reason: 'App Routerでサーバーサイド処理もまとめて書けます。Server Actionsで認証・DB操作が実装でき、このアプリに最適です。' },
+            { pts: 2, mark: '○', reason: '動作しますが、バックエンドAPIを別途用意する必要がありNext.jsより構成が複雑になります。' },
+            { pts: 1, mark: '△', reason: '動作はしますが、Supabase連携の事例がNext.jsより少なく難易度が上がります。' },
+            { pts: 0, mark: '×', reason: 'HTMLだけではログイン機能を実装できません。JavaScriptフレームワークが必要です。' },
+          ],
+          [ // db
+            { pts: 3, mark: '◎', reason: 'RLSでユーザーごとのデータ分離が自動で実現できます。Next.jsとの相性が最高で、このアプリには一番のおすすめです。' },
+            { pts: 2, mark: '○', reason: '認証+Firestoreでユーザーデータ管理が完結します。NoSQLなのでデータ設計が柔軟です。' },
+            { pts: 0, mark: '×', reason: 'localStorageはブラウザ内にしかデータが残りません。別端末では見られず「ログイン付き」の要件を満たせません。' },
+            { pts: 1, mark: '△', reason: '技術的には可能ですが、サーバー準備が必要でBaaSより工数が大幅に増えます。個人アプリには過剰です。' },
+          ],
+          [ // auth
+            { pts: 3, mark: '◎', reason: 'SupabaseのDBと同じサービスで認証が完結します。RLSとuser_idでユーザーデータの分離が1行で書けます。' },
+            { pts: 2, mark: '○', reason: 'FirebaseのDBと組み合わせれば統一できます。Google・メール認証が簡単に実装できます。' },
+            { pts: 1, mark: '△', reason: 'Next.js専用ですがSupabase/Firebaseとの組み合わせでは認証管理が二重になりがちです。' },
+            { pts: 0, mark: '×', reason: '「ログイン付き」アプリなので認証は必須。なしでは誰でも全員のデータを見られてしまいます。' },
+          ],
+          [ // deploy
+            { pts: 3, mark: '◎', reason: 'Next.jsの開発元が作ったプラットフォーム。GitHubにプッシュするだけで自動デプロイ完了。無料枠で十分動きます。' },
+            { pts: 2, mark: '○', reason: 'Firebaseを使う場合に統一できます。ただしNext.jsとの親和性はVercelほどではありません。' },
+            { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用です。Server ActionsやAPIルートのサーバー処理が動きません。' },
+            { pts: 1, mark: '△', reason: '技術的には可能ですが個人アプリには設定が複雑すぎます。まずはVercelで十分です。' },
+          ],
+        ],
+      },
+      {
+        icon: '👶',
+        title: '家族で使う育児記録アプリ',
+        description: 'パパとママが共同でデータを入力・閲覧できる記録アプリ。',
+        ratings: [
+          [ // frontend
+            { pts: 3, mark: '◎', reason: 'Supabase/Firebaseと組み合わせて家族間の共有機能を実装しやすいです。Server Actionsでデータ処理も簡潔に書けます。' },
+            { pts: 2, mark: '○', reason: '動作しますが、バックエンドAPIを別途用意する必要があります。Next.jsより構成が少し複雑になります。' },
+            { pts: 2, mark: '○', reason: 'Nuxtを使えばNext.js同様のSSR構成が可能です。Vueに慣れているなら良い選択です。' },
+            { pts: 0, mark: '×', reason: 'HTMLだけでは認証や複数端末での共有を実装できません。フレームワークが必要です。' },
+          ],
+          [ // db
+            { pts: 3, mark: '◎', reason: 'RLSで「家族グループのみアクセス可」という権限制御が得意。PostgreSQLなのでデータ設計もしっかりできます。' },
+            { pts: 3, mark: '◎', reason: 'リアルタイム同期が標準機能！パパが入力した記録がすぐにママの画面に反映されます。家族アプリに最適です。' },
+            { pts: 0, mark: '×', reason: 'localStorageはブラウザ内だけ。家族間で端末を共有できないため、この要件には使えません。' },
+            { pts: 1, mark: '△', reason: '動作しますが、サーバーの準備が必要で家族向け個人アプリには少し大げさです。' },
+          ],
+          [ // auth
+            { pts: 3, mark: '◎', reason: 'SupabaseのRLSと組み合わせて「同じ家族グループのユーザーだけデータを見られる」という制御が実装しやすいです。' },
+            { pts: 3, mark: '◎', reason: 'FirebaseのセキュリティルールとFirebase Authを組み合わせると、家族間のアクセス制御がスムーズに実装できます。' },
+            { pts: 1, mark: '△', reason: '動作しますがSupabase/Firebaseとの組み合わせでは認証管理が二重になりがちです。' },
+            { pts: 0, mark: '×', reason: '家族専用データなので認証は必須。誰でもアクセスできる状態では子どもの記録が漏れてしまいます。' },
+          ],
+          [ // deploy
+            { pts: 3, mark: '◎', reason: '無料枠で十分動き、Next.jsとの相性が最高。GitHubと連携して自動デプロイも簡単です。' },
+            { pts: 3, mark: '◎', reason: 'Firebase Auth・Firestore・Firebase Hostingで全部まとまります。Firebaseで統一するなら最適な選択です。' },
+            { pts: 0, mark: '×', reason: 'GitHub Pagesは静的サイト専用。認証機能やサーバー処理が動きません。' },
+            { pts: 1, mark: '△', reason: '機能的には可能ですが家族向け個人アプリには設定コストが高すぎます。' },
+          ],
+        ],
+      },
+      {
+        icon: '✍️',
+        title: '管理者のみ投稿できるブログ',
+        description: '管理者がログインして記事を投稿。読者は誰でも閲覧できる。SEOも重視。',
+        ratings: [
+          [ // frontend
+            { pts: 3, mark: '◎', reason: 'SSR・SSGでSEOに強いページが作れます。管理者ページはServer Actionsで保護でき、ブログに最適なフレームワークです。' },
+            { pts: 1, mark: '△', reason: 'CSRがメインでSEOが弱いです。検索エンジンに記事が載りにくくなります。' },
+            { pts: 1, mark: '△', reason: 'NuxtはSSRに対応していますが、Next.jsより情報量が少なく難易度が上がります。' },
+            { pts: 0, mark: '×', reason: 'HTMLだけでは管理者認証や記事の動的表示を実装できません。' },
+          ],
+          [ // db
+            { pts: 3, mark: '◎', reason: 'RLSで「管理者だけが書き込み可・全員が読み取り可」という権限設定が1行で書けます。Next.jsとの相性も最高。' },
+            { pts: 2, mark: '○', reason: 'セキュリティルールで管理者だけが投稿できる制御が実装できます。NoSQLなので記事データの構造を柔軟に設計できます。' },
+            { pts: 0, mark: '×', reason: 'localStorageはブラウザ内だけ。複数のユーザーが閲覧するブログには使えません。' },
+            { pts: 2, mark: '○', reason: 'データ設計がしっかりできますが、サーバーの準備が必要です。個人ブログならBaaSで十分です。' },
+          ],
+          [ // auth
+            { pts: 3, mark: '◎', reason: 'RLSと組み合わせて「管理者（auth.uid()が一致する）だけ書き込み可」という制御が1行で書けます。' },
+            { pts: 2, mark: '○', reason: 'Firestoreのセキュリティルールと組み合わせて管理者認証が実装できます。Firebaseを選んだ場合はこれが自然な選択です。' },
+            { pts: 2, mark: '○', reason: 'Next.js専用で管理者ページの保護が実装しやすいです。DBは別途設定が必要ですが選択肢の一つです。' },
+            { pts: 0, mark: '×', reason: '管理者だけが投稿できる仕組みには認証が必須。なしでは誰でも記事を書き換えられてしまいます。' },
+          ],
+          [ // deploy
+            { pts: 3, mark: '◎', reason: 'Next.jsとの相性が最高で、SSGページのCDN配信も得意。GitHubプッシュで自動デプロイも完結します。' },
+            { pts: 2, mark: '○', reason: 'Firebaseを使う場合は統一できます。ただしNext.jsのServer Actionsとの相性はVercelほどではありません。' },
+            { pts: 1, mark: '△', reason: '完全静的なブログなら使えますが、管理者認証のサーバー処理が動かないため今回は不向きです。' },
+            { pts: 1, mark: '△', reason: '技術的には可能ですが、個人ブログには設定コストが高すぎます。Vercelで十分です。' },
+          ],
+        ],
+      },
+    ];
+
+    let practiceScenarioIdx = -1;
+    let practiceStep = 0;
+    let practiceSelections = [];
+
+    function startPracticeMode() {
+      showScreen('practice');
+      document.getElementById('practiceScenarioSelect').style.display = '';
+      document.getElementById('practiceStepView').style.display       = 'none';
+      document.getElementById('practiceSummaryView').style.display    = 'none';
+      buildScenarioGrid();
+    }
+
+    function buildScenarioGrid() {
+      const grid = document.getElementById('scenarioGrid');
+      grid.innerHTML = '';
+      PRACTICE_SCENARIOS.forEach((s, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'scenario-card';
+        btn.innerHTML = `<span class="scenario-icon">${s.icon}</span><div class="scenario-info"><div class="scenario-title">${escapeHtml(s.title)}</div><div class="scenario-desc">${escapeHtml(s.description)}</div></div>`;
+        btn.onclick = () => selectScenario(i);
+        grid.appendChild(btn);
+      });
+    }
+
+    function selectScenario(idx) {
+      practiceScenarioIdx = idx;
+      practiceStep        = 0;
+      practiceSelections  = [];
+      document.getElementById('practiceScenarioSelect').style.display = 'none';
+      document.getElementById('practiceStepView').style.display       = '';
+      document.getElementById('practiceSummaryView').style.display    = 'none';
+      const s = PRACTICE_SCENARIOS[idx];
+      document.getElementById('practiceScenarioBadge').textContent = s.icon + ' ' + s.title;
+      renderPracticeStep();
+    }
+
+    function backToScenarioSelect() {
+      document.getElementById('practiceScenarioSelect').style.display = '';
+      document.getElementById('practiceStepView').style.display       = 'none';
+      document.getElementById('practiceSummaryView').style.display    = 'none';
+    }
+
+    function renderPracticeStep() {
+      const meta    = PRACTICE_STEPS_META[practiceStep];
+      const choices = PRACTICE_CHOICES[practiceStep];
+
+      // 進行ドット
+      document.getElementById('practiceStepProgress').innerHTML =
+        PRACTICE_STEPS_META.map((_, i) =>
+          `<div class="practice-step-dot ${i < practiceStep ? 'done' : i === practiceStep ? 'active' : ''}"></div>`
+        ).join('');
+
+      document.getElementById('practiceStepLabel').textContent    = meta.label;
+      document.getElementById('practiceStepTitle').textContent    = meta.title;
+      document.getElementById('practiceStepQuestion').textContent = meta.question;
+
+      const container = document.getElementById('practiceChoices');
+      container.innerHTML = '';
+      choices.forEach((c, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'practice-choice-btn';
+        btn.innerHTML = `<span class="practice-choice-icon">${c.icon}</span><div class="practice-choice-info"><div class="practice-choice-name">${escapeHtml(c.name)}</div><div class="practice-choice-desc">${escapeHtml(c.desc)}</div></div>`;
+        btn.onclick = () => confirmPracticeChoice(i);
+        container.appendChild(btn);
+      });
+
+      document.getElementById('practiceFeedback').className = 'practice-feedback';
+      document.getElementById('practiceNextBtn').style.display = 'none';
+    }
+
+    function confirmPracticeChoice(choiceIdx) {
+      const rating = PRACTICE_SCENARIOS[practiceScenarioIdx].ratings[practiceStep][choiceIdx];
+      const choice = PRACTICE_CHOICES[practiceStep][choiceIdx];
+      practiceSelections.push({ choiceIdx, ...rating, choiceName: choice.name });
+
+      document.querySelectorAll('.practice-choice-btn').forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === choiceIdx) btn.classList.add('selected');
+      });
+
+      const ratingLabel  = { 3: '◎ 最適！', 2: '○ 良い選択', 1: '△ 惜しい', 0: '× 不向き' };
+      const badgeClass   = { 3: 'r3',       2: 'r2',          1: 'r1',      0: 'r0' };
+      const feedbackClass = { 3: 'fb-3',     2: 'fb-2',        1: 'fb-1',    0: 'fb-0' };
+
+      document.getElementById('practiceFbBadge').textContent = rating.mark;
+      document.getElementById('practiceFbBadge').className   = `practice-fb-badge ${badgeClass[rating.pts]}`;
+      document.getElementById('practiceFbLabel').textContent = ratingLabel[rating.pts];
+      document.getElementById('practiceFbText').textContent  = rating.reason;
+      document.getElementById('practiceFeedback').className  = `practice-feedback ${feedbackClass[rating.pts]} show`;
+
+      const isLast = practiceStep === PRACTICE_STEPS_META.length - 1;
+      const nb = document.getElementById('practiceNextBtn');
+      nb.textContent    = isLast ? '総評を見る 🎉' : '次のステップへ →';
+      nb.style.display  = 'block';
+      nb.className      = 'next-btn show';
+    }
+
+    function nextPracticeStep() {
+      practiceStep++;
+      if (practiceStep >= PRACTICE_STEPS_META.length) {
+        showPracticeSummary();
+      } else {
+        renderPracticeStep();
+      }
+    }
+
+    function showPracticeSummary() {
+      document.getElementById('practiceStepView').style.display    = 'none';
+      document.getElementById('practiceSummaryView').style.display = '';
+
+      const totalPts = practiceSelections.reduce((s, r) => s + r.pts, 0);
+      const maxPts   = PRACTICE_STEPS_META.length * 3;
+
+      const [emoji, title] =
+        totalPts === maxPts ? ['🏆', '完璧な構成！プロと同じ判断です'] :
+        totalPts >= 9       ? ['✨', '良い構成です！実際に動くアプリが作れます'] :
+        totalPts >= 6       ? ['📖', 'もう少しで完璧！各ステップを振り返ろう'] :
+                             ['💪', '各ステップのヒントをじっくり読んでみよう'];
+
+      document.getElementById('practiceResultEmoji').textContent = emoji;
+      document.getElementById('practiceResultTitle').textContent = title;
+      document.getElementById('practiceResultScore').innerHTML   =
+        `合計スコア：<strong>${totalPts} / ${maxPts}</strong>`;
+
+      const markColor = { '◎': '#00ffb4', '○': '#58a6ff', '△': '#e3b341', '×': '#f85149' };
+      document.getElementById('practiceSummaryCards').innerHTML =
+        practiceSelections.map((sel, i) => {
+          const meta  = PRACTICE_STEPS_META[i];
+          const color = markColor[sel.mark];
+          return `<div class="practice-summary-card">
+            <div class="practice-summary-card-top">
+              <span class="practice-summary-step-lbl">${escapeHtml(meta.label)}</span>
+              <span style="font-weight:700;color:${color};font-size:1.05rem;">${sel.mark}</span>
+            </div>
+            <div class="practice-summary-choice">${escapeHtml(sel.choiceName)}</div>
+            <div class="practice-summary-reason">${escapeHtml(sel.reason)}</div>
+          </div>`;
+        }).join('');
     }
 
     // ── Init ──────────────────────────────────────────────────────
