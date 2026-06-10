@@ -1201,6 +1201,14 @@
       'LEFT JOIN':        '左テーブルの全行と、右テーブルで条件が一致する行を結合するSQL構文（左外部結合）。右テーブルに一致がない場合はNULLが入る。',
       'GROUP BY':         '指定した列の値が同じ行をグループにまとめるSQL句。`COUNT()`・`SUM()`・`AVG()` などの集計関数と組み合わせて使う。集計後のグループへの絞り込みは `HAVING` を使う。',
       'IS NULL':          'SQLでNULL（値が存在しない）かどうかを確認する演算子。`WHERE 列名 IS NULL` または `IS NOT NULL` の形で使う。`= NULL` は常に結果が返らないため使えない。',
+      // DB構造
+      'テーブル':         'データベースの「表」全体のこと。行（レコード）と列（カラム）で構成される。Excelの1枚のシートがイメージに近い。',
+      'カラム':           'データベースの表における「列」のこと。「名前」「日付」などデータの種類・項目を定義する。カラムを追加するには `ALTER TABLE テーブル名 ADD COLUMN カラム名 型;` のようなSQLが必要で、アプリのコードだけでは変更できない。',
+      // JS応用
+      'Map':              'JavaScriptでキーと値のペアを管理するデータ構造。`new Map()` で作成し、`.set("キー", 値)` で追加・`.get("キー")` で取り出す。配列（番号でアクセス）と違い、文字列や日付などを「名前」として使えるのが特徴。日付ごとのデータグループ化などに向く。',
+      'useState':         'Reactのフック。`const [値, 更新関数] = useState(初期値)` の形で使う。この値が変わるとReactが画面を自動で再描画する。普通の変数では値が変わっても画面は変わらないため、画面の変化に関係するデータはすべてuseStateで管理する必要がある。',
+      // CSS
+      'flex':             'CSSのレイアウト方法「フレックスボックス」の略。親の箱に `display: flex` を指定すると、中の要素が横一列に並ぶ（デフォルト）。`flex-direction: column` にすれば縦並びにもできる。ボタン・ナビバーなど横一列レイアウトの基本技術。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -2672,6 +2680,46 @@
         difficulty: 3, isNew: true,
         hint: 'CSS Transforms Level 2 で `translate`・`rotate`・`scale` の独立プロパティが追加され、Tailwind v4 はこれを使います。一方 `@keyframes` での `transform: translateX(-50%)` は別プロパティなので両方が適用され二重にずれます。解決策は `inset-x-0 mx-auto w-fit` などで transform を使わない中央寄せに変更することです。',
       },
+      {
+        category: 'データ管理',
+        text: 'データベースの「[[テーブル]]」の説明として正しいものはどれ？',
+        choices: ['アプリのコード内でデータを整理するクラスや関数の総称','データを格納する表全体のこと。行（レコード）と列（カラム）で構成される','データを一時的に保存するブラウザのキャッシュ領域','テーブルはカラムの別名で、同じ意味で使われる'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'Excelの「シート（表）」がイメージに近い。横の並び（行）が1件のデータ（レコード）、縦の並び（列）が「名前」「日付」などのカラム（項目）にあたる。',
+      },
+      {
+        category: 'データ管理',
+        text: 'データベースに新しい[[カラム]]（列）を追加したいとき、正しい説明はどれ？',
+        choices: ['アプリのJSコードを書き換えるだけで追加できる','GitHubにプッシュすると自動的に追加される','`ALTER TABLE` などのSQLでDBスキーマを変更する必要がある。コードとDBは別々に管理される','package.json に項目を追加するだけでよい'],
+        answer: 2,
+        difficulty: 1, isNew: true,
+        hint: 'DBのテーブル・カラムはDBサーバー上の「設計図」で、アプリのコードとは独立して存在する。Supabaseなら `ALTER TABLE テーブル名 ADD COLUMN 新カラム名 型;` のSQLをダッシュボードやマイグレーションで実行する必要がある。',
+      },
+      {
+        category: 'JS基礎',
+        text: 'JavaScriptの「[[配列]]」と「[[Map]]」の取り出し方の違いとして正しいものはどれ？',
+        choices: ['配列はキー名でデータを取り出し、Mapは番号でデータを取り出す','配列はサーバー側でのみ使え、Mapはブラウザ側でのみ使える','配列は番号（インデックス）でデータを取り出し、Mapは名前（キー）でデータを取り出す','配列とMapの取り出し方は同じで、サイズの上限が違うだけ'],
+        answer: 2,
+        difficulty: 2, isNew: true,
+        hint: '配列は `list[0]` のように番号で取り出す。Mapは `map.get("2024-06-10")` のように名前（キー）で取り出す。日付ごとのグループ化など「名前で管理したい」ときはMapが便利。',
+      },
+      {
+        category: '技術スタック',
+        text: 'Reactの[[useState]]の説明として正しいものはどれ？',
+        choices: ['サーバーとのデータ通信を管理するReact標準API','CSSのスタイルを動的に切り替えるための仕組み','値が変わるとReactが画面を自動で再描画する「状態」を管理するフック','DOMを直接操作してHTMLを書き換えるメソッド'],
+        answer: 2,
+        difficulty: 1, isNew: true,
+        hint: '普通の変数（`let count = 0`）は値が変わっても画面は変わらない。`const [count, setCount] = useState(0)` とすると、`setCount(1)` を呼んだ瞬間にReactが画面を描き直す。「データは動くが画面が変わらない」バグのほとんどはuseStateを使っていないのが原因。',
+      },
+      {
+        category: 'Web基礎',
+        text: 'CSSで親の箱に `display: [[flex]]` を指定したとき、何が起きる？',
+        choices: ['中身が非表示になる','中身が縦一列に並ぶ','中身が格子状にグリッド表示される','中身が横一列に並ぶ（デフォルト）'],
+        answer: 3,
+        difficulty: 1, isNew: true,
+        hint: '`display: flex` は「フレックスボックス」を有効にする命令。デフォルトの `flex-direction` は `row`（横並び）。縦に並べたいときは `flex-direction: column` を追加する。ボタンやナビバーを横一列にするときの定番テクニック。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -2718,6 +2766,13 @@
       'Promise.all':2,'Service Role Key':3,'Supabase Storage':2,'URL.createObjectURL':2,'Recharts':2,
       // SQL基礎
       'SQL':1,'PRIMARY KEY':1,'INSERT INTO':1,'INNER JOIN':2,'LEFT JOIN':2,'GROUP BY':2,'IS NULL':2,
+      // DB構造
+      'テーブル':1,'カラム':1,
+      // JS応用
+      'Map':2,
+      'useState':1,
+      // CSS
+      'flex':1,
       // 他アプリ開発で学んだ知識
       'Web Audio API':2,'Howler.js':2,'animation-fill-mode':2,
       'カスタムフック':2,
@@ -2729,15 +2784,15 @@
       { isLabel: true, label: '🔰 入門' },
       { cat: 'IT基礎',     color: '#d2a8ff', terms: ['ターミナル','コマンドライン','ディレクトリ','コマンド','パス','コンパイル','インストール','パッケージ','ライブラリ','フレームワーク','API','サーバー','クライアント','デプロイ','ホスティング','バグ','コンポーネント','プロトコル','レンダリング','マークアップ言語','JSON'] },
       { cat: 'コマンド',   color: '#e3b341', terms: ['cd','mkdir','pwd','ls','rm','touch','cat','cp','mv','chmod'] },
-      { cat: 'JS基礎',     color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM','配列','オブジェクト','if文'] },
+      { cat: 'JS基礎',     color: '#f1e05a', terms: ['JS','関数','変数','const','let','DOM','配列','オブジェクト','if文','Map'] },
       { isLabel: true, label: '📚 発展' },
       { cat: 'Git',        color: '#bc8cff', terms: ['git','git init','git add','git commit','git push','git pull','git status','git log','git clone','リポジトリ','ステージングエリア','ブランチ','git remote','リライト','git restore','git restore --staged','pre-commitフック','.gitignore','git stash','シェバン行','git push --force','git reset --hard'] },
       { cat: '言語の違い', color: '#58a6ff', terms: ['JavaScript','Java','Node.js','フロントエンド','バックエンド','LLM'] },
-      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア','URL.createObjectURL','Web Audio API','Howler.js','animation-fill-mode'] },
+      { cat: 'Web基礎',    color: '#3fb950', terms: ['HTML','CSS','HTTP','HTTPS','GitHub Pages','静的サイト','動的サイト','Canvas','ソフトウェア','URL.createObjectURL','Web Audio API','Howler.js','animation-fill-mode','flex'] },
       { cat: 'npm',        color: '#f85149', terms: ['npm','package.json','node_modules','package-lock.json','devDependencies','npx','npm ci'] },
-      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL','Service Role Key','Supabase Storage'] },
+      { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL','Service Role Key','Supabase Storage','テーブル','カラム'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
-      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts','カスタムフック'] },
+      { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts','カスタムフック','useState'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
