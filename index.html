@@ -4357,30 +4357,30 @@
 正解: ${q.choices[q.answer]}
 ヒント: ${q.hint}`;
 
-      const isOAuthToken = apiKey.startsWith('AQ.');
-      const url = isOAuthToken
-        ? 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent'
-        : `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-      const headers = { 'Content-Type': 'application/json' };
-      if (isOAuthToken) headers['Authorization'] = `Bearer ${apiKey}`;
-
-      fetch(url, {
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
-        headers,
-        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama3-8b-8192',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 300
+        })
       })
       .then(r => r.json())
       .then(data => {
-        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const text = data?.choices?.[0]?.message?.content;
         if (text) {
           box.textContent = text;
           box.classList.add('show');
           btn.textContent = '✨ もう一度聞く';
         } else {
-          const errCode = data?.error?.status;
-          const errMsg = errCode === 'RESOURCE_EXHAUSTED'
+          const errCode = data?.error?.code;
+          const errMsg = errCode === 'rate_limit_exceeded'
             ? '1日の使用上限に達しました。明日また試してみてください。'
-            : errCode === 'UNAUTHENTICATED' || errCode === 'PERMISSION_DENIED'
+            : errCode === 'invalid_api_key'
             ? 'APIキーが無効です。⚙ から再設定してください。'
             : 'AI回答の取得に失敗しました。(' + (data?.error?.message || '') + ')';
           box.textContent = errMsg;
