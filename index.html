@@ -952,6 +952,20 @@
     }
     .ai-explanation.show { display: block; }
 
+    /* ── Stats AI Comment ── */
+    .stats-ai-comment {
+      margin-top: 12px;
+      padding: 10px 14px;
+      background: rgba(137,87,229,0.08);
+      border: 1px solid rgba(137,87,229,0.25);
+      border-radius: 8px;
+      font-size: 0.83rem;
+      color: #c9d1d9;
+      line-height: 1.7;
+      min-height: 36px;
+    }
+    .stats-ai-comment:empty { display: none; }
+
     /* ── Weak Analysis ── */
     .analysis-btn {
       width: 100%;
@@ -3626,7 +3640,7 @@
       document.getElementById('statsSection').style.display = statsOpen ? '' : 'none';
       document.getElementById('statsToggle').textContent =
         statsOpen ? '📊 累計成績を閉じる ▴' : '📊 累計成績を見る ▾';
-      if (statsOpen) renderStats();
+      if (statsOpen) { renderStats(); fetchStatsComment(); }
     }
 
     function renderStats() {
@@ -3664,7 +3678,8 @@
         <div class="cat-breakdown" style="margin:0;border:none;border-radius:0">
           <div class="cat-breakdown-title">カテゴリ別（正解数/回答数）</div>
           ${rows}
-        </div>`;
+        </div>
+        <div class="stats-ai-comment" id="statsAiComment"></div>`;
     }
 
     function updateWeakBtn() {
@@ -4360,6 +4375,56 @@
     renderStreak();
     renderDailyBtn();
     showScreen('start');
+
+    // ── Stats AI Comment ─────────────────────────────────────────
+    function fetchStatsComment() {
+      const apiKey = localStorage.getItem('tora_gemini_key') || localStorage.getItem('tora_groq_key');
+      const box = document.getElementById('statsAiComment');
+      if (!box) return;
+      if (!apiKey) return;
+
+      const s = loadAllStats();
+      const cats = Object.keys(s);
+      if (cats.length === 0) return;
+
+      const worst = cats.reduce((a, k) => {
+        const pa = s[a].c / s[a].t;
+        const pb = s[k].c / s[k].t;
+        return pb < pa ? k : a;
+      });
+      const worstPct = Math.round((s[worst].c / s[worst].t) * 100);
+      const totalT = cats.reduce((a, k) => a + s[k].t, 0);
+      const totalC = cats.reduce((a, k) => a + s[k].c, 0);
+      const overallPct = Math.round((totalC / totalT) * 100);
+
+      box.textContent = '🤖 AIがコメントを生成中...';
+
+      const prompt = `プログラミング学習アプリの成績データです。
+全体正答率：${overallPct}%（${totalT}問中${totalC}問正解）
+最も正答率が低いカテゴリ：${worst}（正答率${worstPct}%）
+
+この生徒への一言アドバイスを、「です・ます」調で1〜2文で書いてください。
+「〜なのよ」「〜だわ」などの語尾は使わない。マークダウン不要。励ましを含める。`;
+
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 120
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        const text = data?.choices?.[0]?.message?.content;
+        box.textContent = text ? '🤖 ' + text : '';
+      })
+      .catch(() => { box.textContent = ''; });
+    }
 
     // ── Weak Analysis ────────────────────────────────────────────
     function openAnalysis() {
