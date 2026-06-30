@@ -4377,8 +4377,13 @@
           box.classList.add('show');
           btn.textContent = '✨ もう一度聞く';
         } else {
-          const errMsg = data?.error?.message || JSON.stringify(data);
-          box.textContent = 'エラー: ' + errMsg;
+          const errCode = data?.error?.status;
+          const errMsg = errCode === 'RESOURCE_EXHAUSTED'
+            ? '1日の使用上限に達しました。明日また試してみてください。'
+            : errCode === 'UNAUTHENTICATED' || errCode === 'PERMISSION_DENIED'
+            ? 'APIキーが無効です。⚙ から再設定してください。'
+            : 'AI回答の取得に失敗しました。(' + (data?.error?.message || '') + ')';
+          box.textContent = errMsg;
           box.classList.add('show');
           btn.textContent = '✨ AIにもっと聞く';
         }
