@@ -925,6 +925,36 @@
     .practice-fb-best-reason { font-size: 0.8rem; color: #8b949e; line-height: 1.5; }
 
     /* ── AI Feature ── */
+    .hint-btn {
+      display: none;
+      margin-top: 14px;
+      margin-bottom: 4px;
+      padding: 8px 16px;
+      background: transparent;
+      border: 1px solid #e3b341;
+      border-radius: 8px;
+      color: #e3b341;
+      font-size: 0.82rem;
+      cursor: pointer;
+      gap: 6px;
+      align-items: center;
+    }
+    .hint-btn.show { display: inline-flex; }
+    .hint-btn:disabled { opacity: 0.5; cursor: default; }
+    .hint-box {
+      display: none;
+      margin-top: 10px;
+      margin-bottom: 6px;
+      padding: 12px 14px;
+      background: rgba(227,179,65,0.1);
+      border: 1px solid rgba(227,179,65,0.35);
+      border-radius: 8px;
+      font-size: 0.84rem;
+      color: #c9d1d9;
+      line-height: 1.7;
+    }
+    .hint-box.show { display: block; }
+    .hint-box-label { font-size: 0.75rem; color: #e3b341; margin-bottom: 4px; }
     .ai-ask-btn {
       margin-top: 10px;
       padding: 7px 14px;
@@ -1147,6 +1177,11 @@
       </div>
       <div class="question-number" id="questionNumber"></div>
       <div class="question-text" id="questionText"></div>
+      <button class="hint-btn" id="hintBtn" onclick="askHint()">💡 ヒントをもらう</button>
+      <div class="hint-box" id="hintBox">
+        <div class="hint-box-label">💡 AIヒント</div>
+        <div id="hintText"></div>
+      </div>
       <div class="choices" id="choicesContainer"></div>
       <button class="confirm-btn" id="confirmBtn" onclick="confirmAnswer()">この答えで確定する →</button>
     </div>
@@ -3546,6 +3581,12 @@
       document.getElementById('confirmBtn').classList.remove('show');
       document.getElementById('nextBtn').classList.remove('show');
       document.getElementById('retryBtn').classList.remove('show');
+      const hintBtn = document.getElementById('hintBtn');
+      hintBtn.classList.add('show');
+      hintBtn.disabled = false;
+      hintBtn.textContent = '💡 ヒントをもらう';
+      document.getElementById('hintBox').classList.remove('show');
+      document.getElementById('hintText').textContent = '';
     }
 
     function selectAnswer(idx) {
@@ -3600,6 +3641,8 @@
       aiBox.classList.remove('show');
       aiBox.textContent = '';
 
+      document.getElementById('hintBtn').classList.remove('show');
+      document.getElementById('hintBox').classList.remove('show');
       const actionRow = document.getElementById('actionRow');
       actionRow.style.display = 'flex';
       if (!ok) document.getElementById('retryBtn').classList.add('show');
@@ -4731,6 +4774,73 @@ ${weakSummary}
 
     // ── Gemini AI Explanation ─────────────────────────────────────
     let currentAIQuestion = null;
+
+    function askHint() {
+      const apiKey = localStorage.getItem('tora_gemini_key');
+      if (!apiKey) {
+        alert('APIキーが設定されていません。右下の ⚙ から設定してください。');
+        return;
+      }
+      const btn = document.getElementById('hintBtn');
+      const box = document.getElementById('hintBox');
+      const txt = document.getElementById('hintText');
+      btn.disabled = true;
+      btn.textContent = '⏳ 考え中…';
+      box.classList.remove('show');
+
+      const q = questions[currentIndex];
+      const choiceList = q.choices.map((c, i) => `${String.fromCharCode(65+i)}. ${c}`).join('\n');
+      const prompt = `プログラミング学習クイズのヒントを1文で書いてください。
+
+ルール：
+- 正解の選択肢・答えそのものを教えてはいけない
+- 「答えは〜」「〜が正解」「〜を選べば」などの表現は絶対に禁止
+- 問題を解くための「考え方の切り口」「注目すべきキーワード」だけを示す
+- 1文のみ。前置き・挨拶不要
+
+問題: ${q.text}
+選択肢:
+${choiceList}`;
+
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.3-70b-versatile',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 100
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        const text = data?.choices?.[0]?.message?.content;
+        if (text) {
+          txt.textContent = text;
+          box.classList.add('show');
+          btn.textContent = '💡 ヒント表示中';
+        } else {
+          const errCode = data?.error?.code;
+          const errMsg = errCode === 'rate_limit_exceeded'
+            ? '使用上限に達しました。明日また試してください。'
+            : errCode === 'invalid_api_key'
+            ? 'APIキーが無効です。⚙ から再設定してください。'
+            : 'ヒントの取得に失敗しました。';
+          txt.textContent = errMsg;
+          box.classList.add('show');
+          btn.textContent = '💡 ヒントをもらう';
+          btn.disabled = false;
+        }
+      })
+      .catch(e => {
+        txt.textContent = 'ネットワークエラー: ' + e.message;
+        box.classList.add('show');
+        btn.textContent = '💡 ヒントをもらう';
+        btn.disabled = false;
+      });
+    }
 
     function askAI() {
       const apiKey = localStorage.getItem('tora_gemini_key');
