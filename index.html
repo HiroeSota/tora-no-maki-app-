@@ -3169,6 +3169,7 @@
     // ── State ─────────────────────────────────────────────────────
     let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1, catStats = {};
     let currentShuffledOrder = [0,1,2,3];
+    let selectedDisplayPos = -1;
     let isDaily = false, isDailyReview = false, dailyWrongFirst = [], dailyReviewWrong = [];
     let selectedDifficulty = 0; // 0=全て, 1=初級, 2=中級, 3=上級
 
@@ -3480,7 +3481,12 @@
     // ── Choice Selection & Confirmation ───────────────────────────
     function selectChoice(displayPos, origIdx) {
       if (answered) return;
+      if (selectedDisplayPos === displayPos) {
+        confirmAnswer();
+        return;
+      }
       selectedIdx = origIdx;
+      selectedDisplayPos = displayPos;
       document.querySelectorAll('.choice-btn').forEach((btn, i) => {
         btn.classList.toggle('selected', i === displayPos);
       });
@@ -3576,6 +3582,7 @@
       });
 
       selectedIdx = -1;
+      selectedDisplayPos = -1;
       document.getElementById('feedback').className = 'feedback';
       document.getElementById('actionRow').style.display = 'none';
       document.getElementById('confirmBtn').classList.remove('show');
