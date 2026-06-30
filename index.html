@@ -1131,10 +1131,6 @@
         <div class="category-badge" id="categoryBadge"></div>
       </div>
       <div class="daily-label" id="dailyLabel" style="display:none"></div>
-      <div class="question-number" id="questionNumber"></div>
-      <div class="question-text" id="questionText"></div>
-      <div class="choices" id="choicesContainer"></div>
-      <button class="confirm-btn" id="confirmBtn" onclick="confirmAnswer()">この答えで確定する →</button>
       <div class="feedback" id="feedback">
         <span class="fb-icon" id="fbIcon"></span>
         <div class="fb-text">
@@ -1144,10 +1140,14 @@
           <div class="ai-explanation" id="aiExplanation"></div>
         </div>
       </div>
-      <div class="action-row">
+      <div class="action-row" id="actionRow" style="display:none">
         <button class="retry-btn" id="retryBtn" onclick="retryQuestion()">もう一度挑戦 🔄</button>
         <button class="next-btn" id="nextBtn" onclick="nextQuestion()"></button>
       </div>
+      <div class="question-number" id="questionNumber"></div>
+      <div class="question-text" id="questionText"></div>
+      <div class="choices" id="choicesContainer"></div>
+      <button class="confirm-btn" id="confirmBtn" onclick="confirmAnswer()">この答えで確定する →</button>
     </div>
 
     <!-- Result Screen -->
@@ -3538,6 +3538,7 @@
 
       selectedIdx = -1;
       document.getElementById('feedback').className = 'feedback';
+      document.getElementById('actionRow').style.display = 'none';
       document.getElementById('confirmBtn').classList.remove('show');
       document.getElementById('nextBtn').classList.remove('show');
       document.getElementById('retryBtn').classList.remove('show');
@@ -3593,11 +3594,15 @@
       aiBox.classList.remove('show');
       aiBox.textContent = '';
 
+      const actionRow = document.getElementById('actionRow');
+      actionRow.style.display = 'flex';
       if (!ok) document.getElementById('retryBtn').classList.add('show');
 
       const nb = document.getElementById('nextBtn');
       nb.textContent = currentIndex + 1 < questions.length ? '次の問題へ →' : '結果を見る 🎉';
       nb.classList.add('show');
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function nextQuestion() {
