@@ -3133,6 +3133,7 @@
 
     // ── State ─────────────────────────────────────────────────────
     let questions = [], currentIndex = 0, score = 0, answered = false, selectedCategory = 'all', retriedCurrent = false, selectedIdx = -1, catStats = {};
+    let currentShuffledOrder = [0,1,2,3];
     let isDaily = false, isDailyReview = false, dailyWrongFirst = [], dailyReviewWrong = [];
     let selectedDifficulty = 0; // 0=全て, 1=初級, 2=中級, 3=上級
 
@@ -3529,8 +3530,8 @@
 
       const container = document.getElementById('choicesContainer');
       container.innerHTML = '';
-      const shuffledOrder = [0,1,2,3].sort(() => Math.random() - 0.5);
-      shuffledOrder.forEach((origIdx, displayPos) => {
+      currentShuffledOrder = [0,1,2,3].sort(() => Math.random() - 0.5);
+      currentShuffledOrder.forEach((origIdx, displayPos) => {
         const label = 'ABCD'[displayPos];
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
@@ -3554,10 +3555,12 @@
       const q = questions[currentIndex];
       const btns = document.querySelectorAll('.choice-btn');
       const ok = idx === q.answer;
+      const selectedDisplayPos = currentShuffledOrder.indexOf(idx);
+      const correctDisplayPos  = currentShuffledOrder.indexOf(q.answer);
 
       btns.forEach(b => (b.disabled = true));
-      btns[idx].classList.add(ok ? 'correct' : 'wrong');
-      if (!ok) btns[q.answer].classList.add('correct');
+      btns[selectedDisplayPos].classList.add(ok ? 'correct' : 'wrong');
+      if (!ok) btns[correctDisplayPos].classList.add('correct');
 
       if (ok && !retriedCurrent) score++;
 
@@ -3581,7 +3584,7 @@
       const fb = document.getElementById('feedback');
       fb.className = 'feedback ' + (ok ? 'correct-fb' : 'wrong-fb') + ' show';
       document.getElementById('fbIcon').textContent = ok ? '✅' : '❌';
-      document.getElementById('fbMain').textContent = ok ? '正解！すばらしい！' : `不正解… 正解は「${'ABCD'[q.answer]}」でした。`;
+      document.getElementById('fbMain').textContent = ok ? '正解！すばらしい！' : `不正解… 正解は「${'ABCD'[correctDisplayPos]}」でした。`;
       document.getElementById('fbHint').textContent = q.hint;
 
       const aiBtn = document.getElementById('aiAskBtn');
