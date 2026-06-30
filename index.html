@@ -3442,11 +3442,11 @@
     }
 
     // ── Choice Selection & Confirmation ───────────────────────────
-    function selectChoice(idx) {
+    function selectChoice(displayPos, origIdx) {
       if (answered) return;
-      selectedIdx = idx;
+      selectedIdx = origIdx;
       document.querySelectorAll('.choice-btn').forEach((btn, i) => {
-        btn.classList.toggle('selected', i === idx);
+        btn.classList.toggle('selected', i === displayPos);
       });
       document.getElementById('confirmBtn').classList.add('show');
     }
@@ -3535,7 +3535,7 @@
         const btn = document.createElement('button');
         btn.className = 'choice-btn';
         btn.innerHTML = `<span class="choice-label">${label}</span><span>${renderText(q.choices[origIdx])}</span>`;
-        btn.onclick = () => selectChoice(origIdx);
+        btn.onclick = () => selectChoice(displayPos, origIdx);
         container.appendChild(btn);
       });
 
