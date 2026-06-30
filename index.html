@@ -1376,6 +1376,21 @@
       'useState':         'Reactのフック。`const [値, 更新関数] = useState(初期値)` の形で使う。この値が変わるとReactが画面を自動で再描画する。普通の変数では値が変わっても画面は変わらないため、画面の変化に関係するデータはすべてuseStateで管理する必要がある。',
       // CSS
       'flex':             'CSSのレイアウト方法「フレックスボックス」の略。親の箱に `display: flex` を指定すると、中の要素が横一列に並ぶ（デフォルト）。`flex-direction: column` にすれば縦並びにもできる。ボタン・ナビバーなど横一列レイアウトの基本技術。',
+      // LLM・AI API
+      'トークン':               'LLMがテキストを処理する最小単位。英語は約0.75単語、日本語は1〜2文字が1トークンの目安。APIの料金計算はトークン数で行われる。',
+      'プロンプトエンジニアリング': 'AIへの指示文（プロンプト）を工夫してAIの出力品質を高める技術。モデル自体を変えずに改善できるため低コスト。役割を与える・例を示す・制約を明示するなどのテクニックがある。',
+      'RAG':                    'Retrieval-Augmented Generation（検索拡張生成）。LLMが学習時に持たない最新情報や社内データを外部から検索してAIに渡し、回答精度を高める仕組み。',
+      'システムプロンプト':       'AIチャットで「あなたは〇〇です」のようにAIの役割・制約を事前に設定する指示。APIではrole:"system"で渡し、ユーザーには見えない形で動作を制御する。',
+      'コンテキストウィンドウ':   'LLMが一度に処理できるテキストの最大量（トークン数）。ウィンドウを超えると古い会話が忘れられる。Claude 3は最大200K、GPT-4は最大128Kトークンなど、モデルによって異なる。',
+      'ストリーミング':           'AIの回答を全部生成し終わる前に、1トークンずつリアルタイムで表示する仕組み。APIでstream:trueを指定すると有効になり、ChatGPTのように文字が順次流れてくるUXを実現できる。',
+      'ファインチューニング':     '既存のAIモデルに追加データを学習させてモデルの重みを更新すること。特定のタスク・文体・知識に特化させられるが、コストと時間がかかる。プロンプトエンジニアリングで解決できる場合はそちらが優先。',
+      // クラウド・デプロイ
+      '環境変数':               'アプリにAPIキーやDB接続先などの秘密情報を安全に渡す仕組み。`.env`ファイルに書き、`process.env.変数名`で読み込む。`.gitignore`に追加してGitHubに上げないことが必須。',
+      'CORS':                   'Cross-Origin Resource Sharing。ブラウザが「別のドメインへのリクエスト」をデフォルトでブロックするセキュリティ機能。サーバー側でAccess-Control-Allow-Originヘッダーを設定することで許可できる。',
+      'CDN':                    'Content Delivery Network。世界中に分散したサーバーからユーザーに最も近い場所でファイルを配信し、表示速度を上げる仕組み。VercelやCloudflareが内蔵している。',
+      'サーバーレス関数':         'サーバーを常時起動せず、リクエストがあった時だけ実行される関数。使った分だけ課金。Next.jsのAPI RoutesやVercel FunctionsはAPIキーをサーバーサイドで安全に扱うためにも使う。',
+      // AI駆動開発
+      'Claude Code':            'Anthropic製のAIコーディングエージェント。ターミナルから`claude`コマンドで起動し、ファイルの読み書き・コマンド実行・コード変更を自律的に行える。複数ファイルをまたいだ変更が得意。',
     };
 
     // ── Questions ─────────────────────────────────────────────────
@@ -2887,6 +2902,148 @@
         difficulty: 1, isNew: true,
         hint: '`display: flex` は「フレックスボックス」を有効にする命令。デフォルトの `flex-direction` は `row`（横並び）。縦に並べたいときは `flex-direction: column` を追加する。ボタンやナビバーを横一列にするときの定番テクニック。',
       },
+
+      // ── LLM・AI API ──────────────────────────────────────────────
+      {
+        category: 'LLM・AI API',
+        text: 'LLM（大規模言語モデル）において「トークン」とは何を指す？',
+        choices: ['APIの通信回数','単語や文字の断片（AIが処理する最小単位）','モデルのパラメータ数','文字コードの単位'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: '1トークン ≈ 英語0.75単語・日本語1〜2文字が目安。APIの料金計算はこのトークン数で行われる。例えば「こんにちは」は約5トークン。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'AIへの指示文（プロンプト）を工夫してAIの出力品質を高める技術を何という？',
+        choices: ['ファインチューニング','プロンプトエンジニアリング','RAG','エンベディング'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'モデル自体を変えずに出力を改善できるため低コスト。役割を与える・例を示す・制約を明示するなどのテクニックがある。「5文以内で」「箇条書き禁止」などの制約がプロンプトエンジニアリングの実例。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'RAG（Retrieval-Augmented Generation）の主な目的はどれ？',
+        choices: ['AIモデルのパラメータを追加学習する','外部の知識・データを検索してAIの回答精度を高める','AIの応答を高速化する','プロンプトを自動生成する'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'LLMの知識は学習時点で固定されている。最新情報や社内データを「検索して渡す」仕組みがRAG。ファインチューニングとの違いは、モデルの重みを変えない点。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'WebアプリにAIのAPIキーを組み込む際、最も安全な保存方法はどれ？',
+        choices: ['JavaScriptファイルに直接書く','GitHubのREADMEに書く','環境変数に保存しサーバーサイドで使う','HTMLのコメントに書く'],
+        answer: 2,
+        difficulty: 2, isNew: true,
+        hint: 'フロントエンドのコードに書くとページのソースから誰でも見られる。Next.jsのAPI RoutesなどサーバーサイドでAPIを呼ぶのが基本。環境変数は `.env` ファイルに書き、`.gitignore` でGitHubに上げない。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'ChatGPTのように回答が1トークンずつリアルタイムで表示される仕組みを何という？',
+        choices: ['WebRTC','ストリーミング（Server-Sent Events）','Long Polling','WebPush'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'APIで `stream: true` を指定すると全部生成し終わる前にトークンを逐次送信できる。全文生成まで待たずに表示できるためUX（使用感）が大きく向上する。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'AIチャットアプリでユーザーに見せずにAIの役割・制約を設定する指示を何という？',
+        choices: ['ユーザープロンプト','システムプロンプト','コンテキストウィンドウ','ファインチューニング'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'APIでは `role: "system"` で渡す。「あなたは丁寧なサポート担当です」「マークダウンは使わないで」などの制約がシステムプロンプトの実例。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'LLMが一度に処理できるテキストの最大量を何という？',
+        choices: ['バッチサイズ','コンテキストウィンドウ','エポック数','レイヤー数'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'この上限を超えると古い会話が「忘れられる」。Claude 3は最大200K、GPT-4は最大128Kトークンなどモデルによって異なる。長い会話履歴を全部渡すとすぐ上限に達するため設計上の注意点になる。',
+      },
+      {
+        category: 'LLM・AI API',
+        text: 'モデルを追加学習させずに出力を改善する手法はどれ？',
+        choices: ['ファインチューニング','プロンプトエンジニアリング','RLHF','LoRA'],
+        answer: 1,
+        difficulty: 2, isNew: true,
+        hint: 'ファインチューニング・RLHF・LoRAはモデルの重みを更新するため高コスト。プロンプトエンジニアリングは指示文を工夫するだけなので即日試せて無料。まずプロンプトで解決を試みるのが原則。',
+      },
+
+      // ── クラウド・デプロイ ─────────────────────────────────────────
+      {
+        category: 'クラウド・デプロイ',
+        text: 'アプリのAPIキーやDB接続先を安全に管理するための仕組みはどれ？',
+        choices: ['コンフィグファイル（config.js）に直接書く','環境変数（.env）に保存する','ローカルストレージに保存する','package.jsonに書く'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: '`.env` ファイルに書いた値は `process.env.変数名` で読み込む。必ず `.gitignore` に追加してGitHubに上げないこと。フロントエンド公開側からは読めないのでAPIキーの漏洩を防げる。',
+      },
+      {
+        category: 'クラウド・デプロイ',
+        text: 'ブラウザからAPIを叩いたとき「CORSエラー」が起きる主な原因はどれ？',
+        choices: ['APIキーが間違っている','HTTPSを使っていない','異なるドメインからのリクエストをサーバーが許可していない','ブラウザのキャッシュが古い'],
+        answer: 2,
+        difficulty: 2, isNew: true,
+        hint: 'CORS（Cross-Origin Resource Sharing）はブラウザのセキュリティ機能。サーバー側で `Access-Control-Allow-Origin` ヘッダーを設定することで解決。Groq・OpenAI等の外部APIはCORSを許可済みのため直接呼べる。',
+      },
+      {
+        category: 'クラウド・デプロイ',
+        text: 'CDN（Content Delivery Network）を使う主な目的はどれ？',
+        choices: ['データベースを高速化する','ユーザーの近くのサーバーからファイルを配信して表示を速くする','APIのレート制限を回避する','HTTPSを自動で設定する'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'VercelやCloudflareはCDNを内蔵しており、日本のユーザーには日本のサーバーから配信される。画像・JS・CSSなど静的ファイルの配信速度が大幅に改善する。',
+      },
+      {
+        category: 'クラウド・デプロイ',
+        text: 'サーバーレス関数（Serverless Function）の特徴として正しいものはどれ？',
+        choices: ['常時起動しているサーバーが必要','データベースの代替として使う','リクエストがあった時だけ実行され使った分だけ課金される','フロントエンドと完全に同じ環境で動く'],
+        answer: 2,
+        difficulty: 2, isNew: true,
+        hint: '常時起動コストがゼロで、Vercel Functions・AWS Lambdaなどで動く。Next.jsのAPI Routesも実態はサーバーレス関数。AIのAPIキーをサーバーサイドで安全に扱うためにも活用できる。',
+      },
+      {
+        category: 'クラウド・デプロイ',
+        text: 'Next.jsアプリをVercelにデプロイする際、本番用の環境変数はどこで設定する？',
+        choices: ['.envファイルをGitHubにpushする','next.config.jsに直接書く','Vercelダッシュボード → Settings → Environment Variables','package.jsonのscriptsに書く'],
+        answer: 2,
+        difficulty: 2, isNew: true,
+        hint: '.envはGitHubにpushしないのが原則。Vercelはダッシュボードから環境変数を設定でき、ビルド時・実行時に `process.env` で参照できる。`NEXT_PUBLIC_` を付けるとブラウザ側でも読める（ただしソースに露出する）。',
+      },
+
+      // ── AI駆動開発 ────────────────────────────────────────────────
+      {
+        category: 'AI駆動開発',
+        text: 'Claude Code（Anthropic製）の主な特徴として正しいものはどれ？',
+        choices: ['ブラウザ上でのみ動作するAIツール','ターミナルから使えるAIコーディングエージェントで、ファイル読み書きやコマンド実行ができる','コードの静的解析専用ツール','GitHub Actionsと同じCI/CDツール'],
+        answer: 1,
+        difficulty: 1, isNew: true,
+        hint: 'ターミナルで `claude` コマンドを実行して使う。ファイルを読み書きしたりコマンドを実行したりして、コーディング作業を自律的に進めるエージェント型AIツール。複数ファイルをまたいだ変更が得意。',
+      },
+      {
+        category: 'AI駆動開発',
+        text: '「既存コードの複数ファイルをまたいだ大幅なリファクタ」に最も適したAIツールはどれ？',
+        choices: ['GitHub Copilotの行補完機能','ChatGPTのチャット画面','Claude CodeなどのAIエージェント（ファイルを直接編集できる）','Linterの自動修正'],
+        answer: 2,
+        difficulty: 1, isNew: true,
+        hint: '補完系（Copilot）は1行単位の提案が得意。チャット系（ChatGPT）は説明は得意だがファイルを直接編集できない。エージェント系（Claude Code）は複数ファイルをまたいだ変更・コマンド実行まで自律でできる。',
+      },
+      {
+        category: 'AI駆動開発',
+        text: 'AIコーディングツールに依頼する際、最も精度が上がる指示の仕方はどれ？',
+        choices: ['「いい感じにして」と曖昧に伝える','コード全体をコピーして「直して」と伝える','「〇〇ファイルの△△関数を、〜という理由で□□に変更して」と具体的に伝える','英語で伝える'],
+        answer: 2,
+        difficulty: 1, isNew: true,
+        hint: '「対象・理由・期待する結果」をセットで伝えると精度が上がる。曖昧な指示は曖昧な結果を生む。日本語でも精度は変わらない。',
+      },
+      {
+        category: 'AI駆動開発',
+        text: 'AI駆動開発によって人間の役割として重要になるものはどれ？',
+        choices: ['コードを1行ずつ手入力すること','プログラミング言語の文法を暗記すること','設計・要件定義・AIの出力レビューと判断','テストコードを書かないこと'],
+        answer: 2,
+        difficulty: 1, isNew: true,
+        hint: 'AIはコードの「生成」が得意。人間は「何を作るか」「正しいか」を判断する役割に移行する。AIの出力を批判的にレビューできるスキルと、要件を正確に言語化できる力が重要になる。',
+      },
     ];
 
     // ── Word List Groups ──────────────────────────────────────────
@@ -2945,6 +3102,13 @@
       'カスタムフック':2,
       'git push --force':2,'git reset --hard':2,
       'JSON':1,
+      // LLM・AI API
+      'トークン':1,'プロンプトエンジニアリング':2,'RAG':3,
+      'システムプロンプト':2,'コンテキストウィンドウ':2,'ストリーミング':2,'ファインチューニング':3,
+      // クラウド・デプロイ
+      '環境変数':1,'CORS':2,'CDN':1,'サーバーレス関数':2,
+      // AI駆動開発
+      'Claude Code':1,
     };
 
     const WORD_LIST_GROUPS = [
@@ -2960,6 +3124,10 @@
       { cat: 'データ管理', color: '#00b4d8', terms: ['データベース','GitHub','Firebase','Firestore','localStorage','SessionStorage','ITP','OAuth','セキュリティルール','Firebase CLI','firebase deploy','firebase serve','RLS','UUID','ON DELETE CASCADE','supabase.rpc()','SQL','PRIMARY KEY','INSERT INTO','INNER JOIN','LEFT JOIN','GROUP BY','IS NULL','Service Role Key','Supabase Storage','テーブル','カラム'] },
       { cat: 'PWA',        color: '#f0883e', terms: ['PWA','Service Worker','manifest.json'] },
       { cat: '技術スタック', color: '#ff7b72', terms: ['TypeScript','Next.js','React','Supabase','pnpm','Biome','Tailwind CSS','Vercel','Docker','Prisma','ESLint','Prettier','layout.tsx','Server Components','middleware.ts','route.ts','NEXT_PUBLIC_','Suspense','signInWithOAuth','CLAUDE.md','Stopフック','process.exit()','useTransition','useOptimistic','Server Actions','revalidatePath','maybeSingle()','.env.local','Promise.all','Recharts','カスタムフック','useState'] },
+      { isLabel: true, label: '🤖 AI・クラウド' },
+      { cat: 'LLM・AI API',  color: '#a78bfa', terms: ['トークン','プロンプトエンジニアリング','RAG','システムプロンプト','コンテキストウィンドウ','ストリーミング','ファインチューニング'] },
+      { cat: 'クラウド・デプロイ', color: '#38bdf8', terms: ['環境変数','CORS','CDN','サーバーレス関数'] },
+      { cat: 'AI駆動開発',   color: '#34d399', terms: ['Claude Code'] },
     ];
 
     // ── State ─────────────────────────────────────────────────────
@@ -3003,6 +3171,10 @@
       { key: 'データ管理',   label: 'データ管理' },
       { key: 'PWA',          label: 'PWA' },
       { key: '技術スタック', label: '技術スタック' },
+      { key: '__label__',    label: '🤖 AI・クラウド' },
+      { key: 'LLM・AI API',  label: 'LLM・AI API' },
+      { key: 'クラウド・デプロイ', label: 'クラウド・デプロイ' },
+      { key: 'AI駆動開発',   label: 'AI駆動開発' },
     ];
 
     function initFilterGrid() {
