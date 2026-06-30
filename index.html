@@ -952,6 +952,56 @@
     }
     .ai-explanation.show { display: block; }
 
+    /* ── Weak Analysis ── */
+    .analysis-btn {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      border: 1px solid #8957e5;
+      border-radius: 10px;
+      color: #b47aff;
+      font-size: 0.92rem;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+    .analysis-btn:hover { background: rgba(137,87,229,0.12); }
+    .analysis-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 300;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 40px;
+    }
+    .analysis-overlay.show { display: flex; }
+    .analysis-modal {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      padding: 24px;
+      width: min(92vw, 460px);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    .analysis-modal h3 { color: #e6edf3; margin: 0 0 12px; font-size: 1rem; }
+    .analysis-content {
+      font-size: 0.88rem;
+      color: #c9d1d9;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      min-height: 60px;
+    }
+    .analysis-close {
+      float: right;
+      background: transparent;
+      border: none;
+      color: #8b949e;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
     /* ── Settings Modal ── */
     .settings-btn {
       position: fixed;
@@ -1052,6 +1102,7 @@
       <div id="dailyArea"></div>
       <button class="start-btn" onclick="startQuiz()">スタートする →</button>
       <button class="weak-btn" id="weakBtn" onclick="startWeakQuiz()" style="display:none">🎯 苦手モードで挑戦 <span id="weakCount"></span></button>
+      <button class="analysis-btn" onclick="openAnalysis()">🔍 AIに苦手を分析してもらう</button>
       <button class="practice-mode-btn" onclick="startPracticeMode()">🛠️ アプリ作成実践モード</button>
       <button class="word-list-toggle" id="statsToggle" onclick="toggleStats()">📊 累計成績を見る ▾</button>
       <div class="word-list-section" id="statsSection" style="display:none"></div>
@@ -4310,6 +4361,83 @@
     renderDailyBtn();
     showScreen('start');
 
+    // ── Weak Analysis ────────────────────────────────────────────
+    function openAnalysis() {
+      const apiKey = localStorage.getItem('tora_gemini_key') || localStorage.getItem('tora_groq_key');
+      if (!apiKey) {
+        alert('Groq APIキーが設定されていません。右下の ⚙ から設定してください。');
+        return;
+      }
+
+      const stats = loadAllStats();
+      const weak = loadWeak();
+
+      if (Object.keys(stats).length === 0) {
+        alert('まだ問題を解いていません。いくつか問題を解いてから分析してみてください！');
+        return;
+      }
+
+      // カテゴリ別正答率を整理
+      const catSummary = Object.entries(stats).map(([cat, s]) => {
+        const rate = Math.round((s.c / s.t) * 100);
+        return `・${cat}：${s.c}/${s.t}問正解（正答率${rate}%）`;
+      }).join('\n');
+
+      // 苦手問題のカテゴリ別件数
+      const weakByCat = {};
+      weak.forEach(text => {
+        const q = ALL_QUESTIONS.find(q => q.text === text);
+        if (q) weakByCat[q.category] = (weakByCat[q.category] || 0) + 1;
+      });
+      const weakSummary = Object.entries(weakByCat).length > 0
+        ? Object.entries(weakByCat).map(([cat, n]) => `・${cat}：${n}問`).join('\n')
+        : '（まだ苦手登録なし）';
+
+      const prompt = `以下はプログラミング学習アプリでのユーザーの成績データです。
+
+【カテゴリ別正答率】
+${catSummary}
+
+【苦手登録されている問題数（カテゴリ別）】
+${weakSummary}
+
+このデータをもとに、以下を日本語で答えてください：
+1. 最も強化すべきカテゴリとその理由
+2. 具体的な学習アドバイス（2〜3点）
+3. 今日取り組むべきこと（1点）
+
+挨拶・前置き不要。箇条書き中心で簡潔に。`;
+
+      document.getElementById('analysisOverlay').classList.add('show');
+      document.getElementById('analysisContent').textContent = '⏳ AIが分析中...';
+
+      fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: 'llama-3.1-8b-instant',
+          messages: [{ role: 'user', content: prompt }],
+          max_tokens: 500
+        })
+      })
+      .then(r => r.json())
+      .then(data => {
+        const text = data?.choices?.[0]?.message?.content;
+        document.getElementById('analysisContent').textContent =
+          text || 'エラー: ' + (data?.error?.message || '回答を取得できませんでした。');
+      })
+      .catch(e => {
+        document.getElementById('analysisContent').textContent = 'ネットワークエラー: ' + e.message;
+      });
+    }
+
+    function closeAnalysis() {
+      document.getElementById('analysisOverlay').classList.remove('show');
+    }
+
     // ── AI Settings ──────────────────────────────────────────────
     function openSettings() {
       const key = localStorage.getItem('tora_gemini_key') || '';
@@ -4404,6 +4532,15 @@
       });
     }
   </script>
+
+  <!-- Weak Analysis Modal -->
+  <div class="analysis-overlay" id="analysisOverlay" onclick="if(event.target===this)closeAnalysis()">
+    <div class="analysis-modal">
+      <button class="analysis-close" onclick="closeAnalysis()">✕</button>
+      <h3>🔍 苦手分析レポート</h3>
+      <div class="analysis-content" id="analysisContent">分析中...</div>
+    </div>
+  </div>
 
   <!-- Settings Button -->
   <button class="settings-btn" onclick="openSettings()" title="AI設定">⚙</button>
