@@ -4399,12 +4399,23 @@
 
       box.textContent = '🤖 AIがコメントを生成中...';
 
-      const prompt = `プログラミング学習アプリの成績データです。
-全体正答率：${overallPct}%（${totalT}問中${totalC}問正解）
-最も正答率が低いカテゴリ：${worst}（正答率${worstPct}%）
+      const catSummary = cats.map(cat => {
+        const { c, t } = s[cat];
+        const p = Math.round((c / t) * 100);
+        return `${cat}：${p}%（${c}/${t}問）`;
+      }).join('、');
 
-この生徒への一言アドバイスを、「です・ます」調で1〜2文で書いてください。
-「〜なのよ」「〜だわ」などの語尾は使わない。マークダウン不要。励ましを含める。`;
+      const prompt = `以下はプログラミング学習アプリの成績データです。
+
+全体：${overallPct}%正答率（${totalT}問回答）
+カテゴリ別：${catSummary}
+最も弱いカテゴリ：${worst}（${worstPct}%）
+
+このデータを見て、具体的で的確な学習アドバイスを「です・ます」調で2文で書いてください。
+条件：
+- 「学生さん」など呼びかけは不要。すぐアドバイスから始める
+- データに基づいた具体的な内容にする（「頑張ってください」のような抽象的な言葉は避ける）
+- マークダウン不要`;
 
       fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
@@ -4413,9 +4424,9 @@
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-versatile',
           messages: [{ role: 'user', content: prompt }],
-          max_tokens: 120
+          max_tokens: 150
         })
       })
       .then(r => r.json())
@@ -4493,7 +4504,7 @@ ${weakSummary}
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-versatile',
           messages: [{ role: 'user', content: prompt }],
           max_tokens: 500
         })
@@ -4574,7 +4585,7 @@ ${weakSummary}
           'Authorization': `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          model: 'llama-3.1-8b-instant',
+          model: 'llama-3.3-70b-versatile',
           messages: [{ role: 'user', content: prompt }],
           max_tokens: 300
         })
