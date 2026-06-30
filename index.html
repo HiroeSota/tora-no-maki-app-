@@ -4370,14 +4370,15 @@
           box.classList.add('show');
           btn.textContent = '✨ もう一度聞く';
         } else {
-          box.textContent = '回答を取得できませんでした。';
+          const errMsg = data?.error?.message || JSON.stringify(data);
+          box.textContent = 'エラー: ' + errMsg;
           box.classList.add('show');
           btn.textContent = '✨ AIにもっと聞く';
         }
         btn.disabled = false;
       })
-      .catch(() => {
-        box.textContent = 'エラーが発生しました。APIキーを確認してください。';
+      .catch(e => {
+        box.textContent = 'ネットワークエラー: ' + e.message;
         box.classList.add('show');
         btn.disabled = false;
         btn.textContent = '✨ AIにもっと聞く';
