@@ -922,6 +922,106 @@
       margin-bottom: 2px;
     }
     .practice-fb-best-reason { font-size: 0.8rem; color: #8b949e; line-height: 1.5; }
+
+    /* ── AI Feature ── */
+    .ai-ask-btn {
+      margin-top: 10px;
+      padding: 7px 14px;
+      background: transparent;
+      border: 1px solid #8957e5;
+      border-radius: 8px;
+      color: #b47aff;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: none;
+    }
+    .ai-ask-btn:hover { background: rgba(137,87,229,0.15); }
+    .ai-ask-btn.show { display: inline-flex; align-items: center; gap: 6px; }
+    .ai-explanation {
+      display: none;
+      margin-top: 10px;
+      padding: 12px 14px;
+      background: rgba(137,87,229,0.1);
+      border: 1px solid rgba(137,87,229,0.35);
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 400;
+      color: #c9d1d9;
+      line-height: 1.7;
+      white-space: pre-wrap;
+    }
+    .ai-explanation.show { display: block; }
+
+    /* ── Settings Modal ── */
+    .settings-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #21262d;
+      border: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 1.1rem;
+      cursor: pointer;
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-btn:hover { border-color: #8957e5; color: #b47aff; }
+    .settings-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 300;
+      align-items: center;
+      justify-content: center;
+    }
+    .settings-overlay.show { display: flex; }
+    .settings-modal {
+      background: #161b22;
+      border: 1px solid #30363d;
+      border-radius: 14px;
+      padding: 28px 24px;
+      width: min(90vw, 420px);
+    }
+    .settings-modal h3 { color: #e6edf3; margin: 0 0 6px; font-size: 1rem; }
+    .settings-modal p  { color: #8b949e; font-size: 0.82rem; margin: 0 0 16px; line-height: 1.6; }
+    .settings-modal input {
+      width: 100%;
+      padding: 10px 12px;
+      background: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: 8px;
+      color: #e6edf3;
+      font-size: 0.88rem;
+      box-sizing: border-box;
+      margin-bottom: 12px;
+    }
+    .settings-modal input:focus { outline: none; border-color: #8957e5; }
+    .settings-save-btn {
+      width: 100%;
+      padding: 10px;
+      background: #8957e5;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.9rem;
+      cursor: pointer;
+    }
+    .settings-save-btn:hover { background: #a371f7; }
+    .settings-close-btn {
+      float: right;
+      background: transparent;
+      border: none;
+      color: #8b949e;
+      font-size: 1.2rem;
+      cursor: pointer;
+      line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -975,6 +1075,8 @@
         <div class="fb-text">
           <div id="fbMain"></div>
           <div class="fb-hint" id="fbHint"></div>
+          <button class="ai-ask-btn" id="aiAskBtn" onclick="askAI()">✨ AIにもっと聞く</button>
+          <div class="ai-explanation" id="aiExplanation"></div>
         </div>
       </div>
       <div class="action-row">
@@ -3241,6 +3343,19 @@
       document.getElementById('fbMain').textContent = ok ? '正解！すばらしい！' : `不正解… 正解は「${'ABCD'[q.answer]}」でした。`;
       document.getElementById('fbHint').textContent = q.hint;
 
+      const aiBtn = document.getElementById('aiAskBtn');
+      const aiBox = document.getElementById('aiExplanation');
+      if (!ok) {
+        currentAIQuestion = q;
+        aiBtn.classList.add('show');
+        aiBtn.disabled = false;
+        aiBtn.textContent = '✨ AIにもっと聞く';
+      } else {
+        aiBtn.classList.remove('show');
+      }
+      aiBox.classList.remove('show');
+      aiBox.textContent = '';
+
       if (!ok) document.getElementById('retryBtn').classList.add('show');
 
       const nb = document.getElementById('nextBtn');
@@ -4194,7 +4309,95 @@
     renderStreak();
     renderDailyBtn();
     showScreen('start');
+
+    // ── AI Settings ──────────────────────────────────────────────
+    function openSettings() {
+      const key = localStorage.getItem('tora_gemini_key') || '';
+      document.getElementById('geminiKeyInput').value = key;
+      document.getElementById('settingsOverlay').classList.add('show');
+    }
+    function closeSettings() {
+      document.getElementById('settingsOverlay').classList.remove('show');
+    }
+    function saveSettings() {
+      const key = document.getElementById('geminiKeyInput').value.trim();
+      if (key) {
+        localStorage.setItem('tora_gemini_key', key);
+        closeSettings();
+        alert('APIキーを保存しました！');
+      } else {
+        localStorage.removeItem('tora_gemini_key');
+        closeSettings();
+        alert('APIキーを削除しました。');
+      }
+    }
+
+    // ── Gemini AI Explanation ─────────────────────────────────────
+    let currentAIQuestion = null;
+
+    function askAI() {
+      const apiKey = localStorage.getItem('tora_gemini_key');
+      if (!apiKey) {
+        alert('Gemini APIキーが設定されていません。右下の ⚙ から設定してください。');
+        return;
+      }
+      const btn = document.getElementById('aiAskBtn');
+      const box = document.getElementById('aiExplanation');
+      btn.disabled = true;
+      btn.textContent = '⏳ AIが考えています…';
+      box.classList.remove('show');
+      box.textContent = '';
+
+      const q = currentAIQuestion;
+      const prompt = `あなたは初心者向けのプログラミング家庭教師です。
+以下のクイズ問題について、なぜその答えが正解なのかを日本語で200文字以内で丁寧に説明してください。
+専門用語は日常のたとえを使って説明してください。
+
+問題: ${q.text}
+正解: ${q.choices[q.answer]}
+ヒント: ${q.hint}`;
+
+      fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
+      })
+      .then(r => r.json())
+      .then(data => {
+        const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        if (text) {
+          box.textContent = text;
+          box.classList.add('show');
+          btn.textContent = '✨ もう一度聞く';
+        } else {
+          box.textContent = '回答を取得できませんでした。';
+          box.classList.add('show');
+          btn.textContent = '✨ AIにもっと聞く';
+        }
+        btn.disabled = false;
+      })
+      .catch(() => {
+        box.textContent = 'エラーが発生しました。APIキーを確認してください。';
+        box.classList.add('show');
+        btn.disabled = false;
+        btn.textContent = '✨ AIにもっと聞く';
+      });
+    }
   </script>
+
+  <!-- Settings Button -->
+  <button class="settings-btn" onclick="openSettings()" title="AI設定">⚙</button>
+
+  <!-- Settings Modal -->
+  <div class="settings-overlay" id="settingsOverlay" onclick="if(event.target===this)closeSettings()">
+    <div class="settings-modal">
+      <button class="settings-close-btn" onclick="closeSettings()">✕</button>
+      <h3>🤖 AI設定</h3>
+      <p>Gemini APIキーを入力すると、不正解時に「AIにもっと聞く」ボタンが使えるようになります。<br>キーは端末内にのみ保存されます。</p>
+      <input type="password" id="geminiKeyInput" placeholder="AIzaSy...">
+      <button class="settings-save-btn" onclick="saveSettings()">保存する</button>
+    </div>
+  </div>
 </body>
 </html>
  
